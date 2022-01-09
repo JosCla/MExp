@@ -1,0 +1,52 @@
+~1.~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~..~2p1....~3p|...R~4p1--^^-^~~~~~~~
+~p.~~~~~~~~~~~~~~~~~~~~~~~~~~~8p..~~
+~~~~~~~~~~~~~~..~~~~~7^1|..R~~1==|~~
+~5p^|--.-^~~6p1....R~p^11..R~~||||~~
+~~~~~~~~~~~~~~~..~~~~~^1=..R~~|#||~~
+~9p-^~Ap~~Bp.~~R~Cp.-^~~~~~~~~~~R~~~
+~###|~~t~~.=.~~~~~8883~~Dp~~~~~R~~~~
+~~R~~~~.~~|=~~~~~~8154~~~#~~~~.11=~~
+~R~~~~~^~~..#~~~~~7765~~~~~~E..==~~~
+~~~~~~~~~~~~|~~~~~~~~~~~~.~~p=|1||.R
+~~~~~~~~~~.#.~~~~Fp~~~~~~~~~~~~~~~~~
+
+Entity Movement and Interaction Test Map
+1 - test 1: make sure entities (player in this case) can't go out of bounds
+2 - test 2: does log turn as you push it to the right?
+3 - test 3: does sideways log roll when you push it?
+4 - test 4: does turning log only go uphill when it's standing?
+5 - test 5: does rolling log only go downhill?
+6 - test 6: general test for rolling log around 
+    (rdrur is log movements, should end up against right-most rock)
+7 - test 7: pushing logs off a cliff onto other logs
+    (should try to push sideways, combine with vertical, rest atop standing)
+8 - test 8: pushing logs over other logs
+    (standing log and vertical log should just combine, rolling should roll
+    across, but one stops early, hits a rock, and combines)
+    (also the rolling log should roll across a raft without sailing)
+9 - test 9: rafting general
+    (if something atop an entity on top of water tries to move and fails, it
+    will try to make that entity move in the opposite direction. the 4 smaller
+    components lined up are:
+    a. push up while on raft to go down
+    b. same, but make sure that there are no problems with being between rocks
+    c. push up on nothing should give no movement
+    d. push up while on log gives no movement)
+A - test 10: can the player knock over a tree and use it to climb up layers?
+B - test 11: correct player movement across water logs
+    (rdlldrdrrrdddldl is player movements, should end up in bottom left)
+C - test 12: can the player correctly ascend/descend the terrain?
+    (rrrdddlllururrdludlr is player movements, should end up in central hole)
+D - test 13: pushing stuff on top of rafts
+    (if the player pushes a standing log atop a raft, the raft should sail
+    over, before the log tries to fall over onto the new land)
+E - test 14: are log-to-log pushing interactions handled correctly?
+    (if the player starts by pushing right, then the whole stack should be
+    pushed right. effectively, each case will say "the next thing should move
+    out of the way, and then i'll move in if there's space", queueing its
+    movement behind the next thing moving first
+    this should also work for the other "stacked up" types, but other two
+    should not be able to move)
+
+test 15: make sure the stack wasn't destroyed. should be the same as start!

@@ -1,0 +1,325 @@
+.MEENTS
+
+.main function
+
+.loading save file
+sub(FSTR)
+sub(LSAV)
+
+.getting an entity to move
+sub(GCEP,1,1)->A
+
+!If A
+    ClrHome
+    Disp "NOT FOUND"
+    Repeat getKey(15)
+    End
+    Return
+End
+
+.displaying the entity pre-move
+ClrHome
+For(B,0,7)
+    Output(0,B,{A+B}>Dec)
+End
+Repeat getKey(1)
+End
+
+.moving the entity once to the right
+sub(MVEN,A,1,0)
+
+.displaying the entity post-move
+ClrHome
+For(B,0,7)
+    Output(0,B,{A+B}>Dec)
+End
+Repeat getKey(4)
+End
+
+.other files (comment out)
+prgmMESSRC
+
+Lbl MVEN {
+    .Moves an entity
+    .r1: pointer to entity to move
+    .r2: dispX
+    .r3: dispY
+    .T: movement state
+        0: success
+        1: out of bounds
+        2: blocked
+        3: couldn't move (player trying to move onto water, off sideways log)
+    .U: number of movements pushed to stack
+
+    .Storing to stack
+    S-12->S
+    A->{S}^r
+    B->{S+2}^r
+    C->{S+4}^r
+    D->{S+6}^r
+    E->{S+8}^r
+    F->{S+10}^r
+
+    .Storing arguments
+    r_1->A
+    r_2->B
+    r_3->C
+
+    .Finding target position for entity
+    {A+1}+r_2->D
+    {A+2}+r_3->E
+
+    .Make sure it's in-bounds
+    {EM}->G
+    {EM+1}->H
+    .(due to unsigned comparison, this implicitly makes sure it's non-negative)
+    !If (D<G) and (E<H)
+        1->T
+        0->U
+        Goto MVENE
+    End
+
+    .(for now, just forcing the movement)
+    B->{A+1}
+    C->{A+2}
+    0->T
+    
+    0->U
+
+    .MVEN end
+    Lbl MVENE
+    {S}^r->A
+    {S+2}^r->B
+    {S+4}^r->C
+    {S+6}^r->D
+    {S+8}^r->E
+    {S+10}^r->F
+    S+12->S
+
+    .(return)
+    Return
+
+    .convert to collision type based on entity type and direction
+        (horizontal log going down becomes rolling log, all rafts become general rafts)
+    sub(GCET,{A},r_2,r_3)->F
+    
+    .get relative terrain height
+    sub(GTHA,D,E)-sub(GTHA,{A+1},{A+2})->G
+
+    .calculate if it's too high
+    If G<=sub(GMHD,F)
+        .actual height diff is less than max height diff
+    Else
+        .actual height diff too large, so we can't move there
+        
+        
+    
+    if (too high) 
+        .for most, it's one tile above. for player, two above, etc
+        .then we can't move there
+    else
+        .get the highest entity
+        .also note that if we're the player on a sideways log or raft on water,
+            we need to use a different table to get interaction types
+        if (none)
+            .should be able to go there
+            .(unless we're a player on a sideways log going onto equal height)
+        else
+            if (below)
+                .handle below interaction
+            else
+                .find the lowest entity we can interact with
+                    (don't forget that a standing log can be below foot level
+                    but interactable)
+                .handle push interaction with that entity
+
+    .in any case, if we can move, then make a movement and then "update"
+        (gives a chance to combine to rafts, let roll logs keep going, etc)
+}
+
+Lbl GECT {
+    .Get entity collision type
+    .r1: entity type
+    .r2: dispX
+    .r3: dispY
+
+    If r_1<3
+        .Player, standing log, or standing tree
+        Return r_1
+    ElseIf r_1=5 or (r_1=6)
+        .Raft
+        Return 5
+    ElseIf r_1>6
+        .Immobile (snowman or sign)
+        Return 6
+    ElseIf r_2
+        .Laid down logs (horizontal movement)
+        If r_1=3
+            Return 4
+        Else
+            Return 3
+    ElseIf r_3
+        .Laid down logs (vertical movement)
+        Return r_1
+    Else
+        .Indeterminate type (laid down log without movement)
+        Return -1
+}
+
+Lbl GCEP {
+    .Get current entities pointer
+    .r1-r2: entity id (island, ent num)
+    .Directly returns the pointer in current entities
+
+    .Storing args to stack
+    S-4->S
+    r_1->{S}^r
+    r_2->{S+2}^r
+
+    .First getting the entity island
+    sub(GENI,r_1,r_2)->G
+
+    .Recalling args
+    {S}^r->r_1
+    {S+2}^r->r_2
+    S+4->S
+
+    .Traversing the island's linked list to find the entity in question
+    {G*2+CE}^r->H
+    While H
+        .Return our entity if we've found it
+        If ({H+3+CE}=r_1) and ({H+4+CE}=r_2)
+            Return H+CE
+        End
+
+        .If we haven't found it, go to next list element
+        {H+10+CE}^r->H
+    End
+
+    .Returning 0 if we found nothing
+    Return 0
+}
+
+Lbl GENI {
+    .Get entity island
+    .r1-r2: entity id (island, ent num)
+    .Directly returns the entity island number
+
+    .Finding the entity's position
+    sub(GENP,r_1,r_2)
+
+    .Returning the island at that position
+    Return sub(GIAT,T,U)
+}
+    
+Lbl GENP {
+    .Get entity position
+    .r1-r2: entity id (island, ent num)
+    .T: posX
+    .U: posY
+
+    .Using EPOS to find where the entity is
+    {r_1*2+EP}^r->G
+    r_2*2+G+EP->H
+    {H}->T
+    {H+1}->U
+
+    .(return)
+    Return
+}    
+
+Lbl GIAT {
+    .Get island at
+    .r1: posX
+    .r2: posY
+    .Directly returns the island number
+
+    .Returning island number
+    Return {r_2*MW+r_1+2+EM}
+}
+
+Lbl GSEH {
+    .Get sorted entity list by height
+    .r1-r2: posX, posY
+    .Directly returns the length of the entity list
+    .Will place the sorted list (pointers to CENT) below stack pointer S
+    .  (the list has lower height at higher addresses, higher height at lower)
+
+    .First finding the entity island at this position
+    sub(GIAT,r_1,r_2)->G
+
+    .(if no entity here, just return an empty list)
+    0Return!If G
+
+    .Starting with an empty list (T is the current list length)
+    0->T
+
+    .Traversing the island's linked list to find entities at this position
+    {G*2+CE}^r->H
+    While H
+        H+CE->I
+
+        .Checking if the entity is at the right spot
+        If {I+1}=r_1?{I+2}=r_2
+            .If the entity is at the right spot, we can insert it!
+            If T
+                .Find first element whose height is less
+                T-1->J
+                For(K,0,J)
+                    {-K-1*2+S}^r->L
+                EndIf {I+5}<{L+5}
+
+                .Shift over greater elements
+                T-K->J .(num elements to shift)
+                If J
+                    Copy(-T*2+S,-T-1*2+S,J*2)
+                End
+
+                .Insert at our desired position
+                I->{-K-1*2+S}^r
+            Else
+                .Empty list, just insert at the first position
+                I->{S-2}^r
+            End
+
+            .Incrementing list length
+            T++
+        End
+
+        .Going to next list element
+        {I+10}^r->H
+    End
+   
+    .Finally, returning our list length
+    Return T
+}
+
+    .handle our interaction type
+    .0: just stop
+    .1: just move
+    .2: just push
+    .3: try to push out of way, then try to move in
+    .4: push and raft away
+    .5: raft away
+
+    if (no entity)
+        .We can move there if <= height or 1 higher if player/upright log
+        .But also player can't move there if it's too much lower or water
+    else
+        .Find the highest entity on our target tile (could combine with above if-statement)
+        if (below)
+            .Check interaction per entity type
+            (if we are upright pushing onto sideways log, try to push out of way before moving onto it anyways)
+        else
+            .Same, but pushing into lowest entity we can push
+    (perhaps first clause of above if-stmt for no ents should, like the second clause, produce one of the common interaction set's things)
+    (and since it applies fairly universally, maybe we wrap the whole thing in the height checking?)
+
+    .Now, we handle our interaction type
+        (if no move, just stop. if push -> move, do that.)
+        (if we move, also move all stuff above)
+            (and if we move onto new island, change island ownership for us and all entities above)
+        (and either way, track whether we were able to successfully move)
+    .And, "update" our entity
+        (flip logs, combine to rafts, etc)
+

@@ -1,0 +1,17 @@
+MExp Entity Types
+
+0: Player
+1: Standing log
+2: Tree Standing log
+3: Horizontal log
+4: Vertical log
+5: Horizontal raft
+    B1-2: ID of other log in raft
+6: Vertical raft
+    B1-2: ID of other log in raft
+7: Snowman
+    B1: Snowman number
+8: Sign
+    B1: Sign number
+9: Postbox
+    B1: Postbox number

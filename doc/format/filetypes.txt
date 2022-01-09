@@ -1,0 +1,144 @@
+ARCHIVED
+
+MEIDAT {
+    Data about each island.
+    (ARCHIVED)
+
+    Format:
+    2B: # islands
+    2B: pointer to island 1 data
+    2B: pointer to island 2 data
+    ...
+
+    [ island 1
+        1B: # entities on this island
+        2B: respawn x and y
+        1B: is this the initial island for this map
+        4B: nothing
+
+        8B: entity 1 spawn information
+        8B: entity 2 spawn information
+        ...
+    ]
+    ...
+}
+
+MEIMAP {
+    Map of islands throughout the map.
+    (ARCHIVED)
+
+    Format:
+    2B: map width and height
+    M*N B: the map
+        n=0 on map means water
+        n=1-127 on map means a tile of island n is here
+}
+
+MEHMAP {
+    Map of height of each tile.
+    (ARCHIVED)
+
+    Format:
+    2B: map width and height
+    M*N B: the map
+        n=0 on map is base height
+        n=1-255 is higher heights. surprise!
+}
+
+MEOMAP {
+    Map of other tile properties.
+    (ARCHIVED)
+
+    Format:
+    2B: map width and height
+    M*NB: the map
+        each map position has 8 bits
+        0 (lsb): is ladder
+        1: is water
+        2: is stump
+        3: is impassable (rock)
+        4-7: ground texture
+}
+
+UNARCHIVED
+
+MEEMAP {
+    Map of where entities are located.
+    (UNARCHIVED)
+
+    Format:
+    2B: map width and height
+    M*N B: the map
+        n=0 on map means no entity
+        n=1-127 on map means entity here, belongs to island n
+        n=128-255 on map means this spot has been checked in some graph search algorithm, subtract 128 to find its underlying value
+}
+
+MECENT {
+    Current entities throughout the map.
+    Tracks entities per island that currently owns them.
+    Uses a linked list for each island to track entities.
+    (UNARCHIVED)
+
+    Format:
+    2B: # islands
+    2B: pointer to head of island 1 entities (0 if none)
+    2B: pointer to head of island 2 entities (0 if none)
+    ...
+    2B: first empty slot in list
+
+    8B: entity 1
+    2B: entity 1 pointer to prev. entity in linked list (0 if none)
+    2B: entity 1 pointer to next entity in linked list (0 if none)
+    12B: entity 2 (same format)
+    ...
+    60B: five empty slots at the end for good measure (and so first empty slot can point to something)
+}
+
+MEEPOS {
+    The current position of entities throughout the map.
+    Very much resembles MEIDAT, but only tracking positions.
+    (UNARCHIVED)
+
+    Format:
+    2B: # islands
+    2B: pointer to island 1 data
+    2B: pointer to island 2 data
+    ...
+
+    [ island 1
+        1B: # entities on this island
+        1B: nothing
+
+        2B: entity 1 x and y
+        2B: entity 2 x and y
+        ...
+    ]
+    ...
+}
+
+MEPDAT {
+    Player data.
+    Effectively, any save-file information that doesn't fit elsewhere.
+    (UNARCHIVED)
+
+    Format:
+    3B: current camera position
+    1B: current loaded island
+    8B: player entity state
+
+    1B: pointer to islands bitmap
+    1B: pointer to snowfolk bitmap
+    1B: pointer to signs bitmap
+    
+    1B: # islands
+    ?B: bitmap for which islands are discovered
+
+    1B: # snowfolk
+    ?B: bitmap for which snowfolk have been discovered
+
+    1B: # signs
+    ?B: bitmap for which signs have been read
+}
+
+

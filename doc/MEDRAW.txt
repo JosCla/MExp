@@ -1,0 +1,133 @@
+.MEDRAWS
+
+.main function
+
+.preparing static data
+prgmMESTAT
+
+.loading save file
+L_1+600->S
+sub(LSAV)
+
+.drawing the screen
+ClrDrawClrDraw^r
+sub(DSCR,0,0,0)
+Repeat getKey(15)
+    DispGraph^r
+End
+Return
+
+.other files (comment out)
+prgmMESSRC
+prgmMEENT
+prgmMEWORL
+
+Lbl DSCR {
+    .Draws the screen
+    .r1: CamX (0-255)
+    .r2: CamY (0-255)
+    .r3: CamZ (0-255)
+
+    .Saving args and vars to stack
+    S-7->S
+    r_1->{S}
+    r_2->{S+1}
+    r_3->{S+2}
+    A->{S+3}^r
+    B->{S+5}^r
+
+    .Drawing each tile
+    For(A,0,7)
+        For(B,0,11)
+            sub(DTIL,
+                {S}+B,{S+1}+A,
+                B*2*2*2,A*2*2*2,
+                {S+2})
+        End
+    End
+
+    .Recovering the stack
+    {S+3}^r->A
+    {S+5}^r->B
+    S+7->S
+
+    Return
+}
+
+Lbl DTIL {
+    .Draws a tile
+    .r1: WorldX
+    .r2: WorldY
+    .r3: ScreenX
+    .r4: ScreenY
+    .r5: CameraZ
+
+    .Storing args and variables
+    S-8->S
+    A->{S}^r
+    B->{S+2}^r
+    C->{S+4}^r
+    D->{S+6}^r
+
+    .Finding terrain heights for this tile and the one in front
+    sub(GHAT)->A
+    sub(GPBA)->D
+    A-(De5)->A
+    r_2++
+    sub(GPBA)->B
+    B-sub(ISAT)->B
+    r_2--
+
+    .Finding screen pos of top tile
+    r_5-A*2+r_4->C
+
+    .Rendering the wall between our tile and the tile in front
+    De7*2+(De6)->G .wall type
+    B->H .curr render height
+    While H<A
+        Pt-Mask(r_3, A-H*2+C, G+8*2*2*2*2+Pic1STIL)
+        H+4->H
+    End
+
+    .Rendering the tile atop the wall
+    If De6
+        .If water, render a water tile
+        Pt-Mask(r_3,C,Pic1STIL+112)
+    Else
+        .If land, find the ground type and render it
+        .(The and-mask finds the upper half-byte of the property byte)
+        Pt-Mask(r_3,C,D and 240+Pic1STIL)
+
+        .And then, put a grid block on top of it
+        Pt-Mask(r_3,C,Pic1STIL+224)
+    End
+
+    .Render stumps/rocks if needed
+    If De4
+        Pt-Mask(r_3,C,Pic1STIL+192)
+    ElseIf De5
+        Pt-Mask(r_3,C,Pic1STIL+208)
+    End
+
+    .Then, we can draw the entities at that position if applicable
+    sub(GSEH)->G
+    If G
+        For(H,1,G)
+            {-H*2+S}^r->I
+            Pt-Mask(
+                r_3,
+                r_5-{I+5}*2+2+r_4,
+                {I}*2*2*2*2+Pic1SENT
+            )
+        End
+    End
+
+    .Recovering the stack
+    {S}^r->A
+    {S+2}^r->B
+    {S+4}^r->C
+    {S+6}^r->D
+    S+8->S
+
+    Return
+}

@@ -1,0 +1,206 @@
+.MESAVE
+
+.main function
+L_1+500->S
+sub(FSTR)
+sub(CSAV)
+Return
+
+LSAV {
+    .Loads a save file
+
+    .Loading all world files
+    GetCalc(Str1FIMAP,Y_1)->G
+    GetCalc(Str1FIDAT,Y_2)->H
+    GetCalc(Str1FHMAP,Y_3)->I
+    GetCalc(Str1FOMAP,Y_4)->J
+
+    !If G and H and I and J
+        1->T .Bad exit code
+        Return
+    End
+
+    .Getting pointers to all save data
+    GetCalc(Str1FEMAP)->EM
+    GetCalc(Str1FCENT)->CE
+    GetCalc(Str1FEPOS)->EP
+    GetCalc(Str1FPDAT)->PD
+
+    .Exiting if that failed
+    !If EM and CE and EP and PD
+        2->T .Bad exit code
+        Return
+    End
+
+    .Getting map dimensions
+    {EM}->MW
+    {EM+1}->MH
+
+    .Loading the player entity
+
+    .Putting camera in the right spot
+
+    .(return)
+    0->T .Good exit code
+    Return
+}
+
+Lbl CSAV {
+    .Creates a new savefile for MExp
+
+    .Generates the entity map (MEEMAP.8xv)
+    .Generates the current entities (MECENT.8xv)
+    .Generates the current entity positions (MEEPOS.8xv)
+    .Generates the player data (MEPDAT.8xv)
+
+    .Requires MEIMAP.8xv for size
+    .Requires MEIDAT.8xv for entities
+
+    .Saving some variables to the stack
+    S-12->S
+    A->{S}^r
+    B->{S+2}^r
+    C->{S+4}^r
+    D->{S+6}^r
+    E->{S+8}^r
+    F->{S+10}^r
+
+    .First opening all needed world files to make sure they're there
+    GetCalc(Str1FIMAP,Y_1)->A .IMAP
+    GetCalc(Str1FIDAT,Y_2)->B .IDAT
+    !If A and B
+        1->T .Bad exit code (world files not present)
+        Goto CSAVE
+    End
+
+    .Finding stats like number of islands and total number of entities
+    {Y_2}^r->G  .number of islands
+    0->H  .number of entities
+    For(I,1,G)
+        {2*I+Y_2}^r->J
+        .if you switch {J+Y_2} and H in the following statement, it acts as
+        .  if the line was just {J+Y_2}->H. i don't get it.
+        {J+Y_2}+H->H
+    End
+    {Y_1}->E      .map width
+    {Y_1+1}^r->F  .map height
+
+    .Deleting save file if it exists
+    DelVar Str1FEMAP
+    DelVar Str1FCENT
+    DelVar Str1FEPOS
+    DelVar Str1FPDAT
+
+    .Creating new save files
+    
+    .EMAP is same size as IMAP
+    GetCalc(Str1FEMAP, {Y_1-2}^r)->A
+
+    .CENT has 64B + (2B per island) + (12B per entity)
+    GetCalc(Str1FCENT, H*6+G*2+64)->B
+
+    .EPOS has 2B + (4B per island (pointer + ent count)) + (2B per entity)
+    GetCalc(Str1FEPOS, G*2+H*2+2)->C
+
+    .PDAT has 12B currently (3B camera pos + 1B empty + 8B player entity)
+    GetCalc(Str1FPDAT, 12)->D
+
+    .Exit early if we couldn't allocate files
+    !If A and B and C and D
+        2->T .Bad exit code (could not allocate new files)
+        Goto CSAVE
+    End
+
+    .Saving basic properties to files
+    E->{A}                .EMAP map width
+    F->{A+1}              .EMAP map height
+    For(I,2,{Y_1-2}^r-1)  .EMAP zeroing out
+    0->{A+I}
+    End
+    G->{B}^r  .CENT num islands
+    G*2+4->T  .CENT first island pointer
+    G->{C}^r  .EPOS num islands
+    G*2+2->U  .EPOS first island pointer
+
+    .Then, we iterate through each island
+    For(I,1,G)
+        .Get the pointer to the island
+        {2*I+Y_2}^r->J
+
+        .Add pointer to island data in CENT if applicable
+        If {J+Y_2}
+            T->{I*2+B}^r
+        Else
+            0->{I*2+B}^r
+        End
+
+        .Add pointer to island data in EPOS, add num ents on island
+        U->{I*2+C}^r
+        {J+Y_2}->{U+C}
+        U+2->U
+
+        .Iterate through each island's entities
+        For(K,1,{J+Y_2})
+            .Get pointer to the entity
+            8*K+J->L
+
+            .Find their X and Y, put those in M and N
+            {L+1+Y_2}->M
+            {L+2+Y_2}->N
+
+            .Store the current island number to its pos in EMAP
+            I->{E*N+M+2+A}
+
+            .Copy entity to CENT, add pointers
+            Copy(L+Y_2,T+B,8)
+            If (K=1)
+                0->{T+8+B}^r
+            Else
+                T-12->{T+8+B}^r
+            End
+            If (K={J+Y_2})
+                0->{T+10+B}^r
+            Else
+                T+12->{T+10+B}^r
+            End
+            T+12->T
+
+            .Copy entity position to EPOS
+            M->{U+C}
+            N->{U+C+1}
+            U+2->U
+        End
+    End
+
+    .Add first empty pointer to CENT
+    T->{G*2+2+B}^r
+
+    .(And add the empty space in question)
+    For(I,0,59)
+        0->{T+I+B}
+    End
+
+    .Archive all files for safekeeping
+    Archive Str1FEMAP
+    Archive Str1FCENT
+    Archive Str1FEPOS
+    Archive Str1FPDAT
+
+    .Good exit code
+    0->T
+
+    .End
+    Lbl CSAVE
+
+    .Recover the stack
+    {S}^r->A
+    {S+2}^r->B
+    {S+4}^r->C
+    {S+6}^r->D
+    {S+8}^r->E
+    {S+10}^r->F
+    S+12->S
+
+    .(return)
+    Return
+}

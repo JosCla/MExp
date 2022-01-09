@@ -1,0 +1,82 @@
+.PRE-TEST
+prgmMESTAT
+L_1+590->S
+LSAV()
+
+.Storing some stuff to the stack
+2->{S}^r
+3->{S+2}^r
+5->{S+4}^r
+7->{S+6}^r
+11->{S+8}^r
+
+.TEST BODY
+
+.Test 1: Ladder detection
+ILAT(3,1)->A
+ILAT(4,2)->B
+ILAT(5,5)->C
+ASRT(A?(0=B)?(0=C))
+
+.Test 2: Water detection
+IWAT(3,1)->A
+IWAT(0,0)->B
+IWAT(4,3)->C
+IWAT(11,7)->D
+ASRT((0=A)?B?C?D)
+
+.Test 3: Stump detection
+ISAT(3,1)->A
+ISAT(0,7)->B
+ISAT(7,1)->C
+ASRT((0=A)?(0=B)?C)
+
+.Test 4: Impenetrable detection
+IIAT(1,1)->A
+IIAT(3,1)->B
+IIAT(10,3)->C
+ASRT(A?(0=B)?C)
+
+.Test 5: Ground type
+GGTA(2,4)->A
+GGTA(1,6)-1->B
+GGTA(9,2)-1->C
+GGTA(6,4)-1->D
+ASRT(0=(A??B??C??D))
+
+.Test 6: Ground height
+GHAT(3,1)-5->A
+GHAT(8,2)-2->B
+GHAT(5,5)-2->C
+GHAT(11,7)->D
+GHAT(6,2)->E
+ASRT(0=(A??B??C??D??E))
+
+.Test 7: Ground height (out of bounds)
+GHAT(20,5)->A
+GHAT(7,19)->B
+GHAT(-3,2)->C
+GHAT(11,-1)->D
+ASRT(0=(A??B??C??D))
+
+.Test 8: Properties byte
+GPBA(10,3)-10->A
+GPBA(0,0)-2->B
+GPBA(1,6)-16->C
+ASRT(0=(A??B??C))
+
+.Test 9: Properties byte (out of bounds)
+GPBA(21,5)->A
+GPBA(7,15)->B
+GPBA(-4,2)->C
+GPBA(11,-1)->D
+ASRT(0=(A??B??C??D))
+
+.Test 10: Stack not modified
+{S}^r-2->A
+{S+2}^r-3->B
+{S+4}^r-5->C
+{S+6}^r-7->D
+{S+8}^r-11->E
+L_1+590-S->F
+ASRT(0=(A??B??C??D??E??F))

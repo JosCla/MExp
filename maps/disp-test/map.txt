@@ -1,0 +1,15 @@
+~~~~~~~~~~~~
+~34511~u2v~~
+~22211w122~~
+~2x2~~~~~~~~
+~222232~~~~~
+~1p1323~y~~~
+~111232~~z~~
+~~~~~~~~~~~~
+
+x: raft, horiz, standing
+y: raft, raft, raft, raft, raft, raft (in water)
+z: horiz, vert, horiz, vert, horiz, vert (in water)
+w: horiz (in water)
+u: tree on stump
+v: horiz on stump
