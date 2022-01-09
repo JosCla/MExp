@@ -124,21 +124,17 @@ MEPDAT {
 
     Format:
     3B: current camera position
-    1B: current loaded island
+    1B: unused
     8B: player entity state
 
     1B: pointer to islands bitmap
     1B: pointer to snowfolk bitmap
-    1B: pointer to signs bitmap
     
     1B: # islands
-    ?B: bitmap for which islands are discovered
+    (n/8)B: bitmap for which islands are discovered
 
     1B: # snowfolk
-    ?B: bitmap for which snowfolk have been discovered
-
-    1B: # signs
-    ?B: bitmap for which signs have been read
+    (n/8)B: bitmap for which snowfolk have been discovered
 }
 
 

@@ -7,6 +7,7 @@ L_1+12->^EP
 L_1+14->^PD
 L_1+16->^MW
 L_1+18->^MH
+L_1+20->^CX+2->^CY+2->^CZ
 
 "appvMEEMAP"->Str1FEMAP
 "appvMECENT"->Str1FCENT

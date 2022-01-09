@@ -4,7 +4,8 @@ L1 structure (768B total):
     8-15: Files (EM, CE, EP, PD)
     16-17: Map width (MW)
     18-19: Map height (MH)
-    20-99: Unused
+    20-25: Camera XYZ (CX, CY, CZ)
+    26-99: Unused
 100-767: Stack (S is initially L1+768)
 
 Pic1SENT (Sprite ENTities) structure
