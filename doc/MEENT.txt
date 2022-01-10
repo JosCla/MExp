@@ -251,8 +251,13 @@ Lbl GSEH {
     .(if no entity here, just return an empty list)
     0Return!If G
 
-    .Starting with an empty list (T is the current list length)
-    0->T
+    .Firstly, if the player is here, insert them into the linked list
+    If {^PL+1}=r_1?{^PL+2}=r_2
+        ^PL->{S-2}^r
+        1->T .(list starts with 1 element)
+    Else
+        0->T .(list starts with 0 elements)
+    End
 
     .Traversing the island's linked list to find entities at this position
     {G*2+CE}^r->H
