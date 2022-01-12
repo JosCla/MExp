@@ -8,6 +8,11 @@ L1 structure (768B total):
     26-99: Unused
 100-767: Stack (S is initially L1+768)
 
+Str1F....: File strings
+
+GDB1MEAH: Max entity ascension height
+nB: The max height that each entity collision type can ascend in movement
+
 Pic1SENT (Sprite ENTities) structure
 16*16B: 16 entities sprites
 0: Player

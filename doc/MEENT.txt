@@ -1,44 +1,5 @@
 .MEENTS
 
-.main function
-
-.loading save file
-sub(FSTR)
-sub(LSAV)
-
-.getting an entity to move
-sub(GCEP,1,1)->A
-
-!If A
-    ClrHome
-    Disp "NOT FOUND"
-    Repeat getKey(15)
-    End
-    Return
-End
-
-.displaying the entity pre-move
-ClrHome
-For(B,0,7)
-    Output(0,B,{A+B}>Dec)
-End
-Repeat getKey(1)
-End
-
-.moving the entity once to the right
-sub(MVEN,A,1,0)
-
-.displaying the entity post-move
-ClrHome
-For(B,0,7)
-    Output(0,B,{A+B}>Dec)
-End
-Repeat getKey(4)
-End
-
-.other files (comment out)
-prgmMESSRC
-
 Lbl MVEN {
     .Moves an entity
     .r1: pointer to entity to move
@@ -70,21 +31,33 @@ Lbl MVEN {
     {A+2}+r_3->E
 
     .Make sure it's in-bounds
-    {EM}->G
-    {EM+1}->H
     .(due to unsigned comparison, this implicitly makes sure it's non-negative)
-    !If (D<G) and (E<H)
+    !If D<MW?E<MH
         1->T
         0->U
         Goto MVENE
     End
 
-    .(for now, just forcing the movement)
-    B->{A+1}
-    C->{A+2}
-    0->T
-    
-    0->U
+    .Finding entity collision type
+    sub(GECT,{A},r_2,r_3)->F
+
+    .Finding the relative height of the target space
+    sub(GHAT,D,E)+1->G
+    G-{A+5}->H
+
+    If {GDB1MEAH+F}>=>=H
+        .We can move to this space! (for now, just forcing the movement)
+        sub(MVER,A,D,E,G)
+
+        0->T .(successful movement!)
+        0->U
+        .Goto MVENE
+    Else
+        .This space is too high to move to; we've been blocked!
+        2->T
+        0->U
+        .Goto MVENE
+    End
 
     .MVEN end
     Lbl MVENE
@@ -98,21 +71,6 @@ Lbl MVEN {
 
     .(return)
     Return
-
-    .convert to collision type based on entity type and direction
-        (horizontal log going down becomes rolling log, all rafts become general rafts)
-    sub(GCET,{A},r_2,r_3)->F
-    
-    .get relative terrain height
-    sub(GTHA,D,E)-sub(GTHA,{A+1},{A+2})->G
-
-    .calculate if it's too high
-    If G<=sub(GMHD,F)
-        .actual height diff is less than max height diff
-    Else
-        .actual height diff too large, so we can't move there
-        
-        
     
     if (too high) 
         .for most, it's one tile above. for player, two above, etc
@@ -137,6 +95,53 @@ Lbl MVEN {
         (gives a chance to combine to rafts, let roll logs keep going, etc)
 }
 
+Lbl MVER {
+    .Move entity (raw)
+    .Just moves an entity without any logic or collision checking
+    .r1: Pointer to entity
+    .r2-r4: Target X,Y,Z
+
+    .Clearing prev. EMAP pos
+    {r_1+1}->G
+    {r_1+2}->H
+    {H*MW+G+2+EM}->I
+    0->{H*MW+G+2+EM}
+
+    .Moving the entity itself
+    r_2->{r_1+1}
+    r_3->{r_1+2}
+    r_4->{r_1+5}
+
+    .Updating EMAP
+    I->{r_3*MW+r_2+2+EM}
+
+    .Updating EPOS
+    {r_1+3}->G
+    {G*2+EP}^r->H
+    {r_1+4}*2+H+EP->I
+    r_2->{I}
+    r_3->{I+1}
+
+    .(return)
+    Return
+
+    .TODO:
+    .Should effectively call MVER on all entities above
+    .  (could do recursively, but would probably be less efficient)
+    .Should update EMAP by the following logic:
+    .  If new space is an island or already has entities on it
+    .    Then keep that as EMAP value, and transfer our entity if needed
+    .  Else If new space is unoccupied and not an island
+    .    Then set our owning island as the EMAP value
+    .  If there are still entities left on our previous space
+    .    Then don't erase the old EMAP value
+    .  Else If there are no entities left on our previous space
+    .    Then do erase the old EMAP value
+    .Should also log this movement to an undo stack if we ever make one
+    .  (or should that be the caller's responsibility? maybe this should just
+    .  be a raw movement function and nothing else)
+}
+
 Lbl GECT {
     .Get entity collision type
     .r1: entity type
@@ -146,7 +151,7 @@ Lbl GECT {
     If r_1<3
         .Player, standing log, or standing tree
         Return r_1
-    ElseIf r_1=5 or (r_1=6)
+    ElseIf r_1=5??r_1=6
         .Raft
         Return 5
     ElseIf r_1>6
@@ -158,12 +163,14 @@ Lbl GECT {
             Return 4
         Else
             Return 3
+        End
     ElseIf r_3
         .Laid down logs (vertical movement)
         Return r_1
-    Else
-        .Indeterminate type (laid down log without movement)
-        Return -1
+    End
+
+    .Indeterminate type (laid down log without movement)
+    Return -1
 }
 
 Lbl GCEP {
@@ -209,7 +216,7 @@ Lbl GENI {
     sub(GENP,r_1,r_2)
 
     .Returning the island at that position
-    Return sub(GIAT,T,U)
+    Return sub(GEIA,T,U)
 }
     
 Lbl GENP {
@@ -228,16 +235,6 @@ Lbl GENP {
     Return
 }    
 
-Lbl GIAT {
-    .Get island at
-    .r1: posX
-    .r2: posY
-    .Directly returns the island number
-
-    .Returning island number
-    Return {r_2*MW+r_1+2+EM}
-}
-
 Lbl GSEH {
     .Get sorted entity list by height
     .r1-r2: posX, posY
@@ -246,7 +243,7 @@ Lbl GSEH {
     .  (the list has lower height at higher addresses, higher height at lower)
 
     .First finding the entity island at this position
-    sub(GIAT,r_1,r_2)->G
+    sub(GEIA,r_1,r_2)->G
 
     .(if no entity here, just return an empty list)
     0Return!If G

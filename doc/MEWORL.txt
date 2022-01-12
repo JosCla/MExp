@@ -3,11 +3,31 @@
 Lbl GHAT {
     .Get height at
     .r1-r2: posX, posY
-    .Directly returns the height at the given position
+    .Directly returns the height at the given position (HMAP)
     If r_2>=MH??r_1>=MW
         0Return
     End
     {r_2*MW+r_1+2+Y_3}Return
+}
+
+Lbl GIAT {
+    .Get island at
+    .r1-r2: posX, posY
+    .Directly returns the island at the given position (IMAP)
+    If r_2>=MH??r_1>=MW
+        0Return
+    End
+    {r_2*MW+r_1+2+Y_1}Return
+}
+
+Lbl GEIA {
+    .Get entity island at
+    .r1-r2: posX, posY
+    .Directly returns the entity island owner at the given position (EMAP)
+    If r_2>=MH??r_1>=MW
+        0Return
+    End
+    {r_2*MW+r_1+2+EM}Return
 }
 
 Lbl ILAT {
