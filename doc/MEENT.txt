@@ -101,45 +101,96 @@ Lbl MVER {
     .r1: Pointer to entity
     .r2-r4: Target X,Y,Z
 
-    .Clearing prev. EMAP pos
-    {r_1+1}->G
-    {r_1+2}->H
-    {H*MW+G+2+EM}->I
-    0->{H*MW+G+2+EM}
+    .Storing arguments and vars to stack
+    .Also allocating a little space to store the entity's prev. position
+    S-18->S
+    r_1->{S}^r
+    r_2->{S+2}
+    r_3->{S+3}
+    A->{S+4}^r
+    B->{S+6}^r
+    C->{S+8}^r
+    D->{S+10}^r
+    E->{S+12}^r
+    F->{S+14}^r
 
-    .Moving the entity itself
-    r_2->{r_1+1}
-    r_3->{r_1+2}
-    r_4->{r_1+5}
+    .Storing entity start position on stack
+    {r_1+1}->{S+16}
+    {r_1+2}->{S+17}
 
-    .Updating EMAP
-    I->{r_3*MW+r_2+2+EM}
+    .Finding height diff from old to new position
+    r_4-{r_1+5}->B
 
-    .Updating EPOS
-    {r_1+3}->G
-    {G*2+EP}^r->H
-    {r_1+4}*2+H+EP->I
-    r_2->{I}
-    r_3->{I+1}
+    .Finding current EMAP and target position EMAP value
+    .TODO: actually find the target position EMAP value!
+    .  If we're going onto a new island or our target already has an EMAP val,
+    .  then that will be our target value. Otherwise, it's just curr EMAP val.
+    sub(GEIA,{S+16},{S+17})->E
+    E->F 
+
+    .Getting all entities at the current position, absorbing them into stack
+    sub(GSEH,{S+16},{S+17})->A
+    -A*2+S->S
+
+    .Moving our entity and all entities above to new position
+    For(C,0,A-1)
+        .Getting pointer to current entity in stack
+        C*2+S->G
+        {G}^r->D
+
+        .Finding the pointer to this entity in EPOS
+        sub(GEPP,{D+3},{D+4})->G
+
+        .Moving the entity's position in CENT and EPOS
+        A*2+S->H
+        {H+2}->{D+1}
+        {H+2}->{G}
+        {H+3}->{D+2}
+        {H+3}->{G+1}
+        {D+5}+B->{D+5}
+
+        .TODO: Move entity from one island to another if needed
+        .If E!=F etc
+
+    .(Break from the loop if we just moved our original entity!)
+    EndIf {H}^r=D
+
+    .Dropping entities at previous position from stack
+    A*2+S->S
+
+    .Clearing prev. EMAP pos if we moved everything
+    If C=A
+        {S+16}->G
+        {S+17}->H
+        0->{H*MW+G+2+EM}
+    End
+
+    .Setting the new EMAP pos regardless
+    {S+2}->G
+    {S+3}->H
+    F->{H*MW+G+2+EM}
+    
+    .Restoring stack and variables
+    {S+4}^r->A
+    {S+6}^r->B
+    {S+8}^r->C
+    {S+10}^r->D
+    {S+12}^r->E
+    {S+14}^r->F
+    S+18->S
 
     .(return)
     Return
 
     .TODO:
-    .Should effectively call MVER on all entities above
-    .  (could do recursively, but would probably be less efficient)
-    .Should update EMAP by the following logic:
+    .Special case for player entity! (Don't update EPOS, etc)
+    .Should find target EMAP value by following logic:
     .  If new space is an island or already has entities on it
     .    Then keep that as EMAP value, and transfer our entity if needed
     .  Else If new space is unoccupied and not an island
-    .    Then set our owning island as the EMAP value
-    .  If there are still entities left on our previous space
-    .    Then don't erase the old EMAP value
-    .  Else If there are no entities left on our previous space
-    .    Then do erase the old EMAP value
-    .Should also log this movement to an undo stack if we ever make one
-    .  (or should that be the caller's responsibility? maybe this should just
-    .  be a raw movement function and nothing else)
+    .    Then keep our previous EMAP value
+    .And, if our target EMAP value is different, transfer over all moved
+    .  entities to the new island!
 }
 
 Lbl GECT {
@@ -226,14 +277,22 @@ Lbl GENP {
     .U: posY
 
     .Using EPOS to find where the entity is
-    {r_1*2+EP}^r->G
-    r_2*2+G+EP->H
-    {H}->T
-    {H+1}->U
+    sub(GEPP)->G
+    {G}->T
+    {G+1}->U
 
     .(return)
     Return
 }    
+
+Lbl GEPP {
+    .Get entity pos pointer
+    .r1-r2: entity id (island, ent num)
+    .Directly returns pointer
+    
+    {r_1*2+EP}^r->G
+    r_2*2+G+EPReturn
+}
 
 Lbl GSEH {
     .Get sorted entity list by height
