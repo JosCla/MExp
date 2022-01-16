@@ -201,8 +201,8 @@ Lbl CSAV {
     .  14B: Camera, player entity, pointer to island and snowfolk bitmap
     .  1+ceil(islands/8)B: Islands discovered
     .  1+ceil(snowfolk/8)B: Snowfolk discovered
-    G-1/8+1->I
-    {S+12}-1/8+1->J
+    G-1//8+1->I
+    {S+12}-1//8+1->J
     GetCalc(Str1FPDAT, I+J+16)->D
     !If D
         3->T .Bad exit code (Could not allocate PDAT)
