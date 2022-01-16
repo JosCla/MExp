@@ -8,6 +8,7 @@ Return
 
 LSAV {
     .Loads a save file
+    .Directly returns the load status (0 good, higher bad)
 
     .Loading all world files
     GetCalc(Str1FIMAP,Y_1)->G
@@ -16,8 +17,7 @@ LSAV {
     GetCalc(Str1FOMAP,Y_4)->J
 
     !If G and H and I and J
-        1->T .Bad exit code
-        Return
+        1Return
     End
 
     .Getting pointers to all save data
@@ -28,8 +28,7 @@ LSAV {
 
     .Exiting if that failed
     !If EM and CE and EP and PD
-        2->T .Bad exit code
-        Return
+        2Return
     End
 
     .Getting map dimensions
@@ -45,12 +44,12 @@ LSAV {
     {^PD+2}->CZ
 
     .(return)
-    0->T .Good exit code
-    Return
+    0Return
 }
 
 Lbl CSAV {
     .Creates a new savefile for MExp
+    .Returns the creation status in T (0 good, higher bad)
 
     .Generates the entity map (MEEMAP.8xv)
     .Generates the current entities (MECENT.8xv)
@@ -72,7 +71,7 @@ Lbl CSAV {
     .Allocating space for:
     .  S+12: number of snowfolk
     .  S+13-15: player start position
-    0->{S+12}->{S+13}->{S+14}->{S+15}
+    0->{S+12}
 
     .First opening all needed world files to make sure they're there
     GetCalc(Str1FIMAP,Y_1)->A .IMAP

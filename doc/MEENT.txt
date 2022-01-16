@@ -201,27 +201,27 @@ Lbl GECT {
 
     If r_1<3
         .Player, standing log, or standing tree
-        Return r_1
+        r_1Return
     ElseIf r_1=5??r_1=6
         .Raft
-        Return 5
+        5Return
     ElseIf r_1>6
         .Immobile (snowman or sign)
-        Return 6
+        6Return
     ElseIf r_2
         .Laid down logs (horizontal movement)
         If r_1=3
-            Return 4
+            4Return
         Else
-            Return 3
+            3Return
         End
     ElseIf r_3
         .Laid down logs (vertical movement)
-        Return r_1
+        r_1Return
     End
 
     .Indeterminate type (laid down log without movement)
-    Return -1
+    -1Return
 }
 
 Lbl GCEP {
@@ -247,7 +247,7 @@ Lbl GCEP {
     While H
         .Return our entity if we've found it
         If ({H+3+CE}=r_1) and ({H+4+CE}=r_2)
-            Return H+CE
+            H+CEReturn
         End
 
         .If we haven't found it, go to next list element
@@ -255,7 +255,7 @@ Lbl GCEP {
     End
 
     .Returning 0 if we found nothing
-    Return 0
+    0Return
 }
 
 Lbl GENI {
@@ -267,7 +267,7 @@ Lbl GENI {
     sub(GENP,r_1,r_2)
 
     .Returning the island at that position
-    Return sub(GEIA,T,U)
+    sub(GEIA,T,U)Return
 }
     
 Lbl GENP {
@@ -305,7 +305,7 @@ Lbl GSEH {
     sub(GEIA,r_1,r_2)->G
 
     .(if no entity here, just return an empty list)
-    0Return!If G
+    Return!If G
 
     .Firstly, if the player is here, insert them into the linked list
     If {^PL+1}=r_1?{^PL+2}=r_2
@@ -352,7 +352,7 @@ Lbl GSEH {
     End
    
     .Finally, returning our list length
-    Return T
+    TReturn
 }
 
     .handle our interaction type
