@@ -1,0 +1,53 @@
+~1~~~2~~~3~~
+~i..~i..~s..
+~~~~~~~~~~~~
+~4~~~5~~~6~~
+~s..~s..~s..
+~~~~~~~~~~~~
+~7~~~8~~~9~~
+~i^~~s^~~i*~
+~~~~~~~~~~~~
+~A~~~B~~~F~~
+~s*~~ir~~p.~
+~~~~~~~~~~~~
+
+Tests:
+1: CENT update
+    Upon moving the standing log twice right...
+    Its X and Y in CENT should update, and nothing else.
+2: EPOS update
+    Upon moving the standing log twice right...
+    The old position (and intermediary pos) should have an EPOS of 0,
+        and the new position should have a nonzero EPOS.
+3: Stack movement (CENT)
+    Upon moving the bottom of the stack twice right...
+    Both the entity and the one on top should have CENT X and Y update.
+4: Partial stack movement (CENT)
+    Upon moving something in the middle of the stack...
+    Only entities above it should have been moved.
+5: Stack movement (EPOS)
+    Upon moving the bottom of the stack twice right...
+    The old position (and intermediary pos) should have an EPOS of 0,
+6: Partial stack movement (EPOS)
+    Upon moving something in the middle of the stack...
+    The old position and new position should have a nonzero EPOS,
+        and the intermediary position should have an EPOS of 0.
+7: Height movement
+    Upon moving the standing log onto the upper ledge...
+    Its X, Y, and Z in CENT should all be correctly updated
+8: Height movement (stack)
+    Upon moving the full stack onto the upper ledge...
+    All stack entities should have their Z correctly changed.
+9: Between-island movement
+    Upon moving the entity from one island to another... (marked by *)
+    It should now be owned by the other island.
+A: Between-island movement (stack)
+    Upon moving the stack from one island to another... (marked by *)
+    The full stack should now be owned by the other island.
+B: Moving onto other island owned entities
+    Upon moving the standing log onto a raft owned by another island...
+    The log should now be owned by the other island as well.
+F: Player island
+    (just something for the player to stand on)
+
+(also test that the stack isn't destroyed through any of this!)
