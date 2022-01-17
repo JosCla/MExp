@@ -1,0 +1,135 @@
+.PRELIMINARY
+L_1+768->S
+prgmMESTAT
+LSAV()
+
+BSTK()
+
+.Test 1: CENT update
+    Upon moving the standing log twice right...
+    Its X and Y in CENT should update, and nothing else.
+GCEP(1,1)->A
+Return!If A
+MVER(A,2,1,2)
+MVER(A,3,1,2)
+Data(1,3,1,1,1,2,0,0)->B
+ASRT(CMPR(A,B,8))
+
+.Test 2: EPOS update
+    Upon moving the standing log twice right...
+    The old position (and intermediary pos) should have an EPOS of 0,
+        and the new position should have a nonzero EPOS.
+GCEP(2,1)->A
+Return!If A
+MVER(A,6,1,2)
+MVER(A,7,1,2)
+GEIA(5,1)->B
+GEIA(6,1)->C
+GEIA(7,1)->D
+ASRT(B=0?C=0?D=2)
+
+.Test 3: Stack movement (CENT)
+    Upon moving the bottom of the stack twice right...
+    Both the entity and the one on top should have CENT X and Y update.
+GCEP(3,1)->A
+GCEP(3,2)->B
+Return!If A?B
+MVER(A,10,1,2)
+MVER(A,11,1,2)
+Data(5,11,1,3,1,2,0,0)->C
+Data(1,11,1,3,2,3,0,0)->D
+ASRT(CMPR(A,C,8)?CMPR(B,D,8))
+
+.Test 4: Partial stack movement (CENT)
+    Upon moving something in the middle of the stack...
+    Only entities above it should have been moved.
+GCEP(4,1)->A
+GCEP(4,2)->B
+GCEP(4,3)->C
+Return!If A?B?C
+MVER(B,2,4,3)
+MVER(B,3,4,3)
+Data(5,1,4,4,1,2,0,0)->D
+Data(5,3,4,4,2,3,0,0)->E
+Data(1,3,4,4,3,4,0,0)->F
+ASRT(CMPR(A,D,8)?CMPR(B,E,8)?CMPR(C,F,8))
+
+.Test 5: Stack movement (EPOS) (consolidated into island 3)
+    Upon moving the bottom of the stack twice right...
+    The old position (and intermediary pos) should have an EPOS of 0,
+GEIA(9,1)->A
+GEIA(10,1)->B
+GEIA(11,1)->C
+ASRT(A=0?B=0?C=3)
+
+.Test 6: Partial stack movement (EPOS) (consolidated into island 4)
+    Upon moving something in the middle of the stack...
+    The old position and new position should have a nonzero EPOS,
+        and the intermediary position should have an EPOS of 0.
+GEIA(1,4)->A
+GEIA(2,4)->B
+GEIA(3,4)->C
+ASRT(A=4?B=0?C=4)
+
+.Test 7: Height movement
+    Upon moving the standing log onto the upper ledge...
+    Its X, Y, and Z in CENT should all be correctly updated
+GCEP(7,1)->A
+Return!If A
+MVER(A,2,7,4)
+Data(1,2,7,7,1,4,0,0)->B
+ASRT(CMPR(A,B,8))
+
+.Test 8: Height movement (stack)
+    Upon moving the full stack onto the upper ledge...
+    All stack entities should have their Z correctly changed.
+GCEP(8,1)->A
+GCEP(8,2)->B
+GCEP(8,3)->C
+Return!If A?B?C
+MVER(A,6,7,5)
+Data(5,6,7,8,1,5,0,0)->D
+Data(5,6,7,8,2,6,0,0)->E
+Data(1,6,7,8,3,7,0,0)->F
+ASRT(CMPR(A,D,8)?CMPR(B,E,8)?CMPR(C,F,8))
+
+.Test 9: Between-island movement
+    Upon moving the entity from one island to another... (marked by *)
+    It should now be owned by the other island.
+GCEP(9,1)->A
+Return!If A
+MVER(A,10,7,2)
+GEIA(10,7)->B
+GCEP(9,1)->C
+ASRT(B=10?C)
+
+.Test 10: Between-island movement (stack)
+    Upon moving the stack from one island to another... (marked by *)
+    The full stack should now be owned by the other island.
+GCEP(11,1)->A
+GCEP(11,2)->B
+Return!If A?B
+MVER(A,2,10,2)
+GEIA(2,10)->C
+GCEP(11,1)->D
+GCEP(11,2)->E
+ASRT(C=12?D?E)
+
+.Test 11: Moving onto other island owned entities
+    Upon moving the standing log onto a raft owned by another island...
+    The log should now be owned by the other island as well.
+GCEP(13,1)->A
+Return!If A
+MVER(A,6,10,2)
+GEIA(6,10)->B
+GCEP(13,1)->C
+GCEP(14,1)->D
+ASRT(B=14?C?D)
+
+.Test 12 (make sure stack is okay)
+CSTK()
+
+.DEPENDENCIES
+prgmMEENT
+prgmMEWORL
+prgmMESSRC
