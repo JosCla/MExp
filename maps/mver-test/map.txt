@@ -25,10 +25,10 @@ Tests:
 4: Partial stack movement (CENT)
     Upon moving something in the middle of the stack...
     Only entities above it should have been moved.
-5: Stack movement (EPOS)
+5: Stack movement (EPOS) (consolidated into island 3)
     Upon moving the bottom of the stack twice right...
     The old position (and intermediary pos) should have an EPOS of 0,
-6: Partial stack movement (EPOS)
+6: Partial stack movement (EPOS) (consolidated into island 4)
     Upon moving something in the middle of the stack...
     The old position and new position should have a nonzero EPOS,
         and the intermediary position should have an EPOS of 0.
