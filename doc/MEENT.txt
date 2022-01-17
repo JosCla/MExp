@@ -159,7 +159,7 @@ Lbl MVER {
     A*2+S->S
 
     .Clearing prev. EMAP pos if we moved everything
-    If C=A
+    If A-1<=C
         {S+16}->G
         {S+17}->H
         0->{H*MW+G+2+EM}
