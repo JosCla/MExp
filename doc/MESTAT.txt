@@ -1,13 +1,12 @@
 ..AXE
 
-L_1->^PL
-L_1+8->^EM
-L_1+10->^CE
-L_1+12->^EP
-L_1+14->^PD
-L_1+16->^MW
-L_1+18->^MH
-L_1+20->^CX+2->^CY+2->^CZ
+L_1->^EM
+L_1+2->^CE
+L_1+4->^EP
+L_1+6->^PD
+L_1+8->^MW
+L_1+10->^MH
+L_1+12->^CX+2->^CY+2->^CZ
 
 "appvMEEMAP"->Str1FEMAP
 "appvMECENT"->Str1FCENT

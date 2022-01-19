@@ -123,8 +123,6 @@ MEPDAT {
     (UNARCHIVED)
 
     Format:
-    3B: current camera position
-    1B: unused
     8B: player entity state
 
     1B: pointer to islands bitmap

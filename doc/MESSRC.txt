@@ -35,14 +35,6 @@ LSAV {
     {EM}->MW
     {EM+1}->MH
 
-    .Loading the player entity
-    Copy(^PD+4,^PL,8)
-
-    .Putting camera in the right spot
-    {^PD}->CX
-    {^PD+1}->CY
-    {^PD+2}->CZ
-
     .(return)
     0Return
 }
@@ -197,39 +189,33 @@ Lbl CSAV {
     End
 
     .Now, allocating space for PDAT
-    .  14B: Camera, player entity, pointer to island and snowfolk bitmap
+    .  10B: Player entity, pointer to island and snowfolk bitmap
     .  1+ceil(islands/8)B: Islands discovered
     .  1+ceil(snowfolk/8)B: Snowfolk discovered
     G-1//8+1->I
     {S+12}-1//8+1->J
-    GetCalc(Str1FPDAT, I+J+16)->D
+    GetCalc(Str1FPDAT, I+J+12)->D
     !If D
         3->T .Bad exit code (Could not allocate PDAT)
         Goto CSAVE
     End
 
-    .Adding camera position
-    {S+13}>4?{S+13}-5,0
-        ->{D}
-    {S+14}>2?{S+14}-3,0
-        ->{D+1}
-    {S+15}->{D+2}
-    
-    .Adding unused byte and player entity
-    0->{D+3}->{D+4}->{D+7}->{D+8}->{D+10}->{D+11}
-    {S+13}->{D+5}
-    {S+14}->{D+6}
-    {S+15}->{D+9}
+    .Adding player entity
+    0->{D}
+    0->{D+3}^r
+    0->{D+6}^r
+    {S+13}^r->{D+1}^r
+    {S+15}->{D+5}
 
     .Adding island bitmap
-    14->K->{D+12}
+    10->K->{D+8}
     G->{K+D}
     For(L,1,I)
         0->{K+L+D}
     End
 
     .Adding snowfolk bitmap
-    15+I->K->{D+13}
+    11+I->K->{D+9}
     {S+12}->{K+D}
     For(L,1,J)
         0->{K+L+D}

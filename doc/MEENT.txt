@@ -308,8 +308,8 @@ Lbl GSEH {
     Return!If G
 
     .Firstly, if the player is here, insert them into the linked list
-    If {^PL+1}=r_1?{^PL+2}=r_2
-        ^PL->{S-2}^r
+    If {^PD+1}=r_1?{^PD+2}=r_2
+        ^PD->{S-2}^r
         1->T .(list starts with 1 element)
     Else
         0->T .(list starts with 0 elements)
