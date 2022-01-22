@@ -122,11 +122,11 @@ Lbl MVER {
     r_4-{r_1+5}->B
 
     .Finding current EMAP and target position EMAP value
-    .TODO: actually find the target position EMAP value!
-    .  If we're going onto a new island or our target already has an EMAP val,
-    .  then that will be our target value. Otherwise, it's just curr EMAP val.
     sub(GEIA,{S+16},{S+17})->E
-    E->F 
+    sub(GIAT,{S+2},{S+3})        .First check if there's an island at target
+        ??sub(GEIA,{S+2},{S+3})  .Then if there's already entity at target
+        ??E                      .Default to current EMAP val
+    ->F                          .(Store the result to F)
 
     .Getting all entities at the current position, absorbing them into stack
     sub(GSEH,{S+16},{S+17})->A
@@ -149,11 +149,11 @@ Lbl MVER {
         {H+3}->{G+1}
         {D+5}+B->{D+5}
 
-        .TODO: Move entity from one island to another if needed
-        .If E!=F etc
+        .Moving entity from one island to another if needed
+        E!=F?sub(CHEI,D,E,F)
 
     .(Break from the loop if we just moved our original entity!)
-    EndIf {H}^r=D
+    EndIf {A*2+S}^r=D
 
     .Dropping entities at previous position from stack
     A*2+S->S
@@ -222,6 +222,44 @@ Lbl GECT {
 
     .Indeterminate type (laid down log without movement)
     -1Return
+}
+
+Lbl CHEI {
+    .Change entity island
+    .r1: Pointer to entity
+    .r2: Entity's current island
+    .r3: Entity's new island
+
+    .First "removing" our entity from its current linked list
+    {r_1+8}^r->G  .prev pointer
+    {r_1+10}^r->H .next pointer
+
+    .Correcting the next entity's previous entity pointer
+    If H
+        G->{H+8+CE}^r
+    End
+
+    .Correcting the previous entity (or list head) next entity pointer
+    If G
+        H->{G+10+CE}^r
+    Else
+        H->{r_2*2+CE}^r
+    End
+
+    .Now, "inserting" our entity at the start of the target linked list
+    {r_3*2+CE}^r->G .entity at head of target linked list
+
+    .Correcting head of linked list, and our previous entity pointer
+    r_1-CE->{r_3*2+CE}^r
+    0->{r_1+8}^r
+
+    .Correcting head entity's previous pointer, and our next pointer
+    If G
+        r_1-CE->{G+8+CE}^r
+    End
+    G->{r_1+10}^r
+
+    Return
 }
 
 Lbl GCEP {
