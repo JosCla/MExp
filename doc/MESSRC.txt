@@ -129,7 +129,10 @@ Lbl CSAV {
         If {J+3+Y_2}
             {J+1+Y_2}->K->{S+13}
             {J+2+Y_2}->L->{S+14}
-            {L*E+K+2+Y_3}+1->{S+15}
+            L*E+K+2->M
+            {M+Y_3}+1->{S+15}
+
+            I->{M+A} .(updating EMAP too)
         End
 
         .Add pointer to island data in CENT if applicable
