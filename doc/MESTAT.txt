@@ -10,7 +10,7 @@ L_1+12->^CX+2->^CY+2->^CZ
 
 "appvMEEMAP"->Str1FEMAP
 "appvMECENT"->Str1FCENT
-"appvMEEPOS"->Str1FEPOS
+"appvMEEPTR"->Str1FEPTR
 "appvMEPDAT"->Str1FPDAT
 "appvMEIMAP"->Str1FIMAP
 "appvMEIDAT"->Str1FIDAT

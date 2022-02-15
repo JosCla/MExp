@@ -128,6 +128,7 @@ Lbl MVEN {
 Lbl MVER {
     .Move entity (raw)
     .Just moves an entity without any logic or collision checking
+    .Will not change the entity's position in CENT
     .r1: Pointer to entity
     .r2-r4: Target X,Y,Z
 
@@ -168,15 +169,10 @@ Lbl MVER {
         C*2+S->G
         {G}^r->D
 
-        .Finding the pointer to this entity in EPOS
-        sub(GEPP,{D+3},{D+4})->G
-
-        .Moving the entity's position in CENT and EPOS
+        .Moving the entity's position in CENT
         A*2+S->H
         {H+2}->{D+1}
-        {H+2}->{G}
         {H+3}->{D+2}
-        {H+3}->{G+1}
         {D+5}+B->{D+5}
 
         .Moving entity from one island to another if needed
@@ -211,16 +207,6 @@ Lbl MVER {
 
     .(return)
     Return
-
-    .TODO:
-    .Special case for player entity! (Don't update EPOS, etc)
-    .Should find target EMAP value by following logic:
-    .  If new space is an island or already has entities on it
-    .    Then keep that as EMAP value, and transfer our entity if needed
-    .  Else If new space is unoccupied and not an island
-    .    Then keep our previous EMAP value
-    .And, if our target EMAP value is different, transfer over all moved
-    .  entities to the new island!
 }
 
 Lbl GECT {
@@ -295,35 +281,27 @@ Lbl CHEI {
 Lbl GCEP {
     .Get current entities pointer
     .r1-r2: entity id (island, ent num)
-    .Directly returns the pointer in current entities
+    .Directly returns the pointer in curr. entities
 
-    .Storing args to stack
-    S-4->S
-    r_1->{S}^r
-    r_2->{S+2}^r
+    {sub(GEPP)}^r+CEReturn
+}
 
-    .First getting the entity island
-    sub(GENI,r_1,r_2)->G
+Lbl GEPP {
+    .Get entity pointers pointer
+    .Effectively, this will find the location of the place in EPTR that
+    .  points to this entity in CENT
+    .r1-r2: entity id (island, ent num)
+    .Directly returns the pointer to the pointer in EPTR
 
-    .Recalling args
-    {S}^r->r_1
-    {S+2}^r->r_2
-    S+4->S
-
-    .Traversing the island's linked list to find the entity in question
-    {G*2+CE}^r->H
-    While H
-        .Return our entity if we've found it
-        If ({H+3+CE}=r_1) and ({H+4+CE}=r_2)
-            H+CEReturn
-        End
-
-        .If we haven't found it, go to next list element
-        {H+10+CE}^r->H
+    If r_1
+        .Non-player
+        {r_1*2+EP}^r->G
+        r_2*2+G+EPReturn
     End
 
-    .Returning 0 if we found nothing
-    0Return
+    .Player
+    {r_1+EP}^r->G
+    G*2+2+EPReturn
 }
 
 Lbl GENI {
@@ -344,23 +322,14 @@ Lbl GENP {
     .T: posX
     .U: posY
 
-    .Using EPOS to find where the entity is
-    sub(GEPP)->G
-    {G}->T
-    {G+1}->U
+    .Using entity pointer to find where the entity is
+    sub(GCEP)->G
+    {G+1}->T
+    {G+2}->U
 
     .(return)
     Return
 }    
-
-Lbl GEPP {
-    .Get entity pos pointer
-    .r1-r2: entity id (island, ent num)
-    .Directly returns pointer
-    
-    {r_1*2+EP}^r->G
-    r_2*2+G+EPReturn
-}
 
 Lbl GSEH {
     .Get sorted entity list by height
@@ -374,14 +343,6 @@ Lbl GSEH {
 
     .(if no entity here, just return an empty list)
     Return!If G
-
-    .Firstly, if the player is here, insert them into the linked list
-    If {^PD+1}=r_1?{^PD+2}=r_2
-        ^PD->{S-2}^r
-        1->T .(list starts with 1 element)
-    Else
-        0->T .(list starts with 0 elements)
-    End
 
     .Traversing the island's linked list to find entities at this position
     {G*2+CE}^r->H

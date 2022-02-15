@@ -23,7 +23,7 @@ LSAV {
     .Getting pointers to all save data
     GetCalc(Str1FEMAP)->EM
     GetCalc(Str1FCENT)->CE
-    GetCalc(Str1FEPOS)->EP
+    GetCalc(Str1FEPTR)->EP
     GetCalc(Str1FPDAT)->PD
 
     .Exiting if that failed
@@ -41,18 +41,18 @@ LSAV {
 
 Lbl CSAV {
     .Creates a new savefile for MExp
-    .Returns the creation status in T (0 good, higher bad)
+    .Directly returns the creation status (0 good, higher bad)
 
     .Generates the entity map (MEEMAP.8xv)
     .Generates the current entities (MECENT.8xv)
-    .Generates the current entity positions (MEEPOS.8xv)
+    .Generates the current entity pointers (MEEPTR.8xv)
     .Generates the player data (MEPDAT.8xv)
 
     .Requires MEIMAP.8xv for size
     .Requires MEIDAT.8xv for entities
 
     .Saving some variables to the stack
-    S-16->S
+    S-13->S
     A->{S}^r
     B->{S+2}^r
     C->{S+4}^r
@@ -62,7 +62,6 @@ Lbl CSAV {
 
     .Allocating space for:
     .  S+12: number of snowfolk
-    .  S+13-15: player start position
     0->{S+12}
 
     .First opening all needed world files to make sure they're there
@@ -89,7 +88,7 @@ Lbl CSAV {
     .Deleting save file if it exists
     DelVar Str1FEMAP
     DelVar Str1FCENT
-    DelVar Str1FEPOS
+    DelVar Str1FEPTR
     DelVar Str1FPDAT
 
     .Creating new save files
@@ -97,11 +96,12 @@ Lbl CSAV {
     .EMAP is same size as IMAP
     GetCalc(Str1FEMAP, {Y_1-2}^r)->A
 
-    .CENT has 64B + (2B per island) + (12B per entity)
-    GetCalc(Str1FCENT, H*6+G*2+64)->B
+    .CENT has 64B + (2B per island) + (12B per entity) + (12B player)
+    GetCalc(Str1FCENT, H*6+G*2+76)->B
 
-    .EPOS has 2B + (4B per island (pointer + ent count)) + (2B per entity)
-    GetCalc(Str1FEPOS, G*2+H*2+2)->C
+    .EPTR has 2B num islands + 2B player entity pointer
+        + (4B per island (pointer + ent count)) + (2B per entity pointer)
+    GetCalc(Str1FEPTR, G*2+H*2+4)->C
 
     .Exit early if we couldn't allocate files
     !If A?B?C
@@ -117,23 +117,13 @@ Lbl CSAV {
     End
     G->{B}^r  .CENT num islands
     G*2+4->T  .CENT first island pointer
-    G->{C}^r  .EPOS num islands
-    G*2+2->U  .EPOS first island pointer
+    G->{C}^r  .EPTR num islands
+    G*2+4->U  .EPTR first island pointer
 
     .Then, we iterate through each island
     For(I,1,G)
         .Get the pointer to the island
         {2*I+Y_2}^r->J
-
-        .If the island is our starting island, then record the player's pos
-        If {J+3+Y_2}
-            {J+1+Y_2}->K->{S+13}
-            {J+2+Y_2}->L->{S+14}
-            L*E+K+2->M
-            {M+Y_3}+1->{S+15}
-
-            I->{M+A} .(updating EMAP too)
-        End
 
         .Add pointer to island data in CENT if applicable
         If {J+Y_2}
@@ -142,7 +132,7 @@ Lbl CSAV {
             0->{I*2+B}^r
         End
 
-        .Add pointer to island data in EPOS, add num ents on island
+        .Add pointer to island data in EPTR, add num ents on island
         U->{I*2+C}^r
         {J+Y_2}->{U+C}
         U+2->U
@@ -162,7 +152,7 @@ Lbl CSAV {
             .Store the current island number to its pos in EMAP
             I->{E*N+M+2+A}
 
-            .Copy entity to CENT, add pointers
+            .Copy entity to CENT, add linked list pointers
             Copy(L+Y_2,T+B,8)
             If (K=1)
                 0->{T+8+B}^r
@@ -174,12 +164,42 @@ Lbl CSAV {
             Else
                 T+12->{T+10+B}^r
             End
+
+            .Add pointer in EPTR
+            T->{U+C}^r
+
+            .Increment positions in CENT and EPTR
+            T+12->T
+            U+2->U
+        End
+
+        .If the island is our starting island, then insert our player
+        If {J+3+Y_2}
+            .Inserting the player entity data
+            0->{T+B}
+            0->{T+3+B}^r
+            0->{T+6+B}^r
+            {J+1+Y_2}->K->{T+1+B}
+            {J+2+Y_2}->L->{T+2+B}
+            L*E+K+2->M
+            {M+Y_3}+1->{T+5+B}
+            .Inserting linked list pointers
+            If {J+Y_2}
+                T-12->{T+8+B}^r
+            Else
+                .(linked list)
+                0->{T+8+B}^r
+                T->{I*2+B}^r
+
+                .(emap)
+                I->{M+A}
+            End
+            0->{T+10+B}^r
             T+12->T
 
-            .Copy entity position to EPOS
-            M->{U+C}
-            N->{U+C+1}
-            U+2->U
+            .Updating EPTR
+            {r_1+C}^r->K
+            T->{K*2+2+C}^r
         End
     End
 
@@ -192,33 +212,26 @@ Lbl CSAV {
     End
 
     .Now, allocating space for PDAT
-    .  10B: Player entity, pointer to island and snowfolk bitmap
+    .  2B: Player entity, pointer to island and snowfolk bitmap
     .  1+ceil(islands/8)B: Islands discovered
     .  1+ceil(snowfolk/8)B: Snowfolk discovered
     G-1//8+1->I
     {S+12}-1//8+1->J
-    GetCalc(Str1FPDAT, I+J+12)->D
+    GetCalc(Str1FPDAT, I+J+4)->D
     !If D
         3->T .Bad exit code (Could not allocate PDAT)
         Goto CSAVE
     End
 
-    .Adding player entity
-    0->{D}
-    0->{D+3}^r
-    0->{D+6}^r
-    {S+13}^r->{D+1}^r
-    {S+15}->{D+5}
-
     .Adding island bitmap
-    10->K->{D+8}
+    2->K->{D}
     G->{K+D}
     For(L,1,I)
         0->{K+L+D}
     End
 
     .Adding snowfolk bitmap
-    11+I->K->{D+9}
+    3+I->K->{D+1}
     {S+12}->{K+D}
     For(L,1,J)
         0->{K+L+D}
@@ -237,8 +250,8 @@ Lbl CSAV {
     {S+6}^r->D
     {S+8}^r->E
     {S+10}^r->F
-    S+16->S
+    S+13->S
 
     .(return)
-    Return
+    TReturn
 }

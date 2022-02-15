@@ -95,9 +95,10 @@ MECENT {
     60B: five empty slots at the end for good measure (and so first empty slot can point to something)
 }
 
-MEEPOS {
-    The current position of entities throughout the map.
-    Very much resembles MEIDAT, but only tracking positions.
+MEEPTR {
+    The current pointers to entities in MECENT.
+    All "pointers" are relative to start of MECENT.
+    Very much resembles MEIDAT, but only tracking pointers.
     (UNARCHIVED)
 
     Format:
@@ -105,13 +106,15 @@ MEEPOS {
     2B: pointer to island 1 data
     2B: pointer to island 2 data
     ...
+    2B: pointer to island n data
+    2B: pointer to player entity
 
     [ island 1
         1B: # entities on this island
         1B: nothing
 
-        2B: entity 1 x and y
-        2B: entity 2 x and y
+        2B: entity 1 pointer
+        2B: entity 2 pointer
         ...
     ]
     ...
@@ -121,9 +124,6 @@ MEPDAT {
     Player data.
     Effectively, any save-file information that doesn't fit elsewhere.
     (UNARCHIVED)
-
-    Format:
-    8B: player entity state
 
     1B: pointer to islands bitmap
     1B: pointer to snowfolk bitmap
