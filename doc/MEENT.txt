@@ -176,7 +176,7 @@ Lbl MVER {
         {D+5}+B->{D+5}
 
         .Moving entity from one island to another if needed
-        E!=F?{D}!=0?sub(CHEI,D,E,F)
+        E!=F?sub(CHEI,D,E,F)
 
     .(Break from the loop if we just moved our original entity!)
     EndIf {A*2+S}^r=D
@@ -300,7 +300,7 @@ Lbl GEPP {
     End
 
     .Player
-    {r_1+EP}^r->G
+    {EP}^r->G
     G*2+2+EPReturn
 }
 
