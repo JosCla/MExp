@@ -339,12 +339,14 @@ Lbl GSEH {
     .  (the list has lower height at higher addresses, higher height at lower)
 
     .First finding the entity island at this position
-    sub(GEIA,r_1,r_2)->G
+    .  (arguments are already in the right spots)
+    sub(GEIA)->G
 
     .(if no entity here, just return an empty list)
     Return!If G
 
     .Traversing the island's linked list to find entities at this position
+    0->T
     {G*2+CE}^r->H
     While H
         H+CE->I
