@@ -186,20 +186,21 @@ Lbl CSAV {
             .Inserting linked list pointers
             If {J+Y_2}
                 T-12->{T+8+B}^r
+                T->{T-2+B}^r
             Else
-                .(linked list)
                 0->{T+8+B}^r
                 T->{I*2+B}^r
-
-                .(emap)
-                I->{M+A}
             End
             0->{T+10+B}^r
-            T+12->T
+
+            .Updating EMAP
+            I->{M+A}
 
             .Updating EPTR
-            {r_1+C}^r->K
+            {C}^r->K
             T->{K*2+2+C}^r
+
+            T+12->T
         End
     End
 
