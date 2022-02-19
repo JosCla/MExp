@@ -1,0 +1,32 @@
+Lbl LSAV {
+    .Loads a save file
+    .Directly returns the load status (0 good, higher bad)
+
+    .Loading all world files
+    GetCalc(Str1FIMAP,Y_1)->G
+    GetCalc(Str1FIDAT,Y_2)->H
+    GetCalc(Str1FHMAP,Y_3)->I
+    GetCalc(Str1FOMAP,Y_4)->J
+
+    !If G?H?I?J
+        1Return
+    End
+
+    .Getting pointers to all save data
+    GetCalc(Str1FEMAP)->EM
+    GetCalc(Str1FCENT)->CE
+    GetCalc(Str1FEPTR)->EP
+    GetCalc(Str1FPDAT)->PD
+
+    .Exiting if that failed
+    !If EM?CE?EP?PD
+        2Return
+    End
+
+    .Getting map dimensions
+    {EM}->MW
+    {EM+1}->MH
+
+    .(return)
+    0Return
+}
