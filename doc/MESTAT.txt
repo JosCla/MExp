@@ -22,34 +22,34 @@ L_1+12->^CX+2->^CY+2->^CZ
 ."Max entity ascension height"
 .(Per collision type)
 .Use nib{} to correctly access entries
-[1110100]->GDB1MEAH
+[11101000]->GDB1MEAH
 
 ."Entity height"
 .(Per collision type)
 .Use nib{} to correctly access entries
-[2221112]->GDB1ENTH
+[22211120]->GDB1ENTH
 
 ."Entity interaction table (above)"
 .The rows are the actor, and the columns are what is acted upon
 .Use nib{} to correctly access entries
-[0333330]->GDB1EITA
-[0303000
-[0303000
-[0202000
-[0303000
-[0303000
-[0000000
+[03333300]->GDB1EITA
+[03030000
+[03030000
+[02020000
+[03030000
+[03030000
+[00000000
 
 ."Entity interaction table (below)"
 .The rows are the actor, and the columns are what is acted upon
 .Use nib{} to correctly access entries
-[0000110]->GDB1EITB
-[0104110
-[0104110
-[0303110
-[0103110
-[0101110
-[0000000
+[00001100]->GDB1EITB
+[01041100
+[01041100
+[03031100
+[01031100
+[01011100
+[00000000
 
 ."Sprite table (Entity)"
 [1824183C66243C24183C183C7E3C3C24]->Pic1SENT
