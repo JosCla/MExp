@@ -126,6 +126,29 @@ Lbl MVEN {
         .Goto MVENE
     End
 
+    .Now, handling special log behaviors (flipping, rolling, etc)
+    !If T
+        If F=1??F=2
+            .Standing log to "lying" log
+            If {S}^r
+                3->{A}
+            ElseIf {S+2}^r
+                4->{A}
+            End
+        ElseIf F=4
+            .Vertical log to standing log
+            1->{A}
+        ElseIf F=3
+            .Rolling log continues to roll
+            .TODO
+        End
+    Else
+        If F=2
+            .Tree standing log, through any interaction, loses leaves
+            1->{A}
+        End
+    End
+
     .MVEN end
     Lbl MVENE
     {S+4}^r->A
