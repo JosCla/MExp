@@ -13,7 +13,7 @@ Lbl MVEN {
     .U: number of movements pushed to stack
 
     .Storing to stack
-    S-18->S
+    S-19->S
     r_2->{S}^r
     r_3->{S+2}^r
     A->{S+4}^r
@@ -23,6 +23,7 @@ Lbl MVEN {
     E->{S+12}^r
     F->{S+14}^r
     .(plus 2 bytes on end to store target position)
+    .(plus another byte on end to store target height)
 
     .Keeping entity pointer in A
     r_1->A
@@ -90,11 +91,11 @@ Lbl MVEN {
                 0->U
             ElseIf N=3
                 .Push then move
-                {D+5}->N
+                {D+5}->{S+18}
                 sub(MVEN,D,{S}^r,{S+2}^r)
                 !If T
                     If E
-                        sub(MVER,A,{S+16},{S+17},N)
+                        sub(MVER,A,{S+16},{S+17},{S+18})
                     Else
                         .TODO: push movement to mvmt queue
                     End
@@ -157,7 +158,7 @@ Lbl MVEN {
     {S+10}^r->D
     {S+12}^r->E
     {S+14}^r->F
-    S+18->S
+    S+19->S
 
     .(return)
     Return
