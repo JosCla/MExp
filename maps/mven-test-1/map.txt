@@ -1,0 +1,34 @@
+~~~~~~~~~~~~
+~1p^.....r~~
+~^r#~~~~~r2~
+~-..~~~~...~
+~~~~~~~....~
+~3.r~~~#|..r
+~....#~~...r
+~~~~~~~~~~~~
+
+1: Big log stack mven queueing test
+So, the "player ledge", viewed from the side, looks like:
+    ^^^^
+    p*^^
+    ..*^
+    ..*^
+    ..*^^^^r
+    ........
+And, after the player pushes off the first log,
+  the logs should "cascade" their rolling, eventually settling as:
+    ..^^
+    ..^^
+    ..^****r
+    ........
+The bottom portion of the island is just to let the player raft to island 2.
+
+2: Push off rolling log to raft
+The player should stand on the island to the left of the rolling log, and
+  push on the rolling log, simultaneously rafting left and letting the log
+  roll right.
+
+3: Push rolling log on raft
+The single raft at this island has a vertical log on it. Pushing it right
+  should cause the raft to sail off to the right, with the rolling log atop it,
+  before then stopping at island 2, and letting the rolling log roll off.
