@@ -59,7 +59,7 @@ Lbl MVEN {
             .Finding the highest entity at/below the player (push target)
             max({A+5},B)->K
             For(I,1,C)
-                {-I*2+S}^r->D
+                {-C+I-1*2+S}^r->D
             EndIf {D+5}<=K
             I=C->E .(E is true if our target is the bottom entity)
 
