@@ -104,7 +104,7 @@ Lbl DTIL {
 
     .Render stumps/rocks if needed
     If De4
-        Pt-Mask(r_3,C,Pic1STIL+192)
+        Pt-Mask(r_3,C-2,Pic1STIL+192)
     ElseIf De5
         Pt-Mask(r_3,C,Pic1STIL+208)
     End
