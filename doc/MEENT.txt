@@ -1,5 +1,108 @@
 .MEENTS
 
+Lbl MVPL {
+    .Moves the player
+    .  (Temporary function for making sure this all works well)
+    .r1: DispX
+    .r2: DispY
+
+    .Allocating stack
+    S-4->S
+    A->{S}^r
+    B->{S+2}^r
+
+    .Stashing args in saved regs
+    r_1->A
+    r_2->B
+
+    .Moving the player
+    sub(GCEP,0)->G
+    MVEN(G,A,B)
+
+    .A is now the number of actions in the previous queue frame
+    0->A
+
+    .Performing successive movements
+    While U
+        .Moving next queue frame into the stack
+        If A
+            A*5->G
+            U*5->H
+            -H+S->I
+            CPRV(I,I+G,H)
+        End
+        A-U*5+S->S
+
+        .Storing the previous number of frame actions in A
+        U->A
+
+        .Advancing a single tick
+        MVET(U)
+    End
+
+    .Restoring stack
+    A*5+S->S
+    {S}^r->A
+    {S+2}^r->B
+    S+4->S
+}
+
+Lbl MVET {
+    .Moves entities through a single tick
+    .r1: Number of actions to execute in the current queue frame
+    .  The movements should be executed from high to low memory addresses
+    .U: Number of movements pushed to stack
+    .  New movements will be pushed below stack pointer, to be executed from
+    .  high to low memory addresses
+    .  (put in U instead of T to be consistent with MVEN)
+
+    .Allocating stack
+    S-10->S
+    A->{S}^r
+    B->{S+2}^r
+    C->{S+4}^r
+    D->{S+6}^r
+    E->{S+8}^r
+
+    .Storing the base pointer of actions to execute in D
+    S+10->D
+
+    .Storing num actions to execute in A
+    r_1->A
+
+    .Executing all actions (storing total actions pushed in C)
+    0->C
+    For(B,1,A)
+        .Getting pointer to current action
+        A-B*5+D->E
+
+        .Getting pointer to entity in question
+        sub(GCEP,{E},{E+1})->G
+
+        .Performing movement
+        sub(MVEN,G,signed{E+2},signed{E+3})
+        C+U->C
+        -U*5+S->S
+    End
+
+    .(Putting number of movements added into U)
+    C->U
+
+    .Recovering stack
+    D-10->S
+    {S}^r->A
+    {S+2}^r->B
+    {S+4}^r->C
+    {S+6}^r->D
+    {S+8}^r->E
+    S+10->S
+
+    .Moving newly added actions directly underneath stack pointer
+    U*5->G
+    S-G->H
+    CPRV(H-10,H,G)
+}
+
 Lbl MVEN {
     .Moves an entity
     .r1: pointer to entity to move
@@ -13,7 +116,7 @@ Lbl MVEN {
     .U: number of movements pushed to stack
 
     .Storing to stack
-    S-16->S
+    S-19->S
     r_2->{S}^r
     r_3->{S+2}^r
     A->{S+4}^r
@@ -22,6 +125,8 @@ Lbl MVEN {
     D->{S+10}^r
     E->{S+12}^r
     F->{S+14}^r
+    .(plus 2 bytes on end to store target position)
+    .(plus another byte on end to store target height)
 
     .Keeping entity pointer in A
     r_1->A
@@ -38,6 +143,10 @@ Lbl MVEN {
         Goto MVENE
     End
 
+    .Putting target position onto the stack
+    D->{S+16}
+    E->{S+17}
+
     .Finding entity collision type
     sub(GECT,{A},r_2,r_3)->F
 
@@ -45,37 +154,82 @@ Lbl MVEN {
     sub(GHAT,D,E)+1->B
     B-{A+5}->H
 
-    If {GDB1MEAH+F}>=>=H
+    If nib{GDB1MEAH*2+F}>=>=H
         .We can move to this space! (for now, just forcing the movement)
 
         .Checking for entities on this spot
-        If sub(GSEH,D,E)->C
-            .Finding the lowest entity we can push
+        If sub(GSEH,{S+16},{S+17})->C
+            .Finding the highest entity at/below the player (push target)
             max({A+5},B)->K
-            For(I,0,C)
-                {-I-1*2+S}^r->J
-            EndIf {J+5}<=K
+            For(I,1,C)
+                {-C+I-1*2+S}^r->D
+            EndIf {D+5}<=K
+            I=C->E .(E is true if our target is the bottom entity)
 
-            .Trying to move it if it's at the right level
-            If {J+5}=K
-                sub(MVEN,J,{S}^r,{S+2}^r)
+            .Getting interaction type between the two entities
+            sub(GECT,{D},{S}^r,{S+2}^r)->L
+            nib{GDB1ENTH*2+L}+{D+5}->M
+            If M>K
+                .Above
+                nib{F*4+GDB1EITA*2+L}->N
             Else
-                0->T
+                .Below
+                nib{F*4+GDB1EITB*2+L}->N
             End
 
-            .If it moved successfully, we can then move
-            !If T
-                sub(MVER,A,D,E,B)
-
-                0->T (successful movement!)
+            .Handling interaction type
+            !If N
+                .Blocked
+                2->T
                 0->U
-            Else
-                2->T (blocked)
+            ElseIf N=1
+                .Move
+                sub(MVER,A,{S+16},{S+17},M)
+                0->T
                 0->U
+            ElseIf N=2
+                .Push (but also blocked)
+                sub(MVEN,D,{S}^r,{S+2}^r)
+                2->T
+            ElseIf N=3
+                .Push then move
+                {D+5}->{S+18}
+                sub(MVEN,D,{S}^r,{S+2}^r)
+                !If T
+                    If E
+                        S->G
+                        -U*5-4+S->S
+                        T->{S}^r
+                        U->{S+2}^r
+                        sub(MVER,A,{G+16},{G+17},{G+18})
+                        {S}^r->T
+                        {S+2}^r->U
+                        U*5+4+S->S
+                        .TODO: will have to re-fetch A after adding raft combo
+                    Else
+                        -U-1*5+S->G
+                        {A+3}^r->{G}^r
+                        {S}^r->{G+2}
+                        {S+2}^r->{G+3}
+                        0->{G+4}
+                        U++
+                        2->T
+                        .TODO: will have to re-fetch A after adding raft combo
+                    End
+                Else
+                    .(blocked)
+                    2->T
+                End
+            ElseIf N=4
+                .Double move
+                sub(MVER,A,{S+16},{S+17},M)
+                .TODO: push another movement to mvmt queue
+                0->T
+                0->U .(will be 1)
             End
         Else
             .If no entities, we can just move here
-            sub(MVER,A,D,E,B)
+            sub(MVER,A,{S+16},{S+17},B)
 
             0->T .(successful movement!)
             0->U
@@ -89,6 +243,34 @@ Lbl MVEN {
         .Goto MVENE
     End
 
+    .Now, handling special log behaviors (flipping, rolling, etc)
+    !If T
+        If F=1??F=2
+            .Standing log to "lying" log
+            If {S}^r
+                3->{A}
+            ElseIf {S+2}^r
+                4->{A}
+            End
+        ElseIf F=4
+            .Vertical log to standing log
+            1->{A}
+        ElseIf F=3
+            .Rolling log continues to roll
+            -U-1*5+S->G
+            {A+3}^r->{G}^r
+            {S}^r->{G+2}
+            {S+2}^r->{G+3}
+            0->{G+4}
+            U++
+        End
+    Else
+        If F=2
+            .Tree standing log, through any interaction, loses leaves
+            1->{A}
+        End
+    End
+
     .MVEN end
     Lbl MVENE
     {S+4}^r->A
@@ -97,32 +279,17 @@ Lbl MVEN {
     {S+10}^r->D
     {S+12}^r->E
     {S+14}^r->F
-    S+16->S
+    S+19->S
+
+    .If we put movements on stack, copy them just below stack pointer
+    If U
+        U*5->G
+        S-G->H
+        CPRV(H-19,H,G)
+    End
 
     .(return)
     Return
-    
-    if (too high) 
-        .for most, it's one tile above. for player, two above, etc
-        .then we can't move there
-    else
-        .get the highest entity
-        .also note that if we're the player on a sideways log or raft on water,
-            we need to use a different table to get interaction types
-        if (none)
-            .should be able to go there
-            .(unless we're a player on a sideways log going onto equal height)
-        else
-            if (below)
-                .handle below interaction
-            else
-                .find the lowest entity we can interact with
-                    (don't forget that a standing log can be below foot level
-                    but interactable)
-                .handle push interaction with that entity
-
-    .in any case, if we can move, then make a movement and then "update"
-        (gives a chance to combine to rafts, let roll logs keep going, etc)
 }
 
 Lbl MVER {
@@ -385,33 +552,3 @@ Lbl GSEH {
     .Finally, returning our list length
     TReturn
 }
-
-    .handle our interaction type
-    .0: just stop
-    .1: just move
-    .2: just push
-    .3: try to push out of way, then try to move in
-    .4: push and raft away
-    .5: raft away
-
-    if (no entity)
-        .We can move there if <= height or 1 higher if player/upright log
-        .But also player can't move there if it's too much lower or water
-    else
-        .Find the highest entity on our target tile (could combine with above if-statement)
-        if (below)
-            .Check interaction per entity type
-            (if we are upright pushing onto sideways log, try to push out of way before moving onto it anyways)
-        else
-            .Same, but pushing into lowest entity we can push
-    (perhaps first clause of above if-stmt for no ents should, like the second clause, produce one of the common interaction set's things)
-    (and since it applies fairly universally, maybe we wrap the whole thing in the height checking?)
-
-    .Now, we handle our interaction type
-        (if no move, just stop. if push -> move, do that.)
-        (if we move, also move all stuff above)
-            (and if we move onto new island, change island ownership for us and all entities above)
-        (and either way, track whether we were able to successfully move)
-    .And, "update" our entity
-        (flip logs, combine to rafts, etc)
-

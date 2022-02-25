@@ -1,5 +1,6 @@
 ..AXE
 
+.Addresses of various static variables
 L_1->^EM
 L_1+2->^CE
 L_1+4->^EP
@@ -8,6 +9,7 @@ L_1+8->^MW
 L_1+10->^MH
 L_1+12->^CX+2->^CY+2->^CZ
 
+.Filenames
 "appvMEEMAP"->Str1FEMAP
 "appvMECENT"->Str1FCENT
 "appvMEEPTR"->Str1FEPTR
@@ -17,8 +19,39 @@ L_1+12->^CX+2->^CY+2->^CZ
 "appvMEHMAP"->Str1FHMAP
 "appvMEOMAP"->Str1FOMAP
 
-[01010100010000]->GDB1MEAH
+."Max entity ascension height"
+.(Per collision type)
+.Use nib{} to correctly access entries
+[11101000]->GDB1MEAH
 
+."Entity height"
+.(Per collision type)
+.Use nib{} to correctly access entries
+[22211120]->GDB1ENTH
+
+."Entity interaction table (above)"
+.The rows are the actor, and the columns are what is acted upon
+.Use nib{} to correctly access entries
+[03333300]->GDB1EITA
+[03030000
+[03030000
+[02020000
+[03030000
+[03030000
+[00000000
+
+."Entity interaction table (below)"
+.The rows are the actor, and the columns are what is acted upon
+.Use nib{} to correctly access entries
+[00001100]->GDB1EITB
+[01041100
+[01041100
+[03031100
+[01031100
+[01011100
+[00000000
+
+."Sprite table (Entity)"
 [1824183C66243C24183C183C7E3C3C24]->Pic1SENT
 [0018243C3C3C180000183C3C24241800
 [18183C3C7E7E3C001818242442423C00
@@ -36,6 +69,7 @@ L_1+12->^CX+2->^CY+2->^CZ
 [003C42564F423C00003C7E7E707E3C00
 [001C1E1C103C7E0000101010103C7E00
 
+."Sprite table (Tiles)"
 [0002040420404000FFFDFBFBDFBFBFFF]->Pic1STIL
 [0000100004004000FFFFEFFFFBFFBFFF
 [00000000000000000000000000000000

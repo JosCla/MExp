@@ -1,0 +1,186 @@
+MVEN Concept:
+
+While MVER (move entity, raw) represents very basic, raw movement of an entity
+(more or less teleportation), MVEN represents true entity movement, as if we
+pushed the entity within the world.
+
+Thus MVEN will handle things like entities pushing one-another, logs rolling,
+logs flipping, rafts sailing, and generally deciding the result of two entities
+trying to move into one-another. 
+
+
+Beyond simpler single-step movements, movement is expressed through a sort of
+"layered queue". When a movement is made in the world, it may provoke more
+events (logs rolling, rafts sailing, etc). We want those movements to proceed
+"tick-by-tick", but we also want some to be executed sumultaneously (a raft
+sailing AND a log rolling). Hence the "layered queue".
+
+Each element of the queue represents a single tick in time, and the queue
+within each element of the queue is all of the events to be executed within
+that tick, in order. That way, we can execute all events in a single "queue
+frame", re-render the screen to show what happened in the tick, then move on to
+the next queue frame.
+
+In the future, we will also need a concept of "push power". If the player
+pushes against a rock while on a raft, that raft should try to move in the
+opposite direction. But, if a rolling log "pushes" on a rock while on a raft,
+it should just stop.
+
+Queue element format:
+2B: Entity ID
+2B: MVEN push displacement
+1B: "Push power"
+
+
+Ex. Player pushes rolling log
+STATE: ..p|... (no queue)
+ACTION: p.push(1,0) (invokes |.push(1,0))
+STATE: ...p|.. [|.push(1,0)]
+RE-ACTION: |.push(1,0)
+STATE: ...p.|. [] [|.push(1,0)]
+RE-ACTION: |.push(1,0)
+...
+
+Ex. Player pushes a log on a raft
+STATE: ..p|~~. (no queue)
+ACTION: p.push(1,0) (invokes #.push(1,0))
+STATE: ..p~|~. [#.push(1,0)]
+RE-ACTION: #.push(1,0) (invokes |.push(1,0))
+STATE: ..p~~#| [|.push(1,0)]
+...
+
+Ex. Player pushes a log to raft
+STATE: ~~#|.. (player on #) (no queue)
+ACTION: p.push(1,0) (invokes |.push(1,0) and then #.push(-1,0))
+STATE: ~#~.|. [|.push(1,0), #.push(-1,0)]
+RE-ACTION: |.push(1,0)
+RE-ACTION: #.push(-1,0)
+STATE: #~~..| [|.push(1,0), #.push(-1,0)]
+...
+
+
+There are two main "classes" of interactions between objects, those being when
+the object is above/at our level, and when the object is below our level. When
+moving, we first look for the highest entity at or below our level, defaulting
+to the lowest entity above us if there are no entities at or below us. Then, we
+can use the proper cross-ref table to find what interaction happens when we
+push the entity.
+
+But, if our movement result ends up being "push it out of the way then move
+into its place", and there are more entities below the one we push, we will
+also want to interact with the next entity below. As such, we defer our
+movement onto the tile, pushing it into the next queue frame, allowing us to
+separately handle an interaction with that next entity down. This continues
+until we either just push out the entity, just walk onto it, or there are no
+more entities below.
+
+
+Ex. Player is trying to move into a stack
+STATE:
+^#^ (air, raft)
+p*^ (player, rolling log)
+.|^ (ground, standing log)
+... (ground, ground)
+(no queue)
+ACTION: p.push(1,0) (invokes *.push(1,0))
+STATE:
+^^^
+p^#
+.|*
+...
+[*.push(1,0), p.push(1,0)]
+RE-ACTION: *.push(1,0)
+RE-ACTION: p.push(1,0) (invokes |.push(1,0))
+STATE:
+^^^
+^^^#
+.p-*
+....
+[] [*.push(1,0)]
+RE-ACTION: *.push(1,0)
+STATE:
+^^^
+^^^
+.p-
+...
+[log continues rolling]
+...
+
+Ex. Big pile of logs
+STATE:
+^^^^
+^1^^
+..2^ (1, 2, 3, and 4 are all rolling logs)
+..3^
+..4^^^r
+.......
+(no queue)
+ACTION: 1.push(1,0) (invokes 2.push(1,0))
+STATE:
+^^^^
+^1^^
+..^^
+..3^
+..42^^r
+.......
+[2.push(1,0), 1.push(1,0)]
+RE-ACTION: 2.push(1,0)
+RE-ACTION: 1.push(1,0) (invokes 3.push(1,0))
+STATE:
+^^^^
+^1^^
+..^^
+..^^
+..432^r
+.......
+[] [2.push(1,0), 3.push(1,0), 1.push(1,0)]
+RE-ACTION: 2, 3
+RE-ACTION: 1.push(1,0) (invokes 4.push(1,0))
+^^^^
+^^^^
+..^^
+..^^
+..1432r
+.......
+[] [] [2.push(1,0), 3.push(1,0), 4.push(1,0), 1.push(1,0)]
+RE-ACTION: 2, 3, 4, 1 (all are stopped either by the rock
+    or by the log in front of them being stopped)
+
+
+Cross-ref tables for interactions:
+
+Collision Results:
+0: Stop
+1: Move
+2: Push
+3: Push then move if it's out of the way
+4: Double move (move then put another move in next queue frame)
+
+Collision Types:
+0: Player
+1: Standing log
+2: Standing log (tree)
+3: Rolling log
+4: Vertical log
+5: Raft
+6: Immovable
+
+Same level or above (left acting on top)
+ 0123456
+00333330
+10303000
+20303000
+30202000
+40303000
+50303000
+60000000
+
+Below (left acting on top)
+ 0123456
+00000110
+10104110
+20104110
+30303110
+40103110
+50101110
+60000000
