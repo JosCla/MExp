@@ -191,7 +191,6 @@ Lbl MVEN {
                 .Push (but also blocked)
                 sub(MVEN,D,{S}^r,{S+2}^r)
                 2->T
-                0->U
             ElseIf N=3
                 .Push then move
                 {D+5}->{S+18}
@@ -214,12 +213,12 @@ Lbl MVEN {
                         {S+2}^r->{G+3}
                         0->{G+4}
                         U++
+                        2->T
                         .TODO: will have to re-fetch A after adding raft combo
                     End
                 Else
                     .(blocked)
                     2->T
-                    0->U
                 End
             ElseIf N=4
                 .Double move
