@@ -116,7 +116,7 @@ Lbl MVEN {
     .U: number of movements pushed to stack
 
     .Storing to stack
-    S-19->S
+    S-21->S
     r_2->{S}^r
     r_3->{S+2}^r
     A->{S+4}^r
@@ -127,6 +127,7 @@ Lbl MVEN {
     F->{S+14}^r
     .(plus 2 bytes on end to store target position)
     .(plus another byte on end to store target height)
+    .(plus another 2 bytes on end to store property bytes)
 
     .Keeping entity pointer in A
     r_1->A
@@ -139,6 +140,17 @@ Lbl MVEN {
     .(due to unsigned comparison, this implicitly makes sure it's non-negative)
     !If D<MW?E<MH
         1->T
+        0->U
+        Goto MVENE
+    End
+
+    .Putting property bytes for current position and target position on stack
+    GPBA({A+1},{A+2})->{S+19}
+    GPBA(D,E)->{S+20}
+
+    .If we're trying to move into an impenetrable rock, we're blocked
+    If {S+20}e4
+        2->T
         0->U
         Goto MVENE
     End
@@ -279,13 +291,13 @@ Lbl MVEN {
     {S+10}^r->D
     {S+12}^r->E
     {S+14}^r->F
-    S+19->S
+    S+21->S
 
     .If we put movements on stack, copy them just below stack pointer
     If U
         U*5->G
         S-G->H
-        CPRV(H-19,H,G)
+        CPRV(H-21,H,G)
     End
 
     .(return)
