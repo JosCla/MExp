@@ -51,6 +51,12 @@ L_1+12->^CX+2->^CY+2->^CZ
 [01011100
 [00000000
 
+."Entity rendering upward displacement"
+.Effectively, we want to move certain entities up a certain number of pixels
+.  while rendering to give a greater appearance of depth.
+.Use nib{} to correctly access entries
+[2000000222]->GDB1ERUD
+
 ."Sprite table (Entity)"
 [1824183C66243C24183C183C7E3C3C24]->Pic1SENT
 [0018243C3C3C180000183C3C24241800
