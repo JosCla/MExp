@@ -37,7 +37,11 @@ Lbl MVPL {
         U->A
 
         .Displaying what just happened
+        .NOTE: The double DispGraph maintains parity between draws.
+        .  Without it, the screen flashes with each move, which may
+        .  cause dangerous eye-strain.
         DSCR(0,0,1)
+        DispGraph^r
         DispGraph^r
 
         .Advancing a single tick
