@@ -1,0 +1,29 @@
+~~~~~~~~~~~~
+~~~~~~~~~~~~
+~1^.......r~
+~-~~~~~~~~~~
+~2|..1|...r~
+~3|.......r~
+~~~~~~~~~~~~
+~~~~~~~~~~~~
+
+1: Big log stack mven queueing test
+So, the "player ledge", viewed from the side, looks like:
+    ^^^^
+    p*^^
+    ..*^
+    ..*^
+    ..*^^^^r
+    ........
+And, after the player pushes off the first log,
+  the logs should "cascade" their rolling, eventually settling as:
+    ..^^
+    ..^^
+    ..^****r
+    ........
+
+2: Rolling and standing log cascade
+End state: 2..|.=..|r
+
+3: Simple rolling log (start island)
+End state: 3.......|r
