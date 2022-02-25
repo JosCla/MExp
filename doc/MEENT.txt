@@ -36,8 +36,12 @@ Lbl MVPL {
         .Storing the previous number of frame actions in A
         U->A
 
+        .Displaying what just happened
+        DSCR(0,0,1)
+        DispGraph^r
+
         .Advancing a single tick
-        MVET(U)
+        MVET(A)
     End
 
     .Restoring stack
