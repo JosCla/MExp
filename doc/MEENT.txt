@@ -136,6 +136,9 @@ Lbl MVEN {
     {A+1}+r_2->D
     {A+2}+r_3->E
 
+    .Finding entity collision type
+    sub(GECT,{A},r_2,r_3)->F
+
     .Make sure it's in-bounds
     .(due to unsigned comparison, this implicitly makes sure it's non-negative)
     !If D<MW?E<MH
@@ -158,9 +161,6 @@ Lbl MVEN {
     .Putting target position onto the stack
     D->{S+16}
     E->{S+17}
-
-    .Finding entity collision type
-    sub(GECT,{A},r_2,r_3)->F
 
     .Finding the relative height of the target space
     sub(GHAT,D,E)+1->B
