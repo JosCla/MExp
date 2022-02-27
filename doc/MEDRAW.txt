@@ -1,27 +1,3 @@
-.MEDRAWS
-
-.main function
-
-.preparing static data
-prgmMESTAT
-
-.loading save file
-L_1+600->S
-sub(LSAV)
-
-.drawing the screen
-ClrDrawClrDraw^r
-sub(DSCR,0,0,0)
-Repeat getKey(15)
-    DispGraph^r
-End
-Return
-
-.other files (comment out)
-prgmMESSRC
-prgmMEENT
-prgmMEWORL
-
 Lbl DSCR {
     .Draws the screen
     .r1: CamX (0-255)
@@ -39,8 +15,7 @@ Lbl DSCR {
     .Drawing each tile
     For(A,0,7)
         For(B,0,11)
-            sub(DTIL,
-                {S}+B,{S+1}+A,
+            DTIL({S}+B,{S+1}+A,
                 B*2*2*2,A*2*2*2,
                 {S+2})
         End
@@ -70,12 +45,12 @@ Lbl DTIL {
     D->{S+6}^r
 
     .Finding terrain heights for this tile and the one in front
-    sub(GHAT)->A
-    sub(GPBA)->D
+    GHAT()->A
+    GPBA()->D
     A-(De5)->A
     r_2++
-    sub(GPBA)->B
-    B-sub(ISAT)->B
+    GPBA()->B
+    B-ISAT()->B
     r_2--
 
     .Finding screen pos of top tile
@@ -110,7 +85,7 @@ Lbl DTIL {
     End
 
     .Then, we can draw the entities at that position if applicable
-    sub(GSEH)->G
+    GSEH()->G
     If G
         For(H,1,G)
             {-H*2+S}^r->I

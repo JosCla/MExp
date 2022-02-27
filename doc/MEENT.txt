@@ -1,5 +1,3 @@
-.MEENTS
-
 Lbl MVPL {
     .Moves the player
     .  (Temporary function for making sure this all works well)
@@ -16,7 +14,7 @@ Lbl MVPL {
     r_2->B
 
     .Moving the player
-    sub(GCEP,0)->G
+    GCEP(0)->G
     MVEN(G,A,B)
 
     .A is now the number of actions in the previous queue frame
@@ -85,10 +83,10 @@ Lbl MVET {
         A-B*5+D->E
 
         .Getting pointer to entity in question
-        sub(GCEP,{E},{E+1})->G
+        GCEP({E},{E+1})->G
 
         .Performing movement
-        sub(MVEN,G,signed{E+2},signed{E+3})
+        MVEN(G,signed{E+2},signed{E+3})
         C+U->C
         -U*5+S->S
     End
@@ -145,7 +143,7 @@ Lbl MVEN {
     {A+2}+r_3->E
 
     .Finding entity collision type
-    sub(GECT,{A},r_2,r_3)->F
+    GECT({A},r_2,r_3)->F
 
     .Make sure it's in-bounds
     .(due to unsigned comparison, this implicitly makes sure it's non-negative)
@@ -171,14 +169,14 @@ Lbl MVEN {
     E->{S+17}
 
     .Finding the relative height of the target space
-    sub(GHAT,D,E)+1->B
+    GHAT(D,E)+1->B
     B-{A+5}->H
 
     If nib{GDB1MEAH*2+F}>=>=H
         .We can move to this space! (for now, just forcing the movement)
 
         .Checking for entities on this spot
-        If sub(GSEH,{S+16},{S+17})->C
+        If GSEH({S+16},{S+17})->C
             .Finding the highest entity at/below the player (push target)
             max({A+5},B)->K
             For(I,1,C)
@@ -187,7 +185,7 @@ Lbl MVEN {
             I=C->E .(E is true if our target is the bottom entity)
 
             .Getting interaction type between the two entities
-            sub(GECT,{D},{S}^r,{S+2}^r)->L
+            GECT({D},{S}^r,{S+2}^r)->L
             nib{GDB1ENTH*2+L}+{D+5}->M
             If M>K
                 .Above
@@ -204,24 +202,24 @@ Lbl MVEN {
                 0->U
             ElseIf N=1
                 .Move
-                sub(MVER,A,{S+16},{S+17},M)
+                MVER(A,{S+16},{S+17},M)
                 0->T
                 0->U
             ElseIf N=2
                 .Push (but also blocked)
-                sub(MVEN,D,{S}^r,{S+2}^r)
+                MVEN(D,{S}^r,{S+2}^r)
                 2->T
             ElseIf N=3
                 .Push then move
                 {D+5}->{S+18}
-                sub(MVEN,D,{S}^r,{S+2}^r)
+                MVEN(D,{S}^r,{S+2}^r)
                 !If T
                     If E
                         S->G
                         -U*5-4+S->S
                         T->{S}^r
                         U->{S+2}^r
-                        sub(MVER,A,{G+16},{G+17},{G+18})
+                        MVER(A,{G+16},{G+17},{G+18})
                         {S}^r->T
                         {S+2}^r->U
                         U*5+4+S->S
@@ -242,14 +240,14 @@ Lbl MVEN {
                 End
             ElseIf N=4
                 .Double move
-                sub(MVER,A,{S+16},{S+17},M)
+                MVER(A,{S+16},{S+17},M)
                 .TODO: push another movement to mvmt queue
                 0->T
                 0->U .(will be 1)
             End
         Else
             .If no entities, we can just move here
-            sub(MVER,A,{S+16},{S+17},B)
+            MVER(A,{S+16},{S+17},B)
 
             0->T .(successful movement!)
             0->U
@@ -340,14 +338,14 @@ Lbl MVER {
     r_4-{r_1+5}->B
 
     .Finding current EMAP and target position EMAP value
-    sub(GEIA,{S+16},{S+17})->E
-    sub(GIAT,{S+2},{S+3})        .First check if there's an island at target
-        ??sub(GEIA,{S+2},{S+3})  .Then if there's already entity at target
-        ??E                      .Default to current EMAP val
-    ->F                          .(Store the result to F)
+    GEIA({S+16},{S+17})->E
+    GIAT({S+2},{S+3})        .First check if there's an island at target
+        ??GEIA({S+2},{S+3})  .Then if there's already entity at target
+        ??E                  .Default to current EMAP val
+    ->F                      .(Store the result to F)
 
     .Getting all entities at the current position, absorbing them into stack
-    sub(GSEH,{S+16},{S+17})->A
+    GSEH({S+16},{S+17})->A
     -A*2+S->S
 
     .Moving our entity and all entities above to new position
@@ -363,7 +361,7 @@ Lbl MVER {
         {D+5}+B->{D+5}
 
         .Moving entity from one island to another if needed
-        E!=F?sub(CHEI,D,E,F)
+        E!=F?CHEI(D,E,F)
 
     .(Break from the loop if we just moved our original entity!)
     EndIf {A*2+S}^r=D
@@ -470,7 +468,7 @@ Lbl GCEP {
     .r1-r2: entity id (island, ent num)
     .Directly returns the pointer in curr. entities
 
-    {sub(GEPP)}^r+CEReturn
+    {GEPP()}^r+CEReturn
 }
 
 Lbl GEPP {
@@ -497,10 +495,10 @@ Lbl GENI {
     .Directly returns the entity island number
 
     .Finding the entity's position
-    sub(GENP,r_1,r_2)
+    GENP(r_1,r_2)
 
     .Returning the island at that position
-    sub(GEIA,T,U)Return
+    GEIA(T,U)Return
 }
     
 Lbl GENP {
@@ -510,7 +508,7 @@ Lbl GENP {
     .U: posY
 
     .Using entity pointer to find where the entity is
-    sub(GCEP)->G
+    GCEP()->G
     {G+1}->T
     {G+2}->U
 
@@ -527,7 +525,7 @@ Lbl GSEH {
 
     .First finding the entity island at this position
     .  (arguments are already in the right spots)
-    sub(GEIA)->G
+    GEIA()->G
 
     .(if no entity here, just return an empty list)
     Return!If G

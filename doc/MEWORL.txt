@@ -34,35 +34,35 @@ Lbl ILAT {
     .Is there a ladder at the given position?
     .r1-r2: posX, posY
     .Directly returns whether or not there's a ladder here
-    sub(GPBA)e7 Return
+    GPBA()e7 Return
 }
 
 Lbl IWAT {
     .Is there water at the given position?
     .r1-r2: posX, posY
     .Directly returns whether or not there's water here
-    sub(GPBA)e6 Return
+    GPBA()e6 Return
 }
 
 Lbl ISAT {
     .Is there a stump at the given position?
     .r1-r2: posX, posY
     .Directly returns whether or not there's a stump here
-    sub(GPBA)e5 Return
+    GPBA()e5 Return
 }
 
 Lbl IIAT {
     .Is the map impenetrable (rock) at the given position?
     .r1-r2: posX, posY
     .Directly returns whether or not the position is impenetrable
-    sub(GPBA)e4 Return
+    GPBA()e4 Return
 }
 
 Lbl GGTA {
     .Get the ground type at the given position
     .r1-r2: posX, posY
     .Directly returns the ground type
-    sub(GPBA)/16 Return
+    GPBA()/16 Return
 }
 
 Lbl GPBA {
