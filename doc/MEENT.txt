@@ -1,21 +1,16 @@
-Lbl MVPL {
-    .Moves the player
+Lbl MVEF {
+    .Fully moves an entity
     .  (Temporary function for making sure this all works well)
-    .r1: DispX
-    .r2: DispY
+    .r1: Entity pointer
+    .r2: DispX
+    .r3: DispY
 
     .Allocating stack
-    S-4->S
+    S-2->S
     A->{S}^r
-    B->{S+2}^r
 
-    .Stashing args in saved regs
-    r_1->A
-    r_2->B
-
-    .Moving the player
-    GCEP(0)->G
-    MVEN(G,A,B)
+    .Moving the original entity
+    MVEN()
 
     .A is now the number of actions in the previous queue frame
     0->A
@@ -49,8 +44,7 @@ Lbl MVPL {
     .Restoring stack
     A*5+S->S
     {S}^r->A
-    {S+2}^r->B
-    S+4->S
+    S+2->S
 }
 
 Lbl MVET {
