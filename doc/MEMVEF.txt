@@ -1,0 +1,48 @@
+Lbl MVEF {
+    .Fully moves an entity
+    .  (Temporary function for making sure this all works well)
+    .r1: Entity pointer
+    .r2: DispX
+    .r3: DispY
+
+    .Allocating stack
+    S-2->S
+    A->{S}^r
+
+    .Moving the original entity
+    MVEN()
+
+    .A is now the number of actions in the previous queue frame
+    0->A
+
+    .Performing successive movements
+    While U
+        .Moving next queue frame into the stack
+        If A
+            A*5->G
+            U*5->H
+            -H+S->I
+            CPRV(I,I+G,H)
+        End
+        A-U*5+S->S
+
+        .Storing the previous number of frame actions in A
+        U->A
+
+        .Displaying what just happened
+        .NOTE: The double DispGraph maintains parity between draws.
+        .  Without it, the screen flashes with each move, which may
+        .  cause dangerous eye-strain.
+        DSCR(0,0,1)
+        DispGraph^r
+        DispGraph^r
+
+        .Advancing a single tick
+        MVET(A)
+    End
+
+    .Restoring stack
+    A*5+S->S
+    {S}^r->A
+    S+2->S
+}
