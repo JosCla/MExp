@@ -116,18 +116,30 @@ Lbl MVEN {
     .U: number of movements pushed to stack
 
     .Storing to stack
+    .   A: entity pointer
+    .   B: pointer to target entity if applicable
+    .   C: entity collision type
+    .   D: target x
+    .   E: target y
+    .   F: extra space
+    .       (used firstly for storing target ground height)
+    .       (then for storing if entity is top/bottom of entity stack)
+    .   S+12: r_2 (dispX)
+    .   S+13: r_3 (dispY)
+    .   S+14: curr space property byte
+    .   S+15: target space property byte
+    .   S+16^r: pointer to curr entity pointer
+    .   S+18^r: pointer to target entity pointer
+    .   S+20: extra space (used for storing target movement height)
     S-21->S
-    r_2->{S}^r
-    r_3->{S+2}^r
-    A->{S+4}^r
-    B->{S+6}^r
-    C->{S+8}^r
-    D->{S+10}^r
-    E->{S+12}^r
-    F->{S+14}^r
-    .(plus 2 bytes on end to store target position)
-    .(plus another byte on end to store target height)
-    .(plus another 2 bytes on end to store property bytes)
+    A->{S}^r
+    B->{S+2}^r
+    C->{S+4}^r
+    D->{S+6}^r
+    E->{S+8}^r
+    F->{S+10}^r
+    r_2->{S+12}
+    r_3->{S+13}
 
     .Keeping entity pointer in A
     r_1->A
@@ -137,7 +149,7 @@ Lbl MVEN {
     {A+2}+r_3->E
 
     .Finding entity collision type
-    GECT({A},r_2,r_3)->F
+    GECT({A},r_2,r_3)->C
 
     .Make sure it's in-bounds
     .(due to unsigned comparison, this implicitly makes sure it's non-negative)
@@ -148,45 +160,41 @@ Lbl MVEN {
     End
 
     .Putting property bytes for current position and target position on stack
-    GPBA({A+1},{A+2})->{S+19}
-    GPBA(D,E)->{S+20}
+    GPBA({A+1},{A+2})->{S+14}
+    GPBA(D,E)->{S+15}
 
     .If we're trying to move into an impenetrable rock, we're blocked
-    If {S+20}e4
+    If {S+15}e4
         2->T
         0->U
         Goto MVENE
     End
 
-    .Putting target position onto the stack
-    D->{S+16}
-    E->{S+17}
-
     .Finding the relative height of the target space
-    GHAT(D,E)+1->B
-    B-{A+5}->H
+    GHAT(D,E)+1->F
+    F-{A+5}->H
 
-    If nib{GDB1MEAH*2+F}>=>=H
+    If nib{GDB1MEAH*2+C}>=>=H
         .We can move to this space! (for now, just forcing the movement)
 
         .Checking for entities on this spot
-        If GSEH({S+16},{S+17})->C
+        If GSEH(D,E)->I
             .Finding the highest entity at/below the player (push target)
-            max({A+5},B)->K
-            For(I,1,C)
-                {-C+I-1*2+S}^r->D
-            EndIf {D+5}<=K
-            I=C->E .(E is true if our target is the bottom entity)
+            max({A+5},F)->J
+            For(K,1,I)
+                {-I+K-1*2+S}^r->B
+            EndIf {B+5}<=J
+            K=I->F .(F is true if our target is the bottom entity)
 
             .Getting interaction type between the two entities
-            GECT({D},{S}^r,{S+2}^r)->L
-            nib{GDB1ENTH*2+L}+{D+5}->M
-            If M>K
+            GECT({B},signed{S+12},signed{S+13})->L
+            nib{GDB1ENTH*2+L}+{B+5}->M
+            If M>J
                 .Above
-                nib{F*4+GDB1EITA*2+L}->N
+                nib{C*4+GDB1EITA*2+L}->N
             Else
                 .Below
-                nib{F*4+GDB1EITB*2+L}->N
+                nib{C*4+GDB1EITB*2+L}->N
             End
 
             .Handling interaction type
@@ -196,37 +204,50 @@ Lbl MVEN {
                 0->U
             ElseIf N=1
                 .Move
-                MVER(A,{S+16},{S+17},M)
+                MVER(A,D,E,M)
                 0->T
                 0->U
             ElseIf N=2
                 .Push (but also blocked)
-                MVEN(D,{S}^r,{S+2}^r)
+                MVEN(B,signed{S+12},signed{S+13})
                 2->T
             ElseIf N=3
                 .Push then move
-                {D+5}->{S+18}
-                MVEN(D,{S}^r,{S+2}^r)
+
+                .Firstly, grabbing pointers to the pointer to curr/target ent
+                GEPP({A+3},{A+4})->{S+16}^r
+                GEPP({B+3},{B+4})->{S+18}^r
+
+                .Then grabbing the target entity's curr height (target pos)
+                {B+5}->{S+20}
+
+                .Performing the push on the target entity
+                MVEN(B,signed{S+12},signed{S+13})
+
+                .Then, regrabbing pointers to curr/target ent
+                {S+16}^r->G
+                {G}^r+CE->A
+                {S+18}^r->G
+                {G}^r+CE->B
+
+                .Moving into previously occupied space if applicable
                 !If T
-                    If E
+                    If F
                         S->G
-                        -U*5-4+S->S
-                        T->{S}^r
-                        U->{S+2}^r
-                        MVER(A,{G+16},{G+17},{G+18})
-                        {S}^r->T
-                        {S+2}^r->U
-                        U*5+4+S->S
-                        .TODO: will have to re-fetch A after adding raft combo
+                        -U*5+S->S
+                        Select(T,
+                        Select(U,
+                            MVER(A,D,E,{G+20})
+                        )->U
+                        )->T
+                        U*5+S->S
                     Else
                         -U-1*5+S->G
                         {A+3}^r->{G}^r
-                        {S}^r->{G+2}
-                        {S+2}^r->{G+3}
+                        {S+12}^r->{G+2}^r
                         0->{G+4}
                         U++
                         2->T
-                        .TODO: will have to re-fetch A after adding raft combo
                     End
                 Else
                     .(blocked)
@@ -234,14 +255,14 @@ Lbl MVEN {
                 End
             ElseIf N=4
                 .Double move
-                MVER(A,{S+16},{S+17},M)
+                MVER(A,D,E,M)
                 .TODO: push another movement to mvmt queue
                 0->T
                 0->U .(will be 1)
             End
         Else
             .If no entities, we can just move here
-            MVER(A,{S+16},{S+17},B)
+            MVER(A,D,E,F)
 
             0->T .(successful movement!)
             0->U
@@ -257,27 +278,26 @@ Lbl MVEN {
 
     .Now, handling special log behaviors (flipping, rolling, etc)
     !If T
-        If F=1??F=2
+        If C=1??C=2
             .Standing log to "lying" log
-            If {S}^r
+            If {S+12}
                 3->{A}
-            ElseIf {S+2}^r
+            ElseIf {S+13}
                 4->{A}
             End
-        ElseIf F=4
+        ElseIf C=4
             .Vertical log to standing log
             1->{A}
-        ElseIf F=3
+        ElseIf C=3
             .Rolling log continues to roll
             -U-1*5+S->G
             {A+3}^r->{G}^r
-            {S}^r->{G+2}
-            {S+2}^r->{G+3}
+            {S+12}^r->{G+2}^r
             0->{G+4}
             U++
         End
     Else
-        If F=2
+        If C=2
             .Tree standing log, through any interaction, loses leaves
             1->{A}
         End
@@ -285,12 +305,12 @@ Lbl MVEN {
 
     .MVEN end
     Lbl MVENE
-    {S+4}^r->A
-    {S+6}^r->B
-    {S+8}^r->C
-    {S+10}^r->D
-    {S+12}^r->E
-    {S+14}^r->F
+    {S}^r->A
+    {S+2}^r->B
+    {S+4}^r->C
+    {S+6}^r->D
+    {S+8}^r->E
+    {S+10}^r->F
     S+21->S
 
     .If we put movements on stack, copy them just below stack pointer
