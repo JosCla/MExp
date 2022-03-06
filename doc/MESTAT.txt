@@ -32,11 +32,11 @@ L_1+12->^CX+2->^CY+2->^CZ
 ."Entity interaction table (above)"
 .The rows are the actor, and the columns are what is acted upon
 .Use nib{} to correctly access entries
-[03333300]->GDB1EITA
-[03030000
-[03030000
+[03333400]->GDB1EITA
+[03030100
+[03030100
 [02020000
-[03030000
+[03030100
 [03030000
 [00000000
 
@@ -44,8 +44,8 @@ L_1+12->^CX+2->^CY+2->^CZ
 .The rows are the actor, and the columns are what is acted upon
 .Use nib{} to correctly access entries
 [00001100]->GDB1EITB
-[01041100
-[01041100
+[01051100
+[01051100
 [03031100
 [01031100
 [01011100

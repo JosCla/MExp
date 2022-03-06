@@ -135,7 +135,13 @@ Lbl MVEN {
             For(K,1,I)
                 {-I+K-1*2+S}^r->B
             EndIf {B+5}<=J
-            K=I->F .(F is true if our target is the bottom entity)
+
+            .Determining where our entity is in our stack
+            .If bottom of stack, LSB (Fe7) is set
+            .If top of stack, 2nd LSB (Fe6) is set
+            0->F
+            K=I?F+1->F
+            K=1?F+2->F
 
             .Getting interaction type between the two entities
             GECT({B},signed{S+12},signed{S+13})->L
@@ -154,15 +160,20 @@ Lbl MVEN {
                 2->T
                 0->U
             ElseIf N=1
-                .Move
-                MVER(A,D,E,M)
-                0->T
-                0->U
+                .Move if target is top entity
+                If Fe6
+                    MVER(A,D,E,M)
+                    0->T
+                    0->U
+                Else
+                    2->T
+                    0->U
+                End
             ElseIf N=2
                 .Push (but also blocked)
                 MVEN(B,signed{S+12},signed{S+13})
                 2->T
-            ElseIf N=3
+            ElseIf N=3??N=4
                 .Push then move
 
                 .Firstly, grabbing pointers to the pointer to curr/target ent
@@ -173,7 +184,9 @@ Lbl MVEN {
                 {B+5}->{S+20}
 
                 .Performing the push on the target entity
-                MVEN(B,signed{S+12},signed{S+13})
+                Select(N,
+                    MVEN(B,signed{S+12},signed{S+13})
+                )->N
 
                 .Then, regrabbing pointers to curr/target ent
                 {S+16}^r->G
@@ -183,7 +196,7 @@ Lbl MVEN {
 
                 .Moving into previously occupied space if applicable
                 !If T
-                    If F
+                    If Fe7
                         S->G
                         -U*5+S->S
                         Select(T,
@@ -201,10 +214,33 @@ Lbl MVEN {
                         2->T
                     End
                 Else
-                    .(blocked)
-                    2->T
+                    If N=4?Fe6
+                        .If N=4 and this is top entity in stack,
+                        .  move on top of the entity!
+
+                        .Getting height to move to
+                        GECT({B},signed{S+12},signed{S+13})->G
+                        nib{GDB1ENTH*2+G}+{B+5}->H
+
+                        .Performing movement
+                        -U*5+S->S
+                        Select(T,
+                        Select(U,
+                            MVER(A,D,E,H)
+                        )->U
+                        )->T
+                        U*5+S->S
+
+                        0->T
+
+                        .TODO: if blocked by movement queue delay, then
+                        .  don't go on top of it! it'll move later!
+                    Else
+                        .(blocked)
+                        2->T
+                    End
                 End
-            ElseIf N=4
+            ElseIf N=5
                 .Double move
                 MVER(A,D,E,M)
                 .TODO: push another movement to mvmt queue

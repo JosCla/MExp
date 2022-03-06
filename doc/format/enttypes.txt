@@ -26,6 +26,15 @@ Entity Collision Types
 5: Raft
 6: Immobile
 
+Entity Interaction Actions
+
+0: Stop
+1: Move (will only move if is top entity)
+2: Push
+3: Push then move (only moves in if push successful)
+4: Push then climb (will move on top if push fails and target is top entity)
+5: Move twice (Standing log rolls over rolling log)
+
 Entity Movement Results
 
 0: Success
