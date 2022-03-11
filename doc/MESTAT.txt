@@ -43,7 +43,7 @@ L_1+12->^CX+2->^CY+2->^CZ
 ."Entity interaction table (below)"
 .The rows are the actor, and the columns are what is acted upon
 .Use nib{} to correctly access entries
-[00001100]->GDB1EITB
+[03331100]->GDB1EITB
 [01051100
 [01051100
 [03031100
