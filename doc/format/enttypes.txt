@@ -40,4 +40,5 @@ Entity Movement Results
 0: Success
 1: Out of Bounds (player trying to move out of bounds)
 2: Blocked (player bumping into wall, pushing blocked entity, etc)
-3: Couldn't move (player trying to move into water, off sideways log, etc)
+3: Blocked by movement queueing (usually from trying to move onto stack)
+4: Couldn't move (player trying to move into water, off sideways log, etc)

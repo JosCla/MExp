@@ -197,6 +197,7 @@ Lbl MVEN {
                 .Moving into previously occupied space if applicable
                 !If T
                     If Fe7
+                        .Bottom of stack; just move there
                         S->G
                         -U*5+S->S
                         Select(T,
@@ -206,16 +207,17 @@ Lbl MVEN {
                         )->T
                         U*5+S->S
                     Else
+                        .Not bottom of stack; defer movement
                         -U-1*5+S->G
                         {A+3}^r->{G}^r
                         {S+12}^r->{G+2}^r
                         0->{G+4}
                         U++
-                        2->T
+                        3->T
                     End
                 Else
-                    If N=4?Fe6
-                        .If N=4 and this is top entity in stack,
+                    If T=2?N=4?Fe6
+                        .If blocked, N=4, and this is top entity in stack,
                         .  move on top of the entity!
 
                         .Getting height to move to
@@ -232,12 +234,6 @@ Lbl MVEN {
                         U*5+S->S
 
                         0->T
-
-                        .TODO: if blocked by movement queue delay, then
-                        .  don't go on top of it! it'll move later!
-                    Else
-                        .(blocked)
-                        2->T
                     End
                 End
             ElseIf N=5
