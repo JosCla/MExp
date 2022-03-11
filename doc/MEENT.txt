@@ -239,9 +239,14 @@ Lbl MVEN {
             ElseIf N=5
                 .Double move
                 MVER(A,D,E,M)
-                .TODO: push another movement to mvmt queue
+
+                -U-1*5+S->G
+                {A+3}^r->{G}^r
+                {S+12}^r->{G+2}^r
+                0->{G+4}
+                U++
+
                 0->T
-                0->U .(will be 1)
             End
         Else
             .If no entities, we can just move here
