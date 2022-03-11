@@ -154,20 +154,20 @@ Lbl MVEN {
                 nib{C*4+GDB1EITB*2+L}->N
             End
 
+            .Push 0 movements to queue by default
+            0->U
+
             .Handling interaction type
             !If N
                 .Blocked
                 2->T
-                0->U
             ElseIf N=1
                 .Move if target is top entity
                 If Fe6
                     MVER(A,D,E,M)
                     0->T
-                    0->U
                 Else
                     2->T
-                    0->U
                 End
             ElseIf N=2
                 .Push (but also blocked)
@@ -240,11 +240,11 @@ Lbl MVEN {
                 .Double move
                 MVER(A,D,E,M)
 
-                -U-1*5+S->G
+                -5+S->G
                 {A+3}^r->{G}^r
                 {S+12}^r->{G+2}^r
                 0->{G+4}
-                U++
+                1->U
 
                 0->T
             End
