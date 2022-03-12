@@ -263,13 +263,28 @@ Lbl MVEN {
                 0->T
             End
         Else
-            .If no entities, we can move here as long as not player->water
-            If {A}=0?{S+15}e6
-                4->T
-                0->U
-            Else
+            .If no entities, we can move here
+            .  (as long as not player onto water, or player off water roll log
+            0->T
+            If {A}=0
+                If {S+15}e6
+                    4->T
+                ElseIf {S+14}e6
+                    GHEB({A+1},{A+2},{A+5})->G
+                    If G
+                        GECT({G},{S+12},{S+13})->H
+                        If H=3
+                            4->T
+                        Else
+                            0->T
+                        End
+                    Else
+                        0->T
+                    End
+                End
+            End
+            !If T
                 MVER(A,D,E,F)
-
                 0->T
                 0->U
             End
