@@ -150,10 +150,10 @@ Lbl MVEN {
             nib{GDB1ENTH*2+L}+{B+5}->M
             If M>J
                 .Above
-                nib{H*2+C*4+GDB1EITA*2+L}->N
+                nib{C*2+H*4+GDB1EITA*2+L}->N
             Else
                 .Below
-                nib{H*2+C*4+GDB1EITB*2+L}->N
+                nib{C*2+H*4+GDB1EITB*2+L}->N
             End
 
             .If the source is the player standing on a rolling log on water,
