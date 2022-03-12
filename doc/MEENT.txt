@@ -145,13 +145,27 @@ Lbl MVEN {
 
             .Getting interaction type between the two entities
             GECT({B},signed{S+12},signed{S+13})->L
+            GHEB({B+1},{B+2},{B+5})->G
+            {S+15}e6?G=0->H .(is the target on water)
             nib{GDB1ENTH*2+L}+{B+5}->M
             If M>J
                 .Above
-                nib{C*4+GDB1EITA*2+L}->N
+                nib{H*2+C*4+GDB1EITA*2+L}->N
             Else
                 .Below
-                nib{C*4+GDB1EITB*2+L}->N
+                nib{H*2+C*4+GDB1EITB*2+L}->N
+            End
+
+            .If the source is the player standing on a rolling log on water,
+            .  then "downgrade" certain movement types
+            If {A}=0?{S+14}e6
+                GHEB({A+1},{A+2},{A+5})->G
+                If G
+                    GECT({G},{S+12},{S+13})->H
+                    If H=3
+                        nib{GDB1PIRD*2+N}->N
+                    End
+                End
             End
 
             .Push 0 movements to queue by default
@@ -249,11 +263,16 @@ Lbl MVEN {
                 0->T
             End
         Else
-            .If no entities, we can just move here
-            MVER(A,D,E,F)
+            .If no entities, we can move here as long as not player->water
+            If {A}=0?{S+15}e6
+                4->T
+                0->U
+            Else
+                MVER(A,D,E,F)
 
-            0->T .(successful movement!)
-            0->U
+                0->T
+                0->U
+            End
         End
 
         .Goto MVENE
@@ -277,7 +296,13 @@ Lbl MVEN {
             .Vertical log to standing log
             1->{A}
         ElseIf C=3
-            .Rolling log continues to roll
+            .Rolling log continues to roll (only if not on water)
+            If {S+15}e6
+                GHEB({A+1},{A+2},{A+5})->G
+                !If G
+                    Goto MVENE
+                End
+            End
             -U-1*5+S->G
             {A+3}^r->{G}^r
             {S+12}^r->{G+2}^r
@@ -517,6 +542,44 @@ Lbl GENP {
     .(return)
     Return
 }    
+
+Lbl GHEB {
+    .Get highest entity below
+    .r1-r2: posX, posY
+    .r3: height it must be below
+    .Directly returns the pointer to the highest entity below given position
+    .Returns 0 if no such entity exists
+
+    .First finding the entity island at this position
+    .  (arguments are already in the right spots)
+    GEIA()->G
+
+    .(if no entity here, just return null pointer)
+    Return!If G
+
+    .Traversing the island's linked list to find the target entity
+    0->T .(pointer to entity)
+    0->U .(max height)
+    {G*2+CE}^r->H
+    While H
+        H+CE->I
+
+        .Checking if the entity is at the right spot
+        .And, checking if the entity is below the max height, but greater
+        .  than our previous best height
+        If {I+1}=r_1?{I+2}=r_2
+          ?{I+5}>=U?{I+5}<r_3
+            I->T
+            {I+5}->U
+        End
+
+        .Going to next list element
+        {I+10}^r->H
+    End
+
+    .Finally, returning the target pointer
+    TReturn
+}
 
 Lbl GSEH {
     .Get sorted entity list by height
