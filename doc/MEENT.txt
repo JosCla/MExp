@@ -283,10 +283,10 @@ Lbl MVEN {
                     End
                 End
             End
+            0->U
             !If T
                 MVER(A,D,E,F)
                 0->T
-                0->U
             End
         End
 
