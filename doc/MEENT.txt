@@ -313,7 +313,11 @@ Lbl MVEN {
         ElseIf C=3
             .Rolling log continues to roll (only if not on water)
             If {S+15}e6
-                GHEB({A+1},{A+2},{A+5})->G
+                Select(T,
+                Select(U,
+                    GHEB({A+1},{A+2},{A+5})->G
+                )->U
+                )->T
                 !If G
                     Goto MVENE
                 End
