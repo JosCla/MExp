@@ -467,8 +467,8 @@ Lbl GECT {
         r_1Return
     End
 
-    .Indeterminate type (laid down log without movement)
-    -1Return
+    .Indeterminate type (just return impenetrable by default)
+    6Return
 }
 
 Lbl CHEI {
