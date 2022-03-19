@@ -1,0 +1,37 @@
+#1p~~~~~~~~~
+2|........r~
+31.........~
+4|^^---.-^r~
+51^-.-^..^r~
+6|...1|..1r~
+7|..====..r~
+8^11^1|.^1=~
+9|--1.....r#
+
+Test 1: No out-of-bounds
+    Take the rafts in the upper-left and lower-right corners, and try to push
+    them out of bounds. Ensure that they stay in place.
+Test 2: Rolling log rolls
+    Push the rolling log once right, ensure that it hits the rock on the right,
+    and stops.
+Test 3: Standing/Vertical log tips
+    Push the standing log right, ensure that it is now a vertical log.
+    Then push the vertical log right, ensure that it is now a standing log.
+Test 4: Rolling log only rolls downhill
+    Push the rolling log once right, ensure that it stops in the little valley.
+Test 5: Standing/Vertical log can go uphill
+    Push the standing/vertical right, ensure that both forms can go up slopes
+    with height 1. Then, once the log is in the valley, push it left and right
+    to ensure that both forms can't go up slopes with height greater than one.
+Test 6: Log movement interactions
+    Push the rolling log right. It should knock the standing log into another
+    rolling log, that rolls into a standing log, and gets blocked.
+Test 7: Log rolling across other logs
+    Push the rolling log right. It should roll across the vertical logs, that
+    are all sitting one layer below in the water, stopping at the rock.
+Test 8: Pushing a standing log off a ledge onto other logs
+    It should balance atop the standing log, roll over the rolling log, and
+    get blocked by the vertical log.
+Test 9: Standing log is two tall
+    The rolling log, despite being at a higher elevation than the standing log,
+    should still stop upon rolling into it, since the standing log is two tall.
