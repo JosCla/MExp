@@ -1,0 +1,83 @@
+Lbl MVER {
+    .Move entity (raw)
+    .Just moves an entity without any logic or collision checking
+    .Will not change the entity's position in CENT
+    .r1: Pointer to entity
+    .r2-r4: Target X,Y,Z
+
+    .Storing arguments and vars to stack
+    .Also allocating a little space to store the entity's prev. position
+    S-18->S
+    r_1->{S}^r
+    r_2->{S+2}
+    r_3->{S+3}
+    A->{S+4}^r
+    B->{S+6}^r
+    C->{S+8}^r
+    D->{S+10}^r
+    E->{S+12}^r
+    F->{S+14}^r
+
+    .Storing entity start position on stack
+    {r_1+1}->{S+16}
+    {r_1+2}->{S+17}
+
+    .Finding height diff from old to new position
+    r_4-{r_1+5}->B
+
+    .Finding current EMAP and target position EMAP value
+    GEIA({S+16},{S+17})->E
+    GIAT({S+2},{S+3})        .First check if there's an island at target
+        ??GEIA({S+2},{S+3})  .Then if there's already entity at target
+        ??E                  .Default to current EMAP val
+    ->F                      .(Store the result to F)
+
+    .Getting all entities at the current position, absorbing them into stack
+    GSEH({S+16},{S+17})->A
+    -A*2+S->S
+
+    .Moving our entity and all entities above to new position
+    For(C,0,A-1)
+        .Getting pointer to current entity in stack
+        C*2+S->G
+        {G}^r->D
+
+        .Moving the entity's position in CENT
+        A*2+S->H
+        {H+2}->{D+1}
+        {H+3}->{D+2}
+        {D+5}+B->{D+5}
+
+        .Moving entity from one island to another if needed
+        E!=F?CHEI(D,E,F)
+
+    .(Break from the loop if we just moved our original entity!)
+    EndIf {A*2+S}^r=D
+
+    .Dropping entities at previous position from stack
+    A*2+S->S
+
+    .Clearing prev. EMAP pos if we moved everything
+    If A-1<=C
+        {S+16}->G
+        {S+17}->H
+        0->{H*MW+G+2+EM}
+    End
+
+    .Setting the new EMAP pos regardless
+    {S+2}->G
+    {S+3}->H
+    F->{H*MW+G+2+EM}
+    
+    .Restoring stack and variables
+    {S+4}^r->A
+    {S+6}^r->B
+    {S+8}^r->C
+    {S+10}^r->D
+    {S+12}^r->E
+    {S+14}^r->F
+    S+18->S
+
+    .(return)
+    Return
+}

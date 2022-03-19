@@ -1,0 +1,214 @@
+Lbl GECT {
+    .Get entity collision type
+    .r1: entity type
+    .r2: dispX
+    .r3: dispY
+
+    If r_1<3
+        .Player, standing log, or standing tree
+        r_1Return
+    ElseIf r_1=5??r_1=6
+        .Raft
+        5Return
+    ElseIf r_1>6
+        .Immobile (snowman or sign)
+        6Return
+    ElseIf r_2
+        .Laid down logs (horizontal movement)
+        If r_1=3
+            4Return
+        Else
+            3Return
+        End
+    ElseIf r_3
+        .Laid down logs (vertical movement)
+        r_1Return
+    End
+
+    .Indeterminate type (just return impenetrable by default)
+    6Return
+}
+
+Lbl CHEI {
+    .Change entity island
+    .r1: Pointer to entity
+    .r2: Entity's current island
+    .r3: Entity's new island
+
+    .First "removing" our entity from its current linked list
+    {r_1+8}^r->G  .prev pointer
+    {r_1+10}^r->H .next pointer
+
+    .Correcting the next entity's previous entity pointer
+    If H
+        G->{H+8+CE}^r
+    End
+
+    .Correcting the previous entity (or list head) next entity pointer
+    If G
+        H->{G+10+CE}^r
+    Else
+        H->{r_2*2+CE}^r
+    End
+
+    .Now, "inserting" our entity at the start of the target linked list
+    {r_3*2+CE}^r->G .entity at head of target linked list
+
+    .Correcting head of linked list, and our previous entity pointer
+    r_1-CE->{r_3*2+CE}^r
+    0->{r_1+8}^r
+
+    .Correcting head entity's previous pointer, and our next pointer
+    If G
+        r_1-CE->{G+8+CE}^r
+    End
+    G->{r_1+10}^r
+
+    Return
+}
+
+Lbl GCEP {
+    .Get current entities pointer
+    .r1-r2: entity id (island, ent num)
+    .Directly returns the pointer in curr. entities
+
+    {GEPP()}^r+CEReturn
+}
+
+Lbl GEPP {
+    .Get entity pointers pointer
+    .Effectively, this will find the location of the place in EPTR that
+    .  points to this entity in CENT
+    .r1-r2: entity id (island, ent num)
+    .Directly returns the pointer to the pointer in EPTR
+
+    If r_1
+        .Non-player
+        {r_1*2+EP}^r->G
+        r_2*2+G+EPReturn
+    End
+
+    .Player
+    {EP}^r->G
+    G*2+2+EPReturn
+}
+
+Lbl GENI {
+    .Get entity island
+    .r1-r2: entity id (island, ent num)
+    .Directly returns the entity island number
+
+    .Finding the entity's position
+    GENP(r_1,r_2)
+
+    .Returning the island at that position
+    GEIA(T,U)Return
+}
+    
+Lbl GENP {
+    .Get entity position
+    .r1-r2: entity id (island, ent num)
+    .T: posX
+    .U: posY
+
+    .Using entity pointer to find where the entity is
+    GCEP()->G
+    {G+1}->T
+    {G+2}->U
+
+    .(return)
+    Return
+}    
+
+Lbl GHEB {
+    .Get highest entity below
+    .r1-r2: posX, posY
+    .r3: height it must be below
+    .Directly returns the pointer to the highest entity below given position
+    .Returns 0 if no such entity exists
+
+    .First finding the entity island at this position
+    .  (arguments are already in the right spots)
+    GEIA()->G
+
+    .(if no entity here, just return null pointer)
+    Return!If G
+
+    .Traversing the island's linked list to find the target entity
+    0->T .(pointer to entity)
+    0->U .(max height)
+    {G*2+CE}^r->H
+    While H
+        H+CE->I
+
+        .Checking if the entity is at the right spot
+        .And, checking if the entity is below the max height, but greater
+        .  than our previous best height
+        If {I+1}=r_1?{I+2}=r_2
+          ?{I+5}>=U?{I+5}<r_3
+            I->T
+            {I+5}->U
+        End
+
+        .Going to next list element
+        {I+10}^r->H
+    End
+
+    .Finally, returning the target pointer
+    TReturn
+}
+
+Lbl GSEH {
+    .Get sorted entity list by height
+    .r1-r2: posX, posY
+    .Directly returns the length of the entity list
+    .Will place the sorted list (pointers to CENT) below stack pointer S
+    .  (the list has lower height at higher addresses, higher height at lower)
+
+    .First finding the entity island at this position
+    .  (arguments are already in the right spots)
+    GEIA()->G
+
+    .(if no entity here, just return an empty list)
+    Return!If G
+
+    .Traversing the island's linked list to find entities at this position
+    0->T
+    {G*2+CE}^r->H
+    While H
+        H+CE->I
+
+        .Checking if the entity is at the right spot
+        If {I+1}=r_1?{I+2}=r_2
+            .If the entity is at the right spot, we can insert it!
+            If T
+                .Find first element whose height is less
+                T-1->J
+                For(K,0,J)
+                    {-K-1*2+S}^r->L
+                EndIf {I+5}<{L+5}
+
+                .Shift over greater elements
+                T-K->J .(num elements to shift)
+                If J
+                    Copy(-T*2+S,-T-1*2+S,J*2)
+                End
+
+                .Insert at our desired position
+                I->{-K-1*2+S}^r
+            Else
+                .Empty list, just insert at the first position
+                I->{S-2}^r
+            End
+
+            .Incrementing list length
+            T++
+        End
+
+        .Going to next list element
+        {I+10}^r->H
+    End
+   
+    .Finally, returning our list length
+    TReturn
+}
