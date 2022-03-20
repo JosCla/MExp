@@ -21,18 +21,18 @@ L_1+12->^CX+2->^CY+2->^CZ
 
 ."Max entity ascension height"
 .(Per collision type)
-.Use nib{} to correctly access entries
+.Use nib{}^r to correctly access entries
 [11101000]->GDB1MEAH
 
 ."Entity height"
 .(Per collision type)
-.Use nib{} to correctly access entries
+.Use nib{}^r to correctly access entries
 [22211120]->GDB1ENTH
 
 ."Entity interaction table (above)"
 .The rows are the actor, and the columns are what is acted upon
 .Left half is land target, right half is water target
-.Use nib{} to correctly access entries
+.Use nib{}^r to correctly access entries
 [0333340002222200]->GDB1EITA
 [0303010003030000
 [0303010003030000
@@ -44,7 +44,7 @@ L_1+12->^CX+2->^CY+2->^CZ
 ."Entity interaction table (below)"
 .The rows are the actor, and the columns are what is acted upon
 .Left half is land target, right half is water target
-.Use nib{} to correctly access entries
+.Use nib{}^r to correctly access entries
 [0333110000001100]->GDB1EITB
 [0105110001011100
 [0105110001011100
@@ -56,13 +56,13 @@ L_1+12->^CX+2->^CY+2->^CZ
 "Player interaction rolling log downgrade"
 .If the player is standing on a rolling log on water trying to interact
 .  with another entity, this describes how each movement type should downgrade
-.Use nib{} to correctly access entries
+.Use nib{}^r to correctly access entries
 [002220]->GDB1PIRD
 
 ."Entity rendering upward displacement"
 .Effectively, we want to move certain entities up a certain number of pixels
 .  while rendering to give a greater appearance of depth.
-.Use nib{} to correctly access entries
+.Use nib{}^r to correctly access entries
 [2000000222]->GDB1ERUD
 
 ."Sprite table (Entity)"

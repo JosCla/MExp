@@ -125,7 +125,7 @@ Lbl MVEN {
     GHAT(D,E)+1->F
     F-{A+5}->H
 
-    If nib{GDB1MEAH*2+C}>=>=H
+    If nib{GDB1MEAH*2+C}^r>=>=H
         .We can move to this space! (for now, just forcing the movement)
 
         .Checking for entities on this spot
@@ -147,13 +147,13 @@ Lbl MVEN {
             GECT({B},signed{S+12},signed{S+13})->L
             GHEB({B+1},{B+2},{B+5})->G
             {S+15}e6?G=0->H .(is the target on water)
-            nib{GDB1ENTH*2+L}+{B+5}->M
+            nib{GDB1ENTH*2+L}^r+{B+5}->M
             If M>J
                 .Above
-                nib{C*2+H*4+GDB1EITA*2+L}->N
+                nib{C*2+H*4+GDB1EITA*2+L}^r->N
             Else
                 .Below
-                nib{C*2+H*4+GDB1EITB*2+L}->N
+                nib{C*2+H*4+GDB1EITB*2+L}^r->N
             End
 
             .If the source is the player standing on a rolling log on water,
@@ -163,7 +163,7 @@ Lbl MVEN {
                 If G
                     GECT({G},{S+12},{S+13})->H
                     If H=3
-                        nib{GDB1PIRD*2+N}->N
+                        nib{GDB1PIRD*2+N}^r->N
                     End
                 End
             End
@@ -236,7 +236,7 @@ Lbl MVEN {
 
                         .Getting height to move to
                         GECT({B},signed{S+12},signed{S+13})->G
-                        nib{GDB1ENTH*2+G}+{B+5}->H
+                        nib{GDB1ENTH*2+G}^r+{B+5}->H
 
                         .Performing movement
                         -U*5+S->S

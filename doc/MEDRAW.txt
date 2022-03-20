@@ -90,7 +90,7 @@ Lbl DTIL {
         For(H,1,G)
             {-H*2+S}^r->I
             {I}->J
-            nib{GDB1ERUD*2+J}->K
+            nib{GDB1ERUD*2+J}^r->K
             Pt-Mask(
                 r_3,
                 r_5-{I+5}*2+2-K+r_4,
