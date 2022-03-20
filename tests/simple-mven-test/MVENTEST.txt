@@ -1,0 +1,127 @@
+.PRELIMINARY
+L_1+768->S
+prgmMESTAT
+LSAV()
+
+BSTK()
+
+.Test 1: No out-of-bounds
+.   Take the rafts in the upper-left and lower-right corners, and try to push
+.   them out of bounds. Ensure that they stay in place.
+GCEP(1,1)->A
+Return!If A
+MVEF(A,0,-1)
+MVEF(A,-1,0)
+GCEP(1,2)->B
+Return!If B
+MVEF(B,0,1)
+MVEF(B,1,0)
+ASRT({A+1}=0?{A+2}=0?{B+1}=11?{B+2}=8)
+
+.Test 2: Rolling log rolls
+.   Push the rolling log once right, ensure that it hits the rock on the right,
+.   and stops.
+GCEP(2,1)->A
+Return!If A
+MVEF(A,1,0)
+ASRT({A+1}=9?{A+2}=1)
+
+.Test 3: Standing/Vertical log tips
+.   Push the standing log right, ensure that it is now a vertical log.
+.   Then push the vertical log right, ensure that it is now a standing log.
+GCEP(3,1)->A
+Return!If A
+MVEF(A,1,0)
+{A+1}=2?{A+2}=2?{A}=3
+->B
+MVEF(A,1,0)
+{A+1}=3?{A+2}=2?{A}=1
+->C
+ASRT(B?C)
+
+.Test 4: Rolling log only rolls downhill
+.   Push the rolling log once right, ensure that it stops in the little valley.
+GCEP(4,1)->A
+Return!If A
+MVEF(A,1,0)
+ASRT({A+1}=7?{A+2}=3?{A+5}=2)
+
+.Test 5: Standing/Vertical log can go uphill
+.   Push the standing/vertical right, ensure that both forms can go up slopes
+.   with height 1. Then, once the log is in the valley, push it left and right
+.   to ensure that both forms can't go up slopes with height greater than one.
+GCEP(5,1)->A
+Return!If A
+For(F,1,3)
+    MVEF(A,1,0)
+End
+{A+1}=4?{A+5}=2
+->B
+For(F,1,3)
+    MVEF(A,1,0)
+End
+{A+1}=7?{A+5}=2
+->C
+MVEF(A,-1,0)
+{A+1}=7->D
+MVEF(A,1,0)
+MVEF(A,1,0)
+{A+1}=8->E
+ASRT(B?C?D?E)
+
+.Test 6: Log movement interactions
+.   Push the rolling log right. It should knock the standing log into another
+.   rolling log, that rolls into a standing log, and gets blocked.
+GCEP(6,1)->A
+GCEP(6,2)->B
+GCEP(6,3)->C
+GCEP(6,4)->D
+Return!If A?B?C?D
+MVEF(A,1,0)
+ASRT({A+1}=4?{B+1}=6?{C+1}=8?{D+1}=9)
+
+.Test 7: Log rolling across other logs
+.   Push the rolling log right. It should roll across the vertical logs, that
+.   are all sitting one layer below in the water, stopping at the rock.
+GCEP(7,1)->A
+GCEP(7,3)->B
+Return!If A?B
+MVEF(A,1,0)
+ASRT({A+1}=9?{A+5}=2?{B+1}=5?{B+5}=1)
+
+.Test 8: Pushing a standing log off a ledge onto other logs
+.   It should balance atop the standing log, roll over the rolling log, and
+.   get blocked by the vertical log.
+GCEP(8,1)->A
+GCEP(8,2)->B
+GCEP(8,3)->C
+GCEP(8,4)->D
+GCEP(8,5)->E
+GCEP(8,6)->F
+Return!If A?B?C?D?E?F
+MVEF(A,1,0)
+MVEF(C,1,0)
+MVEF(E,1,0)
+ASRT({A+1}=3?{A+5}=4?{B+1}=3?{C+1}=7?{D+1}=6?{E+1}=9?{F+1}=10)
+
+.Test 9: Standing log is two tall
+.   The rolling log, despite being at a higher elevation than the standing log,
+.   should still stop upon rolling into it, since the standing log is two tall.
+GCEP(9,1)->A
+GCEP(9,2)->B
+Return!If A?B
+MVEF(A,1,0)
+ASRT({A}=4?{A+1}=3?{A+5}=3?{B}=3?{B+1}=5)
+
+.Test 10: Stack correctness
+.   The stack above S should not have been modified.
+CSTK()
+
+.DEPENDENCIES
+prgmMEWORL
+prgmMELSAV
+prgmMEEUTL
+prgmMEMVER
+prgmMEMVEN
+prgmMEMVEF
+prgmMEUTIL
