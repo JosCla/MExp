@@ -1,0 +1,38 @@
+1|~~1~~=~~~~
+2r#~~~~~~~~r
+3r#~~~~~~~~r
+4r#~~~~#~~~r
+5.#~~~~....r
+6.#~~~~r...r
+7.|#~~~~~..r
+8~~~~~p=#|~~
+
+Test 1: Push logs into water
+    If you push rolling into water, it rolls in then stops
+    If you push standing into water, it becomes vertical
+    If you push vertical into water, it stays vertical
+Test 2: Rafting motion
+    If the player is on a raft, and they push left, they should sail right,
+    stopping at the opposite rock
+Test 3: Rafting force
+    Rafting should only go through if the push has sufficient "force"
+    Player directly pushing has maximum "force", while a log rolling has
+    minimum "force", to give an example
+Test 4: Raft stop
+    The raft, upon sailing, should stop at other objects
+Test 5: Push a thing on a raft
+    There is a rolling log on top of the raft. When the player pushes it, it
+    should defer the movement to the underlying raft, and when the raft
+    eventually reaches the other side, it should then let the log roll off
+Test 6: Force of thing pushed on raft
+    It's the same as the previous test, but just making sure when the log tries
+    to roll off, it can't push the raft back (too low force)
+Test 7: More raft "backboards"
+    If the player tries to perform a "push then move" off a raft, then the push
+    should go through, but the move is deferred to raft sailing
+    But, if the player just tries to move off the raft, nothing to push, then
+    they should just move off the raft.
+Test 8: Player trying to move on water
+    The player should not be able to walk on water. However, if there is a
+    vertical log or a raft (not a rolling log!), they should be good to move
+    on those, even if they're on water.

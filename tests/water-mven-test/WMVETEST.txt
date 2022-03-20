@@ -1,0 +1,123 @@
+.PRELIMINARY
+L_1+768->S
+prgmMESTAT
+LSAV()
+
+BSTK()
+
+.Test 1: Push logs into water
+.   If you push rolling into water, it rolls in then stops
+.   If you push standing into water, it becomes vertical
+.   If you push vertical into water, it stays vertical
+GCEP(1,1)->A
+GCEP(1,2)->B
+GCEP(1,3)->C
+Return!If A?B?C
+MVEF(A,1,0,0)
+MVEF(B,1,0,0)
+MVEF(C,1,0,0)
+ASRT({A}=4?{A+1}=2?{B}=3?{B+1}=5?{C}=3?{C+1}=8)
+
+.Test 2: Rafting motion
+.   If the player is on a raft, and they push left, they should sail right,
+.   stopping at the opposite rock
+GCEP(0)->A
+GCEP(2,1)->B
+Return!If A?B
+MVER(A,2,1,2)
+MVEF(A,-1,0,2)
+ASRT({A+1}=10?{A+5}=2?{B+1}=10?{B+5}=1)
+
+.Test 3: Rafting force
+.   Rafting should only go through if the push has sufficient "force"
+.   Player directly pushing has maximum "force", while a log rolling has
+.   minimum "force", to give an example
+GCEP(0)->A
+GCEP(3,1)->B
+Return!If A?B
+MVER(A,2,2,2)
+MVEF(A,-1,0,0)
+ASRT({A+1}=2?{B+1}=2)
+
+.Test 4: Raft stop
+.   The raft, upon sailing, should stop at other objects
+GCEP(0)->A
+GCEP(4,1)->B
+GCEP(4,2)->C
+Return!If A?B?C
+MVER(A,2,3,2)
+MVEF(A,-1,0,2)
+ASRT({A+1}=6?{B+1}=6?{C+1}=7)
+
+.Test 5: Push a thing on a raft
+.   There is a rolling log on top of the raft. When the player pushes it, it
+.   should defer the movement to the underlying raft, and when the raft
+.   eventually reaches the other side, it should then let the log roll off
+GCEP(0)->A
+GCEP(5,1)->B
+GCEP(5,2)->C
+Return!If A?B?C
+MVER(A,1,4,2)
+MVEF(A,1,0,2)
+ASRT({A+1}=1?{B+1}=6?{C+1}=10)
+
+.Test 6: Force of thing pushed on raft
+.   It's the same as the previous test, but just making sure when the log tries
+.   to roll off, it can't push the raft back (too low force)
+GCEP(0)->A
+GCEP(6,1)->B
+GCEP(6,2)->C
+Return!If A?B?C
+MVER(A,1,5,2)
+MVEF(A,1,0,2)
+ASRT({A+1}=1?{B+1}=6?{C+1}=6)
+
+.Test 7: More raft "backboards"
+.   If the player tries to perform a "push then move" off a raft, then the push
+.   should go through, but the move is deferred to raft sailing
+.   But, if the player just tries to move off the raft, nothing to push, then
+.   they should just move off the raft.
+GCEP(0)->A
+GCEP(7,1)->B
+GCEP(7,2)->C
+Return!If A?B?C
+MVER(A,3,6,2)
+MVEF(A,-1,0,2)
+{A+1}=8?{B+1}=8?{C+1}=0
+->D
+MVEF(A,1,0,2)
+{A+1}=9?{B+1}=8
+->E
+ASRT(D?E)
+
+.Test 8: Player trying to move on water
+.   The player should not be able to walk on water. However, if there is a
+.   vertical log or a raft (not a rolling log!), they should be good to move
+.   on those, even if they're on water.
+GCEP(0)->A
+Return!If A
+MVER(A,6,7,2)
+MVEF(A,-1,0,2)
+{A+1}=6?{A+5}=2
+->B
+MVEF(A,1,0,2)
+MVEF(A,1,0,2)
+{A+1}=8?{A+5}=2
+->C
+MVEF(A,1,0,2)
+{A+1}=8?{A+5}=2
+->D
+ASRT(B?C?D)
+
+.Test 9: Stack correctness
+.   The stack above S should not have been modified.
+CSTK()
+
+.DEPENDENCIES
+prgmMEWORL
+prgmMELSAV
+prgmMEEUTL
+prgmMEMVER
+prgmMEMVEN
+prgmMEMVEF
+prgmMEUTIL
