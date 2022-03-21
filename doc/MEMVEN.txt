@@ -122,15 +122,9 @@ Lbl MVEN {
     If {A}=0
         If {S+15}e6?B=0
             6->{S+20}
-        ElseIf {S+14}e6
-            GHEB({A+1},{A+2},{A+5})->G
-            If G
-                GECT(G,{S+12},{S+13})->H
-                If H=3
-                    {S+20}->I
-                    nib{GDB1PIRD*2+I}^r->{S+20}
-                End
-            End
+        ElseIf IMOW({A+1},{A+2},{A+5},{S+12},{S+13})=2
+            {S+20}->I
+            nib{GDB1PIRD*2+I}^r->{S+20}
         End
     End
 
@@ -228,25 +222,22 @@ Lbl MVEN {
                 4->{A}
             End
         ElseIf C=4
-            .Vertical log to standing log
+            .Vertical log to standing log (if grounded)
+            Select(U,
+                IMOW({A+1},{A+2},{A+5},{S+12},{S+13})->G
+            )->U
+            If G
+                Goto MVENE
+            End
+
             1->{A}
         ElseIf C=3
             .Rolling log continues to roll (if grounded)
-            If {S+15}e6
-                Select(U,
-                    GHEB({A+1},{A+2},{A+5})->G
-                )->U
-
-                If G
-                    Select(U,
-                        GECT({G},{S+12},{S+13})->H
-                    )->U
-                    If H=3
-                        Goto MVENE
-                    End
-                Else
-                    Goto MVENE
-                End
+            Select(U,
+                IMOW({A+1},{A+2},{A+5},{S+12},{S+13})->G
+            )->U
+            If G
+                Goto MVENE
             End
 
             -U-1*5+S->G

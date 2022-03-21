@@ -212,3 +212,32 @@ Lbl GSEH {
     .Finally, returning our list length
     TReturn
 }
+
+Lbl IMOW
+    .Is this entity moving on water?
+    .r1-r2: PosX, PosY
+    .r3: Entity height
+    .r4-r5: DispX, DispY
+    .Directly returns the result:
+    .   0: Not moving on water
+    .   1: Moving on water
+    .   2: Moving on a rolling log
+
+    .If it's not even water, then not moving on water
+    Return!If IWAT()
+
+    .Looking for entities underneath the given position
+    GHEB()->G
+    If G
+        GECT({G},r_4,r_5)->H
+
+        .If the entity is not a log, then we're effectively not moving on water
+        Return!If H=3
+
+        .If the entity is a rolling log, then we're moving on a rolling log
+        2Return
+    End
+
+    .If no entities, then we're moving on water
+    1Return
+}
