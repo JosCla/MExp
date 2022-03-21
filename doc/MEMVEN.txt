@@ -204,7 +204,7 @@ Lbl MVEN {
         .Double move
         MVER(A,D,E,F)
 
-        -5*S->G
+        S-5->G
         {A+3}^r->{G}^r
         {S+12}^r->{G+2}^r
         0->{G+4}
