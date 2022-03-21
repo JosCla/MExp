@@ -59,11 +59,7 @@ Lbl MVEN {
     .r1: pointer to entity to move
     .r2: dispX
     .r3: dispY
-    .T: movement state
-        0: success
-        1: out of bounds
-        2: blocked
-        3: couldn't move (player trying to move onto water, off sideways log)
+    .T: movement result
     .U: number of movements pushed to stack
 
     .Storing to stack
