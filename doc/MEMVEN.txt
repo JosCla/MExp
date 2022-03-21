@@ -1,59 +1,3 @@
-Lbl MVET {
-    .Moves entities through a single tick
-    .r1: Number of actions to execute in the current queue frame
-    .  The movements should be executed from high to low memory addresses
-    .U: Number of movements pushed to stack
-    .  New movements will be pushed below stack pointer, to be executed from
-    .  high to low memory addresses
-    .  (put in U instead of T to be consistent with MVEN)
-
-    .Allocating stack
-    S-10->S
-    A->{S}^r
-    B->{S+2}^r
-    C->{S+4}^r
-    D->{S+6}^r
-    E->{S+8}^r
-
-    .Storing the base pointer of actions to execute in D
-    S+10->D
-
-    .Storing num actions to execute in A
-    r_1->A
-
-    .Executing all actions (storing total actions pushed in C)
-    0->C
-    For(B,1,A)
-        .Getting pointer to current action
-        A-B*5+D->E
-
-        .Getting pointer to entity in question
-        GCEP({E},{E+1})->G
-
-        .Performing movement
-        MVEN(G,signed{E+2},signed{E+3})
-        C+U->C
-        -U*5+S->S
-    End
-
-    .(Putting number of movements added into U)
-    C->U
-
-    .Recovering stack
-    D-10->S
-    {S}^r->A
-    {S+2}^r->B
-    {S+4}^r->C
-    {S+6}^r->D
-    {S+8}^r->E
-    S+10->S
-
-    .Moving newly added actions directly underneath stack pointer
-    U*5->G
-    S-G->H
-    CPRV(H-10,H,G)
-}
-
 Lbl MVEN {
     .Moves an entity
     .r1: pointer to entity to move
@@ -68,17 +12,17 @@ Lbl MVEN {
     .   C: entity collision type
     .   D: target x
     .   E: target y
-    .   F: extra space
-    .       (used firstly for storing target ground height)
-    .       (then for storing if entity is top/bottom of entity stack)
+    .   F: target z
     .   S+12: r_2 (dispX)
     .   S+13: r_3 (dispY)
     .   S+14: curr space property byte
     .   S+15: target space property byte
     .   S+16^r: pointer to curr entity pointer
     .   S+18^r: pointer to target entity pointer
-    .   S+20: extra space (used for storing target movement height)
-    S-21->S
+    .   S+20: entity interaction
+    .   S+21: is target top/bottom of stack
+    .   S+22: target z if push-then-move interaction
+    S-23->S
     A->{S}^r
     B->{S+2}^r
     C->{S+4}^r
@@ -91,19 +35,18 @@ Lbl MVEN {
     .Keeping entity pointer in A
     r_1->A
 
-    .Finding target position for entity
+    .By default, no target pointer
+    0->B
+
+    .Finding target position
     {A+1}+r_2->D
     {A+2}+r_3->E
 
-    .Finding entity collision type
-    GECT({A},r_2,r_3)->C
-
-    .Make sure it's in-bounds
+    .Making sure it's in-bounds
     .(due to unsigned comparison, this implicitly makes sure it's non-negative)
     !If D<MW?E<MH
-        1->T
-        0->U
-        Goto MVENE
+        0->{S+20}
+        Goto MVENA
     End
 
     .Putting property bytes for current position and target position on stack
@@ -112,187 +55,168 @@ Lbl MVEN {
 
     .If we're trying to move into an impenetrable rock, we're blocked
     If {S+15}e4
-        2->T
-        0->U
-        Goto MVENE
+        0->{S+20}
+        Goto MVENA
     End
+
+    .Getting the pointer to our entity
+    GEPP({A+3},{A+4})->{S+16}^r
+
+    .Getting our collision type
+    GECT({A},{S+12},{S+13})->C
 
     .Finding the relative height of the target space
     GHAT(D,E)+1->F
-    F-{A+5}->H
+    F-{A+5}->G
 
-    If nib{GDB1MEAH*2+C}^r>=>=H
-        .We can move to this space! (for now, just forcing the movement)
+    If nib{GDB1MEAH*2+C}^r>=>=G
+        .Ground is low enough to move to
 
         .Checking for entities on this spot
-        If GSEH(D,E)->I
+        If GSEH(D,E)->H
             .Finding the highest entity at/below the player (push target)
-            max({A+5},F)->J
-            For(K,1,I)
-                {-I+K-1*2+S}^r->B
-            EndIf {B+5}<=J
+            max({A+5},F)->I
+            For(J,1,H)
+                {-H+J-1*2+S}^r->B
+            EndIf {B+5}<=I
 
             .Determining where our entity is in our stack
-            .If bottom of stack, LSB (Fe7) is set
-            .If top of stack, 2nd LSB (Fe6) is set
-            0->F
-            K=I?F+1->F
-            K=1?F+2->F
+            .If bottom of stack, LSB ({S+21}e7) is set
+            .If top of stack, 2nd LSB ({S+21}e6) is set
+            0->{S+21}
+            J=H?{S+21}+1->{S+21}
+            J=1?{S+21}+2->{S+21}
 
             .Getting interaction type between the two entities
-            GECT({B},signed{S+12},signed{S+13})->L
-            GHEB({B+1},{B+2},{B+5})->G
-            {S+15}e6?G=0->H .(is the target on water)
-            nib{GDB1ENTH*2+L}^r+{B+5}->M
-            If M>J
+            GECT({B},signed{S+12},signed{S+13})->G .(target collision type)
+            Select(G,
+                GHEB({B+1},{B+2},{B+5})->H
+            )->G
+            max({A+5},F)->I
+            {S+15}e6?H=0
+                ->J .(is the target on water)
+            nib{GDB1ENTH*2+G}^r+{B+5}->F .(height just above target)
+            {B+5}->{S+22} .(height of target)
+            If F>I
                 .Above
-                nib{C*2+H*4+GDB1EITA*2+L}^r->N
+                nib{C*2+J*4+GDB1EITA*2+G}^r->{S+20}
             Else
                 .Below
-                nib{C*2+H*4+GDB1EITB*2+L}^r->N
+                nib{C*2+J*4+GDB1EITB*2+G}^r->{S+20}
             End
 
-            .If the source is the player standing on a rolling log on water,
-            .  then "downgrade" certain movement types
-            If {A}=0?{S+14}e6
-                GHEB({A+1},{A+2},{A+5})->G
-                If G
-                    GECT({G},{S+12},{S+13})->H
-                    If H=3
-                        nib{GDB1PIRD*2+N}^r->N
-                    End
+            .Finally, putting pointer to target on stack before proceeding
+            GEPP({B+3},{B+4})->{S+18}^r
+        Else
+            .If no entities, we can move here
+            1->{S+20}
+        End
+    Else
+        .Too high to move to; we've been blocked!
+        0->{S+20}
+        .Goto MVENA
+    End
+
+    .In any case, if we are the player, then downgrade certain movement types
+    .   if we're trying to walk on water or trying to push from a rolling log
+    If {A}=0
+        If {S+15}e6?B=0
+            6->{S+20}
+        ElseIf {S+14}e6
+            GHEB({A+1},{A+2},{A+5})->G
+            If G
+                GECT(G,{S+12},{S+13})->H
+                If H=3
+                    {S+20}->I
+                    nib{GDB1PIRD*2+I}^r->{S+20}
                 End
             End
+        End
+    End
 
-            .Push 0 movements to queue by default
-            0->U
+    .MVENA (MVEN Action section)
+    Lbl MVENA
 
-            .Handling interaction type
-            !If N
-                .Blocked
-                2->T
-            ElseIf N=1
-                .Move if target is top entity
-                If Fe6
-                    MVER(A,D,E,M)
-                    0->T
-                Else
-                    2->T
-                End
-            ElseIf N=2
-                .Push (but also blocked)
-                MVEN(B,signed{S+12},signed{S+13})
-                2->T
-            ElseIf N=3??N=4
-                .Push then move
+    0->U (no queued actions by default)
 
-                .Firstly, grabbing pointers to the pointer to curr/target ent
-                GEPP({A+3},{A+4})->{S+16}^r
-                GEPP({B+3},{B+4})->{S+18}^r
+    .Handling pushes in interactions
+    If {S+20}=2??{S+20}=3??{S+20}=4
+        .Performing push
+        MVEN(B,signed{S+12},signed{S+13})
 
-                .Then grabbing the target entity's curr height (target pos)
-                {B+5}->{S+20}
+        .Restoring pointers to curr/target ent
+        {S+16}^r->G
+        {G}^r+CE->A
+        {S+18}^r->G
+        {G}^r+CE->B
+    End
 
-                .Performing the push on the target entity
-                Select(N,
-                    MVEN(B,signed{S+12},signed{S+13})
-                )->N
+    .Handing movements in interactions
+    !If {S+20}
+        .Blocked
+        1->T
+    ElseIf {S+20}=1
+        .Move if target is top entity or no entity
+        If B=0??{S+21}e6
+            MVER(A,D,E,F)
+            0->T
+        Else
+            1->T
+        End
+    ElseIf {S+20}=2
+        .Push (but also blocked)
+        2->T
+    ElseIf {S+20}=3??{S+20}=4
+        .Push then move
 
-                .Then, regrabbing pointers to curr/target ent
-                {S+16}^r->G
-                {G}^r+CE->A
-                {S+18}^r->G
-                {G}^r+CE->B
-
-                .Moving into previously occupied space if applicable
-                !If T
-                    If Fe7
-                        .Bottom of stack; just move there
-                        S->G
-                        -U*5+S->S
-                        Select(T,
-                        Select(U,
-                            MVER(A,D,E,{G+20})
-                        )->U
-                        )->T
-                        U*5+S->S
-                    Else
-                        .Not bottom of stack; defer movement
-                        -U-1*5+S->G
-                        {A+3}^r->{G}^r
-                        {S+12}^r->{G+2}^r
-                        0->{G+4}
-                        U++
-                        3->T
-                    End
-                Else
-                    If T=2?N=4?Fe6
-                        .If blocked, N=4, and this is top entity in stack,
-                        .  move on top of the entity!
-
-                        .Getting height to move to
-                        GECT({B},signed{S+12},signed{S+13})->G
-                        nib{GDB1ENTH*2+G}^r+{B+5}->H
-
-                        .Performing movement
-                        -U*5+S->S
-                        Select(T,
-                        Select(U,
-                            MVER(A,D,E,H)
-                        )->U
-                        )->T
-                        U*5+S->S
-
-                        0->T
-                    End
-                End
-            ElseIf N=5
-                .Double move
-                MVER(A,D,E,M)
-
-                -5+S->G
+        .Moving into previously occupied space if available
+        !If T
+            If {S+21}e7
+                .Bottom of stack; just move there
+                S->G
+                -U*5+S->S
+                Select(U,
+                    MVER(A,D,E,{G+22})
+                )->U
+                U*5+S->S
+                0->T
+            Else
+                .Not bottom of stack; defer movement
+                -U-1*5+S->G
                 {A+3}^r->{G}^r
                 {S+12}^r->{G+2}^r
                 0->{G+4}
-                1->U
-
-                0->T
+                U++
+                3->T
             End
         Else
-            .If no entities, we can move here
-            .  (as long as not player onto water, or player off water roll log
-            0->T
-            If {A}=0
-                If {S+15}e6
-                    4->T
-                ElseIf {S+14}e6
-                    GHEB({A+1},{A+2},{A+5})->G
-                    If G
-                        GECT({G},{S+12},{S+13})->H
-                        If H=3
-                            4->T
-                        Else
-                            0->T
-                        End
-                    Else
-                        0->T
-                    End
-                End
-            End
-            0->U
-            !If T
-                MVER(A,D,E,F)
+            If T=1?{S+20}=4?{S+21}e6
+                .If blocked, push-then-climb, and top ent, move on top!
+                -U*5+S->S
+                Select(U,
+                    MVER(A,D,E,F)
+                )->U
+                U*5+S->S
                 0->T
             End
         End
+    ElseIf {S+20}=5
+        .Double move
+        MVER(A,D,E,F)
 
-        .Goto MVENE
-    Else
-        .This space is too high to move to; we've been blocked!
-        2->T
-        0->U
-        .Goto MVENE
+        -5*S->G
+        {A+3}^r->{G}^r
+        {S+12}^r->{G+2}^r
+        0->{G+4}
+        1->U
+        0->T
+    ElseIf {S+20}=6
+        .Stop by refusal
+        4->T
     End
+
+    .MVENP (MVEN Post-move)
+    Lbl MVENP
 
     .Now, handling special log behaviors (flipping, rolling, etc)
     !If T
@@ -307,22 +231,30 @@ Lbl MVEN {
             .Vertical log to standing log
             1->{A}
         ElseIf C=3
-            .Rolling log continues to roll (only if not on water)
+            .Rolling log continues to roll (if grounded)
             If {S+15}e6
-                Select(T,
                 Select(U,
                     GHEB({A+1},{A+2},{A+5})->G
                 )->U
-                )->T
-                !If G
+
+                If G
+                    Select(U,
+                        GECT({G},{S+12},{S+13})->H
+                    )->U
+                    If H=3
+                        Goto MVENE
+                    End
+                Else
                     Goto MVENE
                 End
             End
+
             -U-1*5+S->G
             {A+3}^r->{G}^r
             {S+12}^r->{G+2}^r
             0->{G+4}
             U++
+            0->T
         End
     Else
         If C=2
@@ -331,7 +263,7 @@ Lbl MVEN {
         End
     End
 
-    .MVEN end
+    .MVENE (MVEN End)
     Lbl MVENE
     {S}^r->A
     {S+2}^r->B
@@ -339,13 +271,13 @@ Lbl MVEN {
     {S+6}^r->D
     {S+8}^r->E
     {S+10}^r->F
-    S+21->S
+    S+23->S
 
     .If we put movements on stack, copy them just below stack pointer
     If U
         U*5->G
         S-G->H
-        CPRV(H-21,H,G)
+        CPRV(H-23,H,G)
     End
 
     .(return)

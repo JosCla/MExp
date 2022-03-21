@@ -57,7 +57,7 @@ L_1+12->^CX+2->^CY+2->^CZ
 .If the player is standing on a rolling log on water trying to interact
 .  with another entity, this describes how each movement type should downgrade
 .Use nib{}^r to correctly access entries
-[002220]->GDB1PIRD
+[66222666]->GDB1PIRD
 
 ."Entity rendering upward displacement"
 .Effectively, we want to move certain entities up a certain number of pixels
