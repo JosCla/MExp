@@ -292,7 +292,7 @@ Lbl MVEN {
             )->U
             0->T
 
-            If G!=1
+            If G!=1??{S+14}e6=0
                 Goto MVENE
             End
 
