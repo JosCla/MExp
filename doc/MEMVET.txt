@@ -31,7 +31,7 @@ Lbl MVET {
         GCEP({E},{E+1})->G
 
         .Performing movement
-        MVEN(G,signed{E+2},signed{E+3})
+        MVEN(G,signed{E+2},signed{E+3},{E+4})
         C+U->C
         -U*5+S->S
     End

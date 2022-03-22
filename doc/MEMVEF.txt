@@ -4,6 +4,7 @@ Lbl MVEF {
     .r1: Entity pointer
     .r2: DispX
     .r3: DispY
+    .r4: Layers of indirection from player push
 
     .Allocating stack
     S-2->S

@@ -3,6 +3,7 @@ Lbl MVEN {
     .r1: pointer to entity to move
     .r2: dispX
     .r3: dispY
+    .r4: layers of indirection from player push
     .T: movement result
     .U: number of movements pushed to stack
 
@@ -22,7 +23,8 @@ Lbl MVEN {
     .   S+20: entity interaction
     .   S+21: is target top/bottom of stack
     .   S+22: target z if push-then-move interaction
-    S-23->S
+    .   S+23: r_4 (layers from player push)
+    S-24->S
     A->{S}^r
     B->{S+2}^r
     C->{S+4}^r
@@ -31,6 +33,7 @@ Lbl MVEN {
     F->{S+10}^r
     r_2->{S+12}
     r_3->{S+13}
+    r_4->{S+23}
 
     .Keeping entity pointer in A
     r_1->A
@@ -136,7 +139,7 @@ Lbl MVEN {
     .Handling pushes in interactions
     If {S+20}=2??{S+20}=3??{S+20}=4
         .Performing push
-        MVEN(B,signed{S+12},signed{S+13})
+        MVEN(B,signed{S+12},signed{S+13},{S+23}+1)
 
         .Restoring pointers to curr/target ent
         {S+16}^r->G
@@ -179,7 +182,7 @@ Lbl MVEN {
                 -U-1*5+S->G
                 {A+3}^r->{G}^r
                 {S+12}^r->{G+2}^r
-                0->{G+4}
+                {S+23}->{G+4}
                 U++
                 3->T
             End
@@ -201,7 +204,7 @@ Lbl MVEN {
         S-5->G
         {A+3}^r->{G}^r
         {S+12}^r->{G+2}^r
-        0->{G+4}
+        {S+23}->{G+4}
         1->U
         0->T
     ElseIf {S+20}=6
@@ -243,7 +246,7 @@ Lbl MVEN {
             -U-1*5+S->G
             {A+3}^r->{G}^r
             {S+12}^r->{G+2}^r
-            0->{G+4}
+            {S+23}->{G+4}
             U++
             0->T
         End
@@ -262,13 +265,13 @@ Lbl MVEN {
     {S+6}^r->D
     {S+8}^r->E
     {S+10}^r->F
-    S+23->S
+    S+24->S
 
     .If we put movements on stack, copy them just below stack pointer
     If U
         U*5->G
         S-G->H
-        CPRV(H-23,H,G)
+        CPRV(H-24,H,G)
     End
 
     .(return)
