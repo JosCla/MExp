@@ -66,7 +66,7 @@ Lbl MVEN {
             GECT({G},{S+12},{S+13})->H
             If H=5
                 .Try moving the raft
-                MVEN(G,{S+12},{S+13},{S+23}+1)
+                MVEN(G,signed{S+12},signed{S+13},{S+23}+1)
 
                 .If the move succeeded, then just abort this movement
                 !If T
@@ -342,7 +342,7 @@ Lbl MVEN {
                 -U*5+S->S
                 Select(T,
                 Select(U,
-                    MVEN(G,{H+12},{H+13},{H+23}+1)
+                    MVEN(G,signed{H+12},signed{H+13},{H+23}+1)
                 )->I
                 )->T
                 I*5+S->S
