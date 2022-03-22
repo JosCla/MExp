@@ -48,8 +48,10 @@ Lbl MVEN {
     .Making sure it's in-bounds
     .(due to unsigned comparison, this implicitly makes sure it's non-negative)
     !If D<MW?E<MH
-        0->{S+20}
-        Goto MVENA
+        .If OOB, just cancel this movement
+        4->T
+        0->U
+        Goto MVENE
     End
 
     .Putting property bytes for current position and target position on stack

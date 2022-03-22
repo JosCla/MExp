@@ -42,4 +42,4 @@ Entity Movement Results
 1: Blocked normally (bump into wall, can't push something, oob, etc)
 2: Blocked by push (getting the push interaction with target entity)
 3: Blocked by movement queueing (usually from trying to move onto stack)
-4: Couldn't move (player trying to move into water, off sideways log, etc)
+4: Couldn't move (player trying to move into water, off sideways log, oob, etc)
