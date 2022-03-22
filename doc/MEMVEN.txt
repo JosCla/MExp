@@ -148,6 +148,38 @@ Lbl MVEN {
         {G}^r+CE->B
     End
 
+    .Handling potential rafting from player pushing
+    If {S+23}=0?{S+14}e6        .If it's the player and we're on water
+            ?{S+20}!=1?{S+20}<5 .and if it's either a push/block interaction
+        .Checking if the bottom entity is a raft
+        Select(U,
+            GLEA({A+1},{A+2})->G
+        )->U
+
+        If G
+            GECT({G},{S+12},{S+13})->H
+            If H=5
+                .Let's try to raft!
+
+                .Defer the opposite of our desired movement to the raft
+                S->I
+                -U*5+S->S
+                Select(U,
+                    MVEN(G,-signed{I+12},-signed{I+13},{I+23}+1)
+                )->I
+                I*5+S->S
+                U+I->U
+
+                .If the raft moved successfully, then block the rest of
+                .   our own movement.
+                !If T
+                    4->T
+                    Goto MVENP
+                End
+            End
+        End
+    End
+
     .Handing movements in interactions
     !If {S+20}
         .Blocked
@@ -229,6 +261,8 @@ Lbl MVEN {
             Select(U,
                 IMOW({A+1},{A+2},{A+5},{S+12},{S+13})->G
             )->U
+            0->T
+
             If G
                 Goto MVENE
             End
@@ -239,6 +273,8 @@ Lbl MVEN {
             Select(U,
                 IMOW({A+1},{A+2},{A+5},{S+12},{S+13})->G
             )->U
+            0->T
+
             If G
                 Goto MVENE
             End
@@ -248,7 +284,22 @@ Lbl MVEN {
             {S+12}^r->{G+2}^r
             {S+23}->{G+4}
             U++
+        ElseIf C=5
+            .Raft continues moving if on water
+            Select(U,
+                IMOW({A+1},{A+2},{A+5},{S+12},{S+13})->G
+            )->U
             0->T
+
+            If G!=1
+                Goto MVENE
+            End
+
+            -U-1*5+S->G
+            {A+3}^r->{G}^r
+            {S+12}^r->{G+2}^r
+            {S+23}->{G+4}
+            U++
         End
     Else
         If C=2

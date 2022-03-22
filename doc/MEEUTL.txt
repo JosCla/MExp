@@ -158,6 +158,41 @@ Lbl GHEB {
     TReturn
 }
 
+Lbl GLEA {
+    .Get lowest entity at
+    .r1-r2: posX, posY
+    .Directly returns the pointer to the lowest entity at the given pos
+    .Returns 0 if no such entity exists
+
+    .First finding the entity island at this position
+    .  (arguments are already in the right spots)
+    GEIA()->G
+
+    .(if no entity here, just return null pointer)
+    Return!If G
+
+    .Traversing the island's linked list to find the target entity
+    0->T   .(pointer to entity)
+    255->U .(max height)
+    {G*2+CE}^r->H
+    While H
+        H+CE->I
+
+        .Checking if the entity is at the right spot
+        .And, checking if the entity is below the prev. best height
+        If {I+1}=r_1?{I+2}=r_2?{I+5}<=U
+            I->T
+            {I+5}->U
+        End
+
+        .Going to next list element
+        {I+10}^r->H
+    End
+
+    .Finally, returning the target pointer
+    TReturn
+}
+
 Lbl GSEH {
     .Get sorted entity list by height
     .r1-r2: posX, posY
