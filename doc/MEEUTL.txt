@@ -193,6 +193,54 @@ Lbl GLEA {
     TReturn
 }
 
+Lbl GLMA {
+    .Get Lowest "Move-off-raft" entity Above a certain height
+    .r1-r2: posX, posY
+    .r3: height to be above
+    .r4-r5: dispX, dispY
+    .Directly returns the pointer to the lowest entity meeting the criteria
+    .Returns 0 if no such entity exists
+
+    .First finding the entity island at this position
+    .  (arguments are already in the right spots)
+    GEIA()->G
+
+    .(if no entity here, just return null pointer)
+    Return!If G
+
+    .Traversing the island's linked list to find the target entity
+    0->T   .(pointer to entity)
+    255->U .(max height)
+    {G*2+CE}^r->H
+    While H
+        H+CE->I
+
+        Select(r_1,
+        Select(r_2,
+        Select(r_3,
+            GECT({I},r_4,r_5)->J
+        )->r_3
+        )->r_2
+        )->r_1
+
+        .Checking if the entity is at the right spot
+        .And, checking if the entity is in the right height range
+        .And, checking if it's able to fall off the raft
+        If {I+1}=r_1?{I+2}=r_2
+                ?{I+5}<=U?{I+5}>r_3
+                ?nib{GDB1CMOR*2+J}^r
+            I->T
+            {I+5}->U
+        End
+
+        .Going to next list element
+        {I+10}^r->H
+    End
+
+    .Finally, returning the target pointer
+    TReturn
+}
+
 Lbl GSEH {
     .Get sorted entity list by height
     .r1-r2: posX, posY

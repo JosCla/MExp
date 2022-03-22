@@ -326,6 +326,28 @@ Lbl MVEN {
         If C=2
             .Tree standing log, through any interaction, loses leaves
             1->{A}
+        ElseIf C=5
+            .If a raft stops, try moving stuff off of it if applicable
+
+            .Finding an entity we can try to move off
+            Select(T,
+            Select(U,
+                GLMA({A+1},{A+2},{A+5},{S+12},{S+13})->G
+            )->U
+            )->T
+
+            .Moving it off
+            If G
+                S->H
+                -U*5+S->S
+                Select(T,
+                Select(U,
+                    MVEN(G,{H+12},{H+13},{H+23}+1)
+                )->I
+                )->T
+                I*5+S->S
+                U+I->U
+            End
         End
     End
 
