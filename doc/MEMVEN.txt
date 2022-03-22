@@ -73,7 +73,8 @@ Lbl MVEN {
     F-{A+5}->G
 
     If nib{GDB1MEAH*2+C}^r>=>=G
-        .Ground is low enough to move to
+        ??{S+15}e7?nib{GDB1CCLL*2+C}^r
+        .Ground is low enough to move to or there's a ladder we can climb
 
         .Checking for entities on this spot
         If GSEH(D,E)->H

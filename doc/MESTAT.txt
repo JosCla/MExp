@@ -29,6 +29,11 @@ L_1+12->^CX+2->^CY+2->^CZ
 .Use nib{}^r to correctly access entries
 [22211120]->GDB1ENTH
 
+"Can CLimb Ladder"
+.(Per collision type)
+.Use nib{}^r to correctly access entries
+[10000000]->GDB1CCLL
+
 ."Entity interaction table (above)"
 .The rows are the actor, and the columns are what is acted upon
 .Left half is land target, right half is water target
