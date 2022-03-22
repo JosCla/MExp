@@ -13,9 +13,9 @@ GCEP(1,1)->A
 GCEP(1,2)->B
 GCEP(1,3)->C
 Return!If A?B?C
-MVEF(A,1,0,0)
-MVEF(B,1,0,0)
-MVEF(C,1,0,0)
+MVEF(A,1,0,1)
+MVEF(B,1,0,1)
+MVEF(C,1,0,1)
 ASRT({A}=4?{A+1}=2?{B}=3?{B+1}=5?{C}=3?{C+1}=8)
 
 .Test 2: Rafting motion
@@ -25,18 +25,19 @@ GCEP(0)->A
 GCEP(2,1)->B
 Return!If A?B
 MVER(A,2,1,2)
-MVEF(A,-1,0,2)
+MVEF(A,-1,0,0)
 ASRT({A+1}=10?{A+5}=2?{B+1}=10?{B+5}=1)
 
 .Test 3: Rafting force
 .   Rafting should only go through if the push has sufficient "force"
 .   Player directly pushing has maximum "force", while a log rolling has
 .   minimum "force", to give an example
+.   This is represented through layers of indirection from original push
 GCEP(0)->A
 GCEP(3,1)->B
 Return!If A?B
 MVER(A,2,2,2)
-MVEF(A,-1,0,0)
+MVEF(A,-1,0,5)
 ASRT({A+1}=2?{B+1}=2)
 
 .Test 4: Raft stop
@@ -46,7 +47,7 @@ GCEP(4,1)->B
 GCEP(4,2)->C
 Return!If A?B?C
 MVER(A,2,3,2)
-MVEF(A,-1,0,2)
+MVEF(A,-1,0,0)
 ASRT({A+1}=6?{B+1}=6?{C+1}=7)
 
 .Test 5: Push a thing on a raft
@@ -58,7 +59,7 @@ GCEP(5,1)->B
 GCEP(5,2)->C
 Return!If A?B?C
 MVER(A,1,4,2)
-MVEF(A,1,0,2)
+MVEF(A,1,0,0)
 ASRT({A+1}=1?{B+1}=6?{C+1}=10)
 
 .Test 6: Force of thing pushed on raft
@@ -69,7 +70,7 @@ GCEP(6,1)->B
 GCEP(6,2)->C
 Return!If A?B?C
 MVER(A,1,5,2)
-MVEF(A,1,0,2)
+MVEF(A,1,0,0)
 ASRT({A+1}=1?{B+1}=6?{C+1}=6)
 
 .Test 7: More raft "backboards"
@@ -82,10 +83,10 @@ GCEP(7,1)->B
 GCEP(7,2)->C
 Return!If A?B?C
 MVER(A,3,6,2)
-MVEF(A,-1,0,2)
+MVEF(A,-1,0,0)
 {A+1}=8?{B+1}=8?{C+1}=0
 ->D
-MVEF(A,1,0,2)
+MVEF(A,1,0,0)
 {A+1}=9?{B+1}=8
 ->E
 ASRT(D?E)
@@ -97,14 +98,14 @@ ASRT(D?E)
 GCEP(0)->A
 Return!If A
 MVER(A,6,7,2)
-MVEF(A,-1,0,2)
+MVEF(A,-1,0,0)
 {A+1}=6?{A+5}=2
 ->B
-MVEF(A,1,0,2)
-MVEF(A,1,0,2)
+MVEF(A,1,0,0)
+MVEF(A,1,0,0)
 {A+1}=8?{A+5}=2
 ->C
-MVEF(A,1,0,2)
+MVEF(A,1,0,0)
 {A+1}=8?{A+5}=2
 ->D
 ASRT(B?C?D)
