@@ -58,6 +58,24 @@ Lbl MVEN {
     GPBA({A+1},{A+2})->{S+14}
     GPBA(D,E)->{S+15}
 
+    .If we're one layer from the player, and we're on a water raft, defer
+    .   movement to the raft, and only proceed if the raft move fails.
+    If {S+23}=1?{S+14}e6
+        GLEA({A+1},{A+2})->G
+        If G
+            GECT({G},{S+12},{S+13})->H
+            If H=5
+                .Try moving the raft
+                MVEN(G,{S+12},{S+13},{S+23}+1)
+
+                .If the move succeeded, then just abort this movement
+                !If T
+                    Goto MVENE
+                End
+            End
+        End
+    End
+
     .If we're trying to move into an impenetrable rock, we're blocked
     If {S+15}e4
         0->{S+20}
