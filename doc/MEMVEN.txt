@@ -62,7 +62,7 @@ Lbl MVEN {
     .   movement to the raft, and only proceed if the raft move fails.
     If {S+23}=1?{S+14}e6
         GLEA({A+1},{A+2})->G
-        If G
+        If G?G!=A
             GECT({G},{S+12},{S+13})->H
             If H=5
                 .Try moving the raft
@@ -173,9 +173,11 @@ Lbl MVEN {
     If {S+23}=0?{S+14}e6        .If it's the player and we're on water
             ?{S+20}!=1?{S+20}<5 .and if it's either a push/block interaction
         .Checking if the bottom entity is a raft
+        Select(T,
         Select(U,
             GLEA({A+1},{A+2})->G
         )->U
+        )->T
 
         If G
             GECT({G},{S+12},{S+13})->H
@@ -185,9 +187,11 @@ Lbl MVEN {
                 .Defer the opposite of our desired movement to the raft
                 S->I
                 -U*5+S->S
+                Select(T,
                 Select(U,
                     MVEN(G,-signed{I+12},-signed{I+13},{I+23}+1)
                 )->I
+                )->J
                 I*5+S->S
                 U+I->U
 
@@ -197,6 +201,8 @@ Lbl MVEN {
                     4->T
                     Goto MVENP
                 End
+
+                J->T
             End
         End
     End
@@ -257,7 +263,7 @@ Lbl MVEN {
         S-5->G
         {A+3}^r->{G}^r
         {S+12}^r->{G+2}^r
-        {S+23}->{G+4}
+        {S+23}+1->{G+4}
         1->U
         0->T
     ElseIf {S+20}=6
@@ -303,7 +309,7 @@ Lbl MVEN {
             -U-1*5+S->G
             {A+3}^r->{G}^r
             {S+12}^r->{G+2}^r
-            {S+23}->{G+4}
+            {S+23}+1->{G+4}
             U++
         ElseIf C=5
             .Raft continues moving if on water
@@ -319,15 +325,17 @@ Lbl MVEN {
             -U-1*5+S->G
             {A+3}^r->{G}^r
             {S+12}^r->{G+2}^r
-            {S+23}->{G+4}
+            {S+23}+1->{G+4}
             U++
         End
     Else
         If C=2
             .Tree standing log, through any interaction, loses leaves
             1->{A}
-        ElseIf C=5
+        ElseIf C=5?{S+23}!=2
             .If a raft stops, try moving stuff off of it if applicable
+            .   (also, the not-equal-two check ensures that the raft actually
+            .   sailed some distance before dropping its items)
 
             .Finding an entity we can try to move off
             Select(T,
