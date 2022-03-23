@@ -127,35 +127,8 @@ Lbl GHEB {
     .Directly returns the pointer to the highest entity below given position
     .Returns 0 if no such entity exists
 
-    .First finding the entity island at this position
-    .  (arguments are already in the right spots)
-    GEIA()->G
-
-    .(if no entity here, just return null pointer)
-    Return!If G
-
-    .Traversing the island's linked list to find the target entity
-    0->T .(pointer to entity)
-    0->U .(max height)
-    {G*2+CE}^r->H
-    While H
-        H+CE->I
-
-        .Checking if the entity is at the right spot
-        .And, checking if the entity is below the max height, but greater
-        .  than our previous best height
-        If {I+1}=r_1?{I+2}=r_2
-          ?{I+5}>=U?{I+5}<r_3
-            I->T
-            {I+5}->U
-        End
-
-        .Going to next list element
-        {I+10}^r->H
-    End
-
-    .Finally, returning the target pointer
-    TReturn
+    0->r_6
+    GICT()Return
 }
 
 Lbl GLEA {
@@ -164,33 +137,8 @@ Lbl GLEA {
     .Directly returns the pointer to the lowest entity at the given pos
     .Returns 0 if no such entity exists
 
-    .First finding the entity island at this position
-    .  (arguments are already in the right spots)
-    GEIA()->G
-
-    .(if no entity here, just return null pointer)
-    Return!If G
-
-    .Traversing the island's linked list to find the target entity
-    0->T   .(pointer to entity)
-    255->U .(max height)
-    {G*2+CE}^r->H
-    While H
-        H+CE->I
-
-        .Checking if the entity is at the right spot
-        .And, checking if the entity is below the prev. best height
-        If {I+1}=r_1?{I+2}=r_2?{I+5}<=U
-            I->T
-            {I+5}->U
-        End
-
-        .Going to next list element
-        {I+10}^r->H
-    End
-
-    .Finally, returning the target pointer
-    TReturn
+    1->r_6
+    GICT()Return
 }
 
 Lbl GLMA {
@@ -201,6 +149,28 @@ Lbl GLMA {
     .Directly returns the pointer to the lowest entity meeting the criteria
     .Returns 0 if no such entity exists
 
+    2->r_6
+    GICT()Return
+}
+
+Lbl GSEH {
+    .Get sorted entity list by height
+    .r1-r2: posX, posY
+    .Directly returns the length of the entity list
+    .Will place the sorted list (pointers to CENT) below stack pointer S
+    .  (the list has lower height at higher addresses, higher height at lower)
+
+    3->r_6
+    GICT()Return
+}
+
+Lbl GICT {
+    .Get (iterate current tile)
+    .Consolidates the functionalities of GHEB, GLEA, GLMA, and GSEH
+    .r1-r2: PosX, PosY
+    .r3-r5: Other relevant arguments to functions
+    .r6: Which function to use (0=GHEB, 1=GLEA, 2=GLMA, 3=GSEH)
+
     .First finding the entity island at this position
     .  (arguments are already in the right spots)
     GEIA()->G
@@ -208,29 +178,66 @@ Lbl GLMA {
     .(if no entity here, just return null pointer)
     Return!If G
 
-    .Traversing the island's linked list to find the target entity
-    0->T   .(pointer to entity)
-    255->U .(max height)
+    .Traversing the island's linked list to find the target entity/entities
+    0->T .(pointer to entity)
+    If r_6=0
+        0->U
+    ElseIf r_6!=3
+        255->U
+    End
+
     {G*2+CE}^r->H
     While H
         H+CE->I
 
-        Select(r_1,
-        Select(r_2,
-        Select(r_3,
-            GECT({I},r_4,r_5)->J
-        )->r_3
-        )->r_2
-        )->r_1
-
         .Checking if the entity is at the right spot
-        .And, checking if the entity is in the right height range
-        .And, checking if it's able to fall off the raft
         If {I+1}=r_1?{I+2}=r_2
-                ?{I+5}<=U?{I+5}>r_3
-                ?nib{GDB1CMOR*2+J}^r
-            I->T
-            {I+5}->U
+            .Making more checks based on the relevant function
+            If r_6=0?{I+5}>=U?{I+5}<r_3
+                I->T
+                {I+5}->U
+            ElseIf r_6=1?{I+5}<=U
+                I->T
+                {I+5}->U
+            ElseIf r_6=2?{I+5}<=U?{I+5}>r_3
+                Select(r_1,
+                Select(r_2,
+                Select(r_3,
+                    GECT({I},r_4,r_5)->J
+                )->r_3
+                )->r_2
+                )->r_1
+           
+                If nib{GDB1CMOR*2+J}^r
+                    I->T
+                    {I+5}->U
+                End
+            ElseIf r_6=3
+                .If the entity is at the right spot, we can insert it!
+                If T
+                    .Find first element whose height is less
+                    T-1->J
+                    For(K,0,J)
+                        {-K-1*2+S}^r->L
+                    EndIf {I+5}<{L+5}
+
+                    .Shift over greater elements
+                    T-K->J .(num elements to shift)
+                    If J
+                        -T*2+S->L
+                        Copy(L,L-2,J*2)
+                    End
+
+                    .Insert at our desired position
+                    I->{-K-1*2+S}^r
+                Else
+                    .Empty list, just insert at the first position
+                    I->{S-2}^r
+                End
+
+                .Incrementing list length
+                T++
+            End
         End
 
         .Going to next list element
@@ -241,62 +248,7 @@ Lbl GLMA {
     TReturn
 }
 
-Lbl GSEH {
-    .Get sorted entity list by height
-    .r1-r2: posX, posY
-    .Directly returns the length of the entity list
-    .Will place the sorted list (pointers to CENT) below stack pointer S
-    .  (the list has lower height at higher addresses, higher height at lower)
-
-    .First finding the entity island at this position
-    .  (arguments are already in the right spots)
-    GEIA()->G
-
-    .(if no entity here, just return an empty list)
-    Return!If G
-
-    .Traversing the island's linked list to find entities at this position
-    0->T
-    {G*2+CE}^r->H
-    While H
-        H+CE->I
-
-        .Checking if the entity is at the right spot
-        If {I+1}=r_1?{I+2}=r_2
-            .If the entity is at the right spot, we can insert it!
-            If T
-                .Find first element whose height is less
-                T-1->J
-                For(K,0,J)
-                    {-K-1*2+S}^r->L
-                EndIf {I+5}<{L+5}
-
-                .Shift over greater elements
-                T-K->J .(num elements to shift)
-                If J
-                    Copy(-T*2+S,-T-1*2+S,J*2)
-                End
-
-                .Insert at our desired position
-                I->{-K-1*2+S}^r
-            Else
-                .Empty list, just insert at the first position
-                I->{S-2}^r
-            End
-
-            .Incrementing list length
-            T++
-        End
-
-        .Going to next list element
-        {I+10}^r->H
-    End
-   
-    .Finally, returning our list length
-    TReturn
-}
-
-Lbl IMOW
+Lbl IMOW {
     .Is this entity moving on water?
     .r1-r2: PosX, PosY
     .r3: Entity height
