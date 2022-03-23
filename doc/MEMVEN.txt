@@ -238,11 +238,7 @@ Lbl MVEN {
                 0->T
             Else
                 .Not bottom of stack; defer movement
-                -U-1*5+S->G
-                {A+3}^r->{G}^r
-                {S+12}^r->{G+2}^r
-                {S+23}->{G+4}
-                U++
+                MVENPMTQ()
                 3->T
             End
         Else
@@ -260,11 +256,8 @@ Lbl MVEN {
         .Double move
         MVER(A,D,E,F)
 
-        S-5->G
-        {A+3}^r->{G}^r
-        {S+12}^r->{G+2}^r
-        {S+23}+1->{G+4}
-        1->U
+        0->U
+        MVENPMTQ()
         0->T
     ElseIf {S+20}=6
         .Stop by refusal
@@ -306,11 +299,7 @@ Lbl MVEN {
                 Goto MVENE
             End
 
-            -U-1*5+S->G
-            {A+3}^r->{G}^r
-            {S+12}^r->{G+2}^r
-            {S+23}+1->{G+4}
-            U++
+            MVENPMTQ()
         ElseIf C=5
             .Raft continues moving if on water
             Select(U,
@@ -322,11 +311,7 @@ Lbl MVEN {
                 Goto MVENE
             End
 
-            -U-1*5+S->G
-            {A+3}^r->{G}^r
-            {S+12}^r->{G+2}^r
-            {S+23}+1->{G+4}
-            U++
+            MVENPMTQ()
         End
     Else
         If C=2
@@ -377,5 +362,18 @@ Lbl MVEN {
     End
 
     .(return)
+    Return
+}
+
+Lbl MVENPMTQ {
+    .MVEN Push Movement To Queue
+    .Pushes the current movement in MVEN to the movement queue
+
+    -U-1*5+S->G
+    {A+3}^r->{G}^r
+    {S+12}^r->{G+2}^r
+    {S+23}+1->{G+4}
+    U++
+
     Return
 }
