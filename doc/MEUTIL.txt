@@ -11,3 +11,24 @@ Lbl CPRV {
         {r_1+r_3-G}->{r_2+r_3-G}
     End
 }
+
+Lbl DGWP {
+    .DispGraph with parity
+    .(Will call DispGraph while also tracking its parity)
+
+    DispGraph^r
+    1-CP->CP
+
+    Return
+}
+
+Lbl DGUP {
+    .DispGraph until a certain parity is met
+    .r1: Desired parity
+
+    If CP!=r_1
+        DGWP()
+    End
+
+    Return
+}

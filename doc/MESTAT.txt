@@ -8,6 +8,7 @@ L_1+6->^PD
 L_1+8->^MW
 L_1+10->^MH
 L_1+12->^CX+2->^CY+2->^CZ
+L_1+18->^CP
 
 .Filenames
 "appvMEEMAP"->Str1FEMAP
