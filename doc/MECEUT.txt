@@ -1,0 +1,110 @@
+Lbl RMEN {
+    .Removes an entity from CENT
+    .Will update its pointer in EPTR to 0
+    .r1: Pointer to entity
+    .Returns nothing
+
+    .Allocating stack
+    S-2->S
+    A->{S}^r
+
+    .Saving pointer to entity to remove in A
+    r_1->A
+
+    .First removing the entity from its linked list
+    {A+8}^r->G    .prev pointer
+    {A+10}^r->H   .next pointer
+
+    .Correcting the next entity's previous entity pointer
+    If H
+        G->{H+8+CE}^r
+    End
+
+    .Correcting the previous entity's (or list head's) next entity pointer
+    If G
+        H->{G+10+CE}^r
+    Else
+        .If list head, find which island owns this entity
+        Select(H,
+            GEIA({A+1},{A+2})->I
+        )->H
+        H->{I*2+CE}^r
+    End
+
+    .Changing the pointer to this entity in EPTR to 0 (DNE)
+    GEPP({A+3},{A+4})->G
+    0->{G}^r
+
+    .Copying in the final entity in CENT to where this entity was
+    {CE}^r->G       .num islands
+    G*2+2+CE->H     .pointer to pointer to first empty slot
+    {H}^r-12+CE->I  .pointer to final entity
+    I->{H}^r        .resetting first empty pointer
+    If A!=I
+        MENC(I,A)   .performing movement
+    End
+
+    .Fixing stack
+    {S}^r->A
+    S+2->S
+
+    Return
+}
+
+Lbl MENC {
+    .Move entity in CENT
+    .Will an entity's data around in CENT
+    .r1: Pointer to entity
+    .r2: New pointer to locate entity at
+    .Returns nothing
+
+    .Allocating stack
+    S-4->S
+    A->{S}^r
+    B->{S+2}^r
+
+    .Saving entity pointers in A and B
+    r_1->A
+    r_2->B
+
+    {A+8}^r->G  .prev pointer
+    {A+10}^r->H .next pointer
+
+    .Correcting the next entity's previous entity pointer
+    If H
+        B-CE->{H+8+CE}^r
+    End
+
+    .Correcting the previous entity's (or list head's) next entity pointer
+    If G
+        B-CE->{G+10+CE}^r
+    Else
+        .If list head, find which island owns this entity
+        GEIA({A+1},{A+2})->I
+        B-CE->{I*2+CE}^r
+    End
+
+    .Changing the pointer to this entity in EPTR
+    GEPP({A+3},{A+4})->G
+    B-CE->{G}^r
+
+    .If this is a raft containing another log,
+    .   changing its pointer in EPTR as well
+    If {A+7}?{A}=5??{A}=6
+        GEPP({A+6},{A+7})->G
+        CE-B->{G}^r
+    End
+
+    .Actually performing the movement
+    Copy(A,B,12)
+
+    ."Invalidating" the previous entity position for debugging purposes
+    -1->{A}
+
+    .Fixing stack
+    {S}^r->A
+    {S+2}^r->B
+    S+4->S
+
+    Return
+}
