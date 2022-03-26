@@ -1,3 +1,5 @@
+.Create Save
+
 Lbl CSAV {
     .Creates a new savefile for MExp
     .Directly returns the creation status (0 good, higher bad)

@@ -1,3 +1,5 @@
+.Entity Utilities
+
 Lbl GECT {
     .Get entity collision type
     .r1: entity type

@@ -1,3 +1,5 @@
+.Move Entity (single Tick)
+
 Lbl MVET {
     .Moves entities through a single tick
     .r1: Number of actions to execute in the current queue frame

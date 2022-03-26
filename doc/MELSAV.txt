@@ -1,3 +1,5 @@
+.Load Save
+
 Lbl LSAV {
     .Loads a save file
     .Directly returns the load status (0 good, higher bad)

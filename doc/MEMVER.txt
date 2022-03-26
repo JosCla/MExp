@@ -1,3 +1,5 @@
+.Move Entity (Raw)
+
 Lbl MVER {
     .Move entity (raw)
     .Just moves an entity without any logic or collision checking

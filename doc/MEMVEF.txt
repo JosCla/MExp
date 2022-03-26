@@ -1,3 +1,5 @@
+.Move fully
+
 Lbl MVEF {
     .Fully moves an entity
     .  (Temporary function for making sure this all works well)
