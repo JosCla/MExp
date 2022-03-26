@@ -1,13 +1,14 @@
 1^^#~~~~~~^^
 2r~~##~....r
-3..p###^^^~~
+3.p1###^^^~~
 4..p1#.~~~~~
-5=|.~~~~~~~~
-6||...r~~~~~
-7^1|~~~~~~~~
+5.p1#..~~~~~
+6=|.~~~~~~~~
+7||...r~~~~~
 8...t1...~~~
 9.......p~~~
 A..l^^..1l^^
+B=.........r
 
 Test 1: Tall raft
     Even if there are several items stacked on a raft on water, you can still
@@ -19,19 +20,20 @@ Test 2: Complex raft push
     and when the right raft reaches the shore, the log on it should roll off
     (This is mainly to test that complex movement queueing works)
 Test 3: Raft stairs
-    The player should be able to walk up the raft stairs
+    The player should be able to walk up the raft stairs, and should be able
+    to push a log up those stairs as well
 Test 4: Lean a log onto the raft
     The player should be able to tip a standing log onto a raft
-Test 5: Player and rolling logs
+Test 5: Push over a stuck raft
+    The player should be able to push a log over the stuck raft as if it was
+    land
+Test 6: Player and rolling logs
     The player should not be able to move on or off of rolling logs in water
     (Can't move from right-to-left nor left-to-right log, and can't move from
     right log onto land)
-Test 6: Pushing stuff from rolling logs
+Test 7: Pushing stuff from rolling logs
     Even if you can't move off a rolling log, you can still push stuff from it
     (Left log in water, right log on land. Stand on left, can push right)
-Test 7: Standing log roll over rolling into water
-    The standing log should roll over the rolling log into the water,
-    but it should be a vertical log in the end (horizontal as we see it)
 Test 8: Tree versus standing log
     If you push a standing log into a tree (right-to-left), neither should
     fall over.
@@ -42,3 +44,7 @@ Test 9: The player shouldn't be able to walk into the water
 Test A: Ladder
     The player should be able to climb laddered tiles
     (and other stuff shouldn't)
+Test B: Pushing log underneath stack
+    If a vertical log is underneath a stack of other items, then upon tilting
+    the log up to a standing log, the other items should increase their height
+    accordingly.
