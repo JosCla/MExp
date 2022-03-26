@@ -60,6 +60,13 @@ Lbl MKRF {
 
     .Deleting the absorbed entity
     RMEN(B)
+
+    .Fixing stack
+    {S}^r->A
+    {S+2}^r->B
+    S+4->S
+
+    Return
 }
 
 Lbl CHEI {
