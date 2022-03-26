@@ -163,10 +163,7 @@ Lbl MVEN {
         MVEN(B,signed{S+12},signed{S+13},{S+23}+1)
 
         .Restoring pointers to curr/target ent
-        {S+16}^r->G
-        {G}^r+CE->A
-        {S+18}^r->G
-        {G}^r+CE->B
+        MVENRPTR()
     End
 
     .Handling potential rafting from player pushing
@@ -194,6 +191,9 @@ Lbl MVEN {
                 )->J
                 I*5+S->S
                 U+I->U
+
+                .Restoring pointers to curr/target ent
+                MVENRPTR()
 
                 .If the raft moved successfully, then block the rest of
                 .   our own movement.
@@ -340,6 +340,9 @@ Lbl MVEN {
                 )->T
                 I*5+S->S
                 U+I->U
+
+                .Restoring pointers to curr/target ent
+                MVENRPTR()
             End
         End
     End
@@ -372,6 +375,7 @@ Lbl MVEN {
                         ->J
                     If J??{I}={G+3}?{I+1}={G+4}
                         .Found a queued movement for one log or the other
+                        U*5+S->S
                         Goto MVENE
                     End
                 End
@@ -383,6 +387,8 @@ Lbl MVEN {
                 MKRF(G,A)
             )->U
             )->T
+
+            .(no need to restore ent pointers since we're at MVENE)
         End
 
         U*5+S->S .(recovering stack)
@@ -418,6 +424,18 @@ Lbl MVENPMTQ {
     {S+12}^r->{G+2}^r
     {S+23}+1->{G+4}
     U++
+
+    Return
+}
+
+Lbl MVENRPTR {
+    .MVEN Restore Pointers
+    .Restores the pointers to the current and target entities
+
+    {S+16}^r->G
+    {G}^r+CE->A
+    {S+18}^r->G
+    {G}^r+CE->B
 
     Return
 }
