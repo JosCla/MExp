@@ -1,0 +1,13 @@
+~~~~~~~~~~~~
+~~^^^^~~888~
+~^^^r~~~yr8~
+~^^.^^~~888~
+~-t|^x~~~~7~
+~.....~~216~
+~~....~~345~
+~~~~~~~~~~~~
+
+(the whole map is like 50 height btw)
+
+x: several standing logs on top of a raft
+y: raft on several standing logs on a raft
