@@ -344,6 +344,50 @@ Lbl MVEN {
         End
     End
 
+    .MVENR (MVEN Raft checking)
+    Lbl MVENR
+
+    .Finally, checking if we should combine this entity with the one below it
+    .   to form a raft
+    .The top and bottom entities must both be single logs (the bottom should
+    .   not be standing), and neither should have any pending movements in
+    .   the building queue.
+    If {A}=1??{A}=3??{A}=4
+        -U*5+S->S .(absorbing queue into stack)
+
+        Select(T,
+        Select(U,
+            GHEB({A+1},{A+2},{A+5})->G
+        )->U
+        )->T
+
+        If G?{G}=3??{G}=4
+            .Both entities are single logs
+
+            .Checking for queued movements
+            If U
+                For(H,0,U-1)
+                    H*5+S->I
+                    {I}={A+3}?{I+1}={A+4}
+                        ->J
+                    If J??{I}={G+3}?{I+1}={G+4}
+                        .Found a queued movement for one log or the other
+                        Goto MVENE
+                    End
+                End
+            End
+
+            .If no queued movements, combine our two entities into a raft!
+            Select(T,
+            Select(U,
+                MKRF(G,A)
+            )->U
+            )->T
+        End
+
+        U*5+S->S .(recovering stack)
+    End
+
     .MVENE (MVEN End)
     Lbl MVENE
     {S}^r->A
