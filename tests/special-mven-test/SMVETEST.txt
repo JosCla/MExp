@@ -1,0 +1,166 @@
+.PRELIMINARY
+L_1+768->S
+prgmMESTAT
+LSAV()->A
+ReturnIf A
+
+BSTK()
+
+.Test 1: Tall raft
+.    Even if there are several items stacked on a raft on water, you can still
+.    raft around while atop all of it
+GCEP(0)->A
+GCEP(1,1)->B
+Return!If A?B
+MVER(A,3,0,7)
+MVEF(A,-1,0,0)
+ASRT({A+1}=9?{B+1}=9)
+
+.Test 2: Complex raft push
+.    The raft on the left has the player on it, the raft on the right has a
+.    rolling log on it (vertical as we see it)
+.    When the player pushes right, the two rafts should depart oppositely,
+.    and when the right raft reaches the shore, the log on it should roll off
+.    (This is mainly to test that complex movement queueing works)
+GCEP(0)->A
+GCEP(2,1)->B
+GCEP(2,2)->C
+GCEP(2,3)->D
+Return!If A?B?C?D
+MVER(A,4,1,2)
+MVEF(A,1,0,0)
+ASRT({A+1}=2?{B+1}=2?{C+1}=6?{D+1}=10)
+
+.Test 3: Raft stairs
+.    The player should be able to walk up the raft stairs, and should be able
+.    to push a log up those stairs as well
+GCEP(0)->A
+GCEP(3,1)->B
+Return!If A?B
+MVER(A,2,2,2)
+For(C,1,8)
+    MVEF(A,1,0,0)
+End
+ASRT({A+1}=7?{B+1}=8?{B}=3)
+
+.Test 4: Lean a log onto the raft
+.    The player should be able to tip a standing log onto a raft
+GCEP(0)->A
+GCEP(4,1)->B
+GCEP(4,2)->C
+Return!If A?B?C
+MVER(A,3,3,2)
+MVEF(A,1,0,0)
+ASRT({A+1}=4?{B+1}=5?{B}=3?{C+1}=5)
+
+.Test 5: Push over a stuck raft
+.    The player should be able to push a log over the stuck raft as if it was
+.    land
+GCEP(0)->A
+GCEP(5,1)->B
+Return!If A?B
+MVER(A,2,4,2)
+MVEF(A,1,0,0)
+{A+1}=3?{B+1}=4
+    ->C
+MVEF(A,1,0,0)
+{A+1}=4?{B+1}=5
+    ->D
+MVEF(A,1,0,0)
+{A+1}=5?{B+1}=6
+    ->E
+ASRT(C?D?E)
+
+.Test 6: Player and rolling logs
+.    The player should not be able to move on or off of rolling logs in water
+.    (Can't move from right-to-left nor left-to-right log, and can't move from
+.    right log onto land)
+GCEP(0)->A
+Return!If A
+MVER(A,1,5,2)
+MVEF(A,1,0,0)
+{A+1}=1->B
+MVEF(A,-1,0,0)
+{A+1}=0->C
+MVER(A,2,5,2)
+MVEF(A,1,0,0)
+{A+1}=2->D
+MVEF(A,-1,0,0)
+{A+1}=2->E
+ASRT(B?C?D?E)
+
+.Test 7: Pushing stuff from rolling logs
+.    Even if you can't move off a rolling log, you can still push stuff from it
+.    (Left log in water, right log on land. Stand on left, can push right)
+GCEP(0)->A
+GCEP(7,2)->B
+Return!If A?B
+MVER(A,1,6,2)
+MVEF(A,1,0,0)
+ASRT({A+1}=1?{B+1}=5)
+
+.Test 8: Tree versus standing log
+.    If you push a standing log into a tree (right-to-left), neither should
+.    fall over.
+.    If you push a tree into a standing log (left-to-right), both should fall
+.    over.
+GCEP(8,1)->A
+GCEP(8,2)->B
+Return!If A?B
+MVEF(B,-1,0,1)
+{A+1}=4?{B+1}=5
+    ->C
+MVEF(A,1,0,1)
+{A+1}=5?{A}=3?{B+1}=6?{B}=3
+    ->D
+ASRT(C?D)
+
+.Test 9: The player shouldn't be able to walk into the water
+.    Surprise!
+GCEP(0)->A
+Return!If A
+MVER(A,8,8,2)
+MVEF(A,1,0,0)
+ASRT({A+1}=8)
+
+.Test A: Ladder
+.    The player should be able to climb laddered tiles
+.    (and other stuff shouldn't)
+GCEP(0)->A
+GCEP(10,1)->B
+Return!If A?B
+MVER(A,2,9,2)
+MVEF(A,1,0,0)
+MVEF(B,1,0,1)
+ASRT({A+1}=3?{A+5}=4?{B+1}=8?{B+5}=2)
+
+.Test B: Pushing log underneath stack
+.    If a vertical log is underneath a stack of other items, then upon tilting
+.    the log up to a standing log, the other items should increase their height
+.    accordingly.
+GCEP(0)->A
+GCEP(11,1)->B
+GCEP(11,2)->C
+GCEP(11,4)->D
+Return!If A?B?C?D
+MVER(A,0,10,2)
+MVEF(A,1,0,0)
+{B}=1?{B+5}=2?{C+5}=4?{D+5}=6
+    ->E
+MVEF(A,1,0,0)
+{B}=3?{B+5}=2?{C+5}=3?{D+5}=5
+    ->F
+ASRT(E?F)
+
+.Test C: Stack correctness
+CSTK()
+
+.DEPENDENCIES
+prgmMEWORL
+prgmMELSAV
+prgmMEEUTL
+prgmMEMVER
+prgmMEMVEN
+prgmMEMVEF
+prgmMEMVET
+prgmMEUTIL
