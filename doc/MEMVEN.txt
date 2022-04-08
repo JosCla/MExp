@@ -285,11 +285,9 @@ Lbl MVEN {
             )->U
             0->T
 
-            If G
-                Goto MVENE
+            !If G
+                1->{A}
             End
-
-            1->{A}
         ElseIf C=3
             .Rolling log continues to roll (if grounded)
             Select(U,
@@ -297,11 +295,9 @@ Lbl MVEN {
             )->U
             0->T
 
-            If G
-                Goto MVENE
+            !If G
+                MVENPMTQ()
             End
-
-            MVENPMTQ()
         ElseIf C=5
             .Raft continues moving if on water
             Select(U,
@@ -309,11 +305,9 @@ Lbl MVEN {
             )->U
             0->T
 
-            If G!=1??{S+14}e6=0
-                Goto MVENE
+            !If G!=1??{S+14}e6=0
+                MVENPMTQ()
             End
-
-            MVENPMTQ()
         End
     Else
         If C=2
