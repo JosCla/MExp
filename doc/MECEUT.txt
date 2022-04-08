@@ -41,7 +41,7 @@ Lbl RMEN {
     {CE}^r->G       .num islands
     G*2+2+CE->H     .pointer to pointer to first empty slot
     {H}^r-12+CE->I  .pointer to final entity
-    I->{H}^r        .resetting first empty pointer
+    I-CE->{H}^r     .resetting first empty pointer
     If A!=I
         MENC(I,A)   .performing movement
     End
