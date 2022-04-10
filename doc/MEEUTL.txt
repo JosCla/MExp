@@ -56,12 +56,16 @@ Lbl MKRF {
     .Then, placing the second entity id in the last bytes of the first entity
     {B+3}^r->{A+6}^r
 
-    .Updating the pointer to the absorbed entity in EPTR
+    .Getting the pointer to the absorbed entity in EPTR
     GEPP({B+3},{B+4})->G
-    CE-A->{G}^r
 
     .Deleting the absorbed entity
-    RMEN(B)
+    Select(G,
+        RMEN(B)
+    )->G
+
+    .Updating the pointer to the absorbed entity in EPTR
+    CE-A->{G}^r
 
     .Fixing stack
     {S}^r->A
