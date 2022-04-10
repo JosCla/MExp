@@ -84,7 +84,7 @@ Return!If A
 MVEF(A,1,0,1)
 GCEP(8,1)->A
 GCEP(8,2)->B
-ASRT(A>CE?{A}=3?{B}=1?{A+5}=3)
+ASRT(A>CE?{A}=3?{B}=1?{A+5}=4)
 
 .Test 9: Stack Correctness
 CSTK()
