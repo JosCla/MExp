@@ -1,0 +1,90 @@
+.PRELIMINARY
+L_1+768->S
+prgmMESTAT
+LSAV()
+
+BSTK()
+
+.Test 1: Basic raft combination
+.    Push the left log into the right one, and you get a raft!
+GCEP(1,1)->A
+Return!If A
+MVEF(A,1,0,1)
+GCEP(1,1)->A
+GCEP(1,2)->B
+ASRT(A<CE?CE-A=(B-CE)?{B}=6?{B+1}=2)
+
+.Test 2: Standing log doesn't roll over
+.    This should also make a raft. The left log, a standing log, should
+.    not fully roll over the right log, a rolling log.
+GCEP(2,1)->A
+Return!If A
+MVEF(A,1,0,1)
+GCEP(2,1)->A
+GCEP(2,2)->B
+ASRT(A<CE?{B}=6?{B+1}=2)
+
+.Test 3: Roll over raft
+.    A rolling log should roll straight across a vertical log, rather than
+.    becoming a raft with it.
+GCEP(3,1)->A
+Return!If A
+MVEF(A,1,0,1)
+GCEP(3,1)->A
+GCEP(3,2)->B
+ASRT(A>CE?{A+1}=3?{B+1}=2?{A}=4?{B}=3)
+
+.Test 4: Roll to stop to raft
+.    If a rolling log stops on top of a vertical log, however, it should
+.    combine with it to form a raft.
+GCEP(4,1)->A
+Return!If A
+MVEF(A,1,0,1)
+GCEP(4,1)->A
+GCEP(4,2)->B
+GCEP(4,3)->C
+ASRT(A<CE?{B}=3?{C}=5?{C+1}=3)
+
+.Test 5: Stack onto raft
+.    If a raft combination happens, then anything on top of the log absorbed
+.    into the raft should end up directly on top of the raft.
+GCEP(5,1)->A
+Return!If A
+MVEF(A,1,0,1)
+GCEP(5,1)->A
+GCEP(5,2)->B
+GCEP(5,3)->C
+ASRT(A<CE?{C}=6?{B+5}=2)
+
+.Test 6: Land raft
+.    If a standing log tries to roll over a rolling log and fails half-way
+.    through, the two should combine into a raft.
+GCEP(6,1)->A
+Return!If A
+MVEF(A,1,0,1)
+GCEP(6,1)->A
+GCEP(6,2)->B
+ASRT(A<CE?{B}=6)
+
+.Test 7: Land raft (part 2)
+.    If a rolling log stops rolling across a vertical log, it should also
+.    combine into a raft.
+GCEP(7,1)->A
+Return!If A
+MVEF(A,1,0,1)
+GCEP(7,1)->A
+GCEP(7,2)->B
+ASRT(A<CE?{B}=5)
+
+.Test 8: Lie on a standing log
+.    If a log stops on top of a standing log, it should not combine into a
+.    raft. I wanna keep that cool bridge-building behavior!
+GCEP(8,1)->A
+Return!If A
+MVEF(A,1,0,1)
+GCEP(8,1)->A
+GCEP(8,2)->B
+ASRT(A>CE?{A}=3?{B}=1?{A+5}=3)
+
+.Test 9: Stack Correctness
+CSTK()
