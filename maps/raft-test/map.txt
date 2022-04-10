@@ -1,0 +1,32 @@
+1=|~~~~~~~~~
+21|~~~~~~~~~
+3|=~~~~~~~~~
+4|==r~~~~~~~
+5=|~~~~~~~~~
+61|r~~~~~~~~
+7|=r~~~~~~~~
+811~~~~~~~~~
+
+Test 1: Basic raft combination
+    Push the left log into the right one, and you get a raft!
+Test 2: Standing log doesn't roll over
+    This should also make a raft. The left log, a standing log, should
+    not fully roll over the right log, a rolling log.
+Test 3: Roll over raft
+    A rolling log should roll straight across a vertical log, rather than
+    becoming a raft with it.
+Test 4: Roll to stop to raft
+    If a rolling log stops on top of a vertical log, however, it should
+    combine with it to form a raft.
+Test 5: Stack onto raft
+    If a raft combination happens, then anything on top of the log absorbed
+    into the raft should end up directly on top of the raft.
+Test 6: Land raft
+    If a standing log tries to roll over a rolling log and fails half-way
+    through, the two should combine into a raft.
+Test 7: Land raft (part 2)
+    If a rolling log stops rolling across a vertical log, it should also
+    combine into a raft.
+Test 8: Lie on a standing log
+    If a log stops on top of a standing log, it should not combine into a
+    raft. I wanna keep that cool bridge-building behavior!

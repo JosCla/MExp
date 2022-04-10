@@ -1,4 +1,4 @@
-..AXE
+.World File Reading Routines
 
 Lbl GHAT {
     .Get height at

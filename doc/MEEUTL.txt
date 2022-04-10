@@ -1,3 +1,5 @@
+.Entity Utilities
+
 Lbl GECT {
     .Get entity collision type
     .r1: entity type
@@ -27,6 +29,50 @@ Lbl GECT {
 
     .Indeterminate type (just return impenetrable by default)
     6Return
+}
+
+Lbl MKRF {
+    .Make a raft from two entities
+    .r1: Pointer to the entity that will become the raft
+    .r2: Pointer to the entity that will be absorbed by the other
+    .Returns nothing
+
+    .Allocating stack
+    S-4->S
+    A->{S}^r
+    B->{S+2}^r
+
+    .Storing pointers in A and B
+    r_1->A
+    r_2->B
+
+    .First, transforming the original entity into a raft
+    If {A}=4
+        6->{A}
+    Else
+        5->{A}
+    End
+
+    .Then, placing the second entity id in the last bytes of the first entity
+    {B+3}^r->{A+6}^r
+
+    .Getting the pointer to the absorbed entity in EPTR
+    GEPP({B+3},{B+4})->G
+
+    .Deleting the absorbed entity
+    Select(G,
+        RMEN(B)
+    )->G
+
+    .Updating the pointer to the absorbed entity in EPTR
+    CE-A->{G}^r
+
+    .Fixing stack
+    {S}^r->A
+    {S+2}^r->B
+    S+4->S
+
+    Return
 }
 
 Lbl CHEI {

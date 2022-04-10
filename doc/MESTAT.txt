@@ -1,4 +1,4 @@
-..AXE
+.Static Memory
 
 .Addresses of various static variables
 L_1->^EM

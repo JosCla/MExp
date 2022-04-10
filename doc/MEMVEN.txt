@@ -1,3 +1,5 @@
+.Move Entity
+
 Lbl MVEN {
     .Moves an entity
     .r1: pointer to entity to move
@@ -163,10 +165,7 @@ Lbl MVEN {
         MVEN(B,signed{S+12},signed{S+13},{S+23}+1)
 
         .Restoring pointers to curr/target ent
-        {S+16}^r->G
-        {G}^r+CE->A
-        {S+18}^r->G
-        {G}^r+CE->B
+        MVENRPTR()
     End
 
     .Handling potential rafting from player pushing
@@ -194,6 +193,9 @@ Lbl MVEN {
                 )->J
                 I*5+S->S
                 U+I->U
+
+                .Restoring pointers to curr/target ent
+                MVENRPTR()
 
                 .If the raft moved successfully, then block the rest of
                 .   our own movement.
@@ -283,11 +285,9 @@ Lbl MVEN {
             )->U
             0->T
 
-            If G
-                Goto MVENE
+            !If G
+                1->{A}
             End
-
-            1->{A}
         ElseIf C=3
             .Rolling log continues to roll (if grounded)
             Select(U,
@@ -295,11 +295,9 @@ Lbl MVEN {
             )->U
             0->T
 
-            If G
-                Goto MVENE
+            !If G
+                MVENPMTQ()
             End
-
-            MVENPMTQ()
         ElseIf C=5
             .Raft continues moving if on water
             Select(U,
@@ -307,11 +305,9 @@ Lbl MVEN {
             )->U
             0->T
 
-            If G!=1??{S+14}e6=0
-                Goto MVENE
+            !If G!=1??{S+14}e6=0
+                MVENPMTQ()
             End
-
-            MVENPMTQ()
         End
     Else
         If C=2
@@ -340,8 +336,58 @@ Lbl MVEN {
                 )->T
                 I*5+S->S
                 U+I->U
+
+                .Restoring pointers to curr/target ent
+                MVENRPTR()
             End
         End
+    End
+
+    .MVENR (MVEN Raft checking)
+    Lbl MVENR
+
+    .Finally, checking if we should combine this entity with the one below it
+    .   to form a raft
+    .The top and bottom entities must both be single logs (the bottom should
+    .   not be standing), and neither should have any pending movements in
+    .   the building queue.
+    If {A}=1??{A}=3??{A}=4
+        -U*5+S->S .(absorbing queue into stack)
+
+        Select(T,
+        Select(U,
+            GHEB({A+1},{A+2},{A+5})->G
+        )->U
+        )->T
+
+        If G?{G}=3??{G}=4
+            .Both entities are single logs
+
+            .Checking for queued movements
+            If U
+                For(H,0,U-1)
+                    H*5+S->I
+                    {I}={A+3}?{I+1}={A+4}
+                        ->J
+                    If J??{I}={G+3}?{I+1}={G+4}
+                        .Found a queued movement for one log or the other
+                        U*5+S->S
+                        Goto MVENE
+                    End
+                End
+            End
+
+            .If no queued movements, combine our two entities into a raft!
+            Select(T,
+            Select(U,
+                MKRF(G,A)
+            )->U
+            )->T
+
+            .(no need to restore ent pointers since we're at MVENE)
+        End
+
+        U*5+S->S .(recovering stack)
     End
 
     .MVENE (MVEN End)
@@ -374,6 +420,18 @@ Lbl MVENPMTQ {
     {S+12}^r->{G+2}^r
     {S+23}+1->{G+4}
     U++
+
+    Return
+}
+
+Lbl MVENRPTR {
+    .MVEN Restore Pointers
+    .Restores the pointers to the current and target entities
+
+    {S+16}^r->G
+    {G}^r+CE->A
+    {S+18}^r->G
+    {G}^r+CE->B
 
     Return
 }
