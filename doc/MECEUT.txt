@@ -4,38 +4,53 @@ Lbl RMEN {
     .Removes an entity from CENT
     .Will update its pointer in EPTR to 0
     .r1: Pointer to entity
-    .Returns nothing
+    .Returns a pointer to the next entity in the linked list, relative to CE
+    .  (returns 0 if there is none)
 
     .Allocating stack
-    S-2->S
+    S-4->S
     A->{S}^r
+    B->{S+2}^r
 
     .Saving pointer to entity to remove in A
     r_1->A
 
     .First removing the entity from its linked list
     {A+8}^r->G    .prev pointer
-    {A+10}^r->H   .next pointer
+    {A+10}^r->B   .next pointer
 
     .Correcting the next entity's previous entity pointer
-    If H
-        G->{H+8+CE}^r
+    If B
+        G->{B+8+CE}^r
     End
 
     .Correcting the previous entity's (or list head's) next entity pointer
     If G
-        H->{G+10+CE}^r
+        B->{G+10+CE}^r
     Else
         .If list head, find which island owns this entity
-        Select(H,
-            GEIA({A+1},{A+2})->I
-        )->H
-        H->{I*2+CE}^r
+        GEIA({A+1},{A+2})->I
+        B->{I*2+CE}^r
     End
 
     .Changing the pointer to this entity in EPTR to 0 (DNE)
     GEPP({A+3},{A+4})->G
     0->{G}^r
+
+    .If the entity is a raft that owns another log, set that log's EPTR to 0
+    .   as well (DNE)
+    If {A+6}?{A}=5??{A}=6
+        GEPP({A+6},{A+7})->G
+        0->{G}^r
+    End
+
+    .If there's nothing left here, set EMAP to zero
+    {A+1}->G
+    {A+2}->H
+    GSEH(G,H)->I
+    !If I
+        0->{H*MW+G+2+EM}
+    End
 
     .Copying in the final entity in CENT to where this entity was
     {CE}^r->G       .num islands
@@ -46,11 +61,15 @@ Lbl RMEN {
         MENC(I,A)   .performing movement
     End
 
+    .Getting ready to return B
+    B->G
+
     .Fixing stack
     {S}^r->A
-    S+2->S
+    {S+2}^r->B
+    S+4->S
 
-    Return
+    GReturn
 }
 
 Lbl MENC {

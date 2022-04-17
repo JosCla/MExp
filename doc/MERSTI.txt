@@ -1,0 +1,188 @@
+.Reset Island
+
+Lbl RSTI {
+    .r1: Island id to reset
+
+    .Allocating stack
+    S-16->S
+    A->{S}^r
+    B->{S+2}^r
+    C->{S+4}^r
+    D->{S+6}^r
+    r_1->D
+
+    .Deleting all entities on the island
+    {D*2+CE}^r->A
+    While A
+        .Getting current entity pointer
+        A+CE->B
+
+        .Removing the entity if it's on the island and is not the player
+        .(and moving A to point to the next entity)
+        GIAT({B+1},{B+2})->G
+        If D=G?{B}!=0
+            RMEN(B)->A
+        Else
+            {B+10}^r->A
+        End
+    End
+
+    .Searching for all entities that this island initially owns, and
+    .   moving them back onto this island
+    {D*2+Y_1}^r->A
+    {A+Y_1}->B
+    For(C,1,B)
+        .Removing the entity
+        GEPP(D,C)->G
+        RMER(G)
+
+        .Re-adding it from IDAT
+        C*8+A->G            .pointer to entity to add, relative to Y_1
+        Copy(G+Y_1,S+8,8)   .putting entity to add on stack
+        ADEN(S+8,D)         .adding entity to the world
+    End
+
+    .Moving the player back onto this island's starting point
+    GCEP(0)->A      .getting pointer to player
+    Copy(A,S+8,8)   .putting player on stack
+    RMEN(A)         .removing the player from the world
+    ADEN(S+8,D)     .adding the player back to our given island
+    .(actually setting their position to the starting point)
+    {D*2+Y_1}^r->G
+    {G+1+Y_1}^r->{A+1}^r
+
+    .Fixing stack
+    {S}^r->A
+    {S+2}^r->B
+    {S+4}^r->C
+    {S+6}^r->D
+    S+16->S
+
+    Return
+}
+
+Lbl RMER {
+    .Remove entity (relative)
+    .Removes an entity given the pointer to its pointer in EPTR
+    .If the relative pointer is positive, it's a normal entity and can be
+    .   removed as such.
+    .If the relative pointer is zero, it's a nonexistent entity and
+    .   doesn't need to be removed.
+    .If the relative pointer is negative, it's a part of a raft, and we need
+    .   to change the raft to a single log.
+    .r1: The pointer to the EPTR entry
+    .Returns:
+    .   0 if the entity was not removed
+    .   1 if the entity was removed normally
+    .   2 if the entity was removed, leaving a log behind
+
+    .Allocating the stack
+    S-6->S
+    A->{S}^r
+    B->{S+2}^r
+    C->{S+4}^r
+
+    r_1->A
+    {A}^r->B
+
+    If B>>0
+        .Positive relative pointer. Remove as a normal entity.
+        B+CE->C
+
+        If {C+6}?{C}=5??{C}=6
+            .However, if it's a raft and it owns another log, just leave log
+
+            .Set EPTR of other log to this
+            GEPP({C+6},{C+7})->G
+            B->{G}^r
+
+            .Set EPTR of this to 0 for nonexistent
+            0->{A}^r
+
+            .Change entity type to log
+            {C}-2->{C}
+
+            .Make this entity have the entity id of the contained log
+            {C+6}^r->{C+3}^r
+            0->{C+6}^r
+
+            2->T
+        Else
+            .If it isn't a raft that owns another entity, remove normally
+            RMEN(C)
+
+            1->T
+        End
+    Else!If G
+        .Zero relative pointer. Entity doesn't exist; no need to remove it
+        0->T
+    Else
+        .Negative relative pointer. Entity is part of raft - leave single log
+        -B+CE->C
+
+        .Deleting the owned part of the raft
+        0->{C+6}^r
+        0->{A}^r
+
+        .Changing the raft to a single log
+        {C}-2->{C}
+
+        2->T
+    End
+
+    .Fixing the stack
+    {S}^r->A
+    {S+2}^r->B
+    {S+4}^r->C
+    S+6->S
+
+    TReturn
+}
+
+Lbl ADEN {
+    .Add entity
+    .Adds an entity to CENT given a base pointer to an 8-byte entity
+    .r1: Base pointer to 8-byte entity to add
+    .r2: Island to add it to
+    .Returns the pointer to the entity in CENT
+
+    .Finding first empty slot in CENT
+    {CE}^r->G       .num islands
+    G*2+2+CE->H     .pointer to pointer to first empty slot
+    {H}^r+CE->I     .pointer to first empty slot
+    {H}^r+12->{H}^r .(first empty now points 12 bytes forwards)
+
+    .Copying in our entity into that slot
+    Copy(r_1,I,8)
+
+    .Setting previous entity pointer to 0
+    0->{I+8}^r
+
+    .Finding the first entity in this island's list
+    r_2*2+CE->J     .pointer to pointer to first entity in island's list
+    {J}^r->K        .pointer to first entity
+    {H}^r->{J}^r    .storing our new entity as the first entity in the island
+
+    If K
+        .Island had entities before this one
+        K->{I+10}^r         .(setting new ent next pointer)
+        {H}^r->{K+CE+8}^r   .(setting old ent prev pointer)
+    Else
+        .Island previously had no entities
+        0->{I+10}^r         .(setting new ent next pointer)
+    End
+
+    .Setting the entity's position in EMAP to this island
+    {I+1}->G
+    {I+2}->H
+    r_2->{H*MW+G+2+EM}
+
+    .Setting the entity's pointer in EPTR to the new pointer
+    Select(I,
+        GEPP({I+3},{I+4})->G
+    )->I
+    I-CE->{G}^r
+
+    .Returning the pointer to our new entity
+    IReturn
+}
