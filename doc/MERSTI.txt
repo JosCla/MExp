@@ -46,7 +46,7 @@ Lbl RSTI {
     GCEP(0)->A      .getting pointer to player
     Copy(A,S+8,8)   .putting player on stack
     RMEN(A)         .removing the player from the world
-    ADEN(S+8,D)     .adding the player back to our given island
+    ADEN(S+8,D)->A  .adding the player back to our given island
     .(actually setting their position to the starting point)
     {D*2+Y_1}^r->G
     {G+1+Y_1}^r->{A+1}^r
@@ -161,12 +161,12 @@ Lbl ADEN {
     .Finding the first entity in this island's list
     r_2*2+CE->J     .pointer to pointer to first entity in island's list
     {J}^r->K        .pointer to first entity
-    {H}^r->{J}^r    .storing our new entity as the first entity in the island
+    I-CE->{J}^r    .storing our new entity as the first entity in the island
 
     If K
         .Island had entities before this one
         K->{I+10}^r         .(setting new ent next pointer)
-        {H}^r->{K+CE+8}^r   .(setting old ent prev pointer)
+        I-CE->{K+CE+8}^r   .(setting old ent prev pointer)
     Else
         .Island previously had no entities
         0->{I+10}^r         .(setting new ent next pointer)
