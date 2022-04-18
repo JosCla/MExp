@@ -135,7 +135,7 @@ Lbl CSAV {
         End
 
         .If the island is our starting island, then insert our player
-        If {J+3+Y_2}
+        If {J+4+Y_2}
             .Inserting the player entity data
             0->{T+B}
             0->{T+3+B}^r
