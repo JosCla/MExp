@@ -45,10 +45,10 @@ Lbl RMEN {
     End
 
     .If there's nothing left here, set EMAP to zero
-    {A+1}->G
-    {A+2}->H
-    GSEH(G,H)->I
+    GSEH({A+1},{A+2})->I
     !If I
+        {A+1}->G
+        {A+2}->H
         0->{H*MW+G+2+EM}
     End
 

@@ -113,7 +113,7 @@ Lbl RMER {
 
             1->T
         End
-    Else!If G
+    Else!If B
         .Zero relative pointer. Entity doesn't exist; no need to remove it
         0->T
     Else
