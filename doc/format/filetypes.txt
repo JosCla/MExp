@@ -12,9 +12,9 @@ MEIDAT {
 
     [ island 1
         1B: # entities on this island
-        2B: respawn x and y
+        3B: respawn x and y
         1B: is this the initial island for this map
-        4B: nothing
+        3B: nothing
 
         8B: entity 1 spawn information
         8B: entity 2 spawn information

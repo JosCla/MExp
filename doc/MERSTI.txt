@@ -48,6 +48,7 @@ Lbl RSTI {
     RMEN(A)         .removing the player from the world
     {D*2+Y_2}^r->G          .fixing the player's entity position via its
     {G+1+Y_2}^r->{S+9}^r    .   copy on the stack
+    {G+3+Y_2}^r->{S+13}^r   .(fixing height too)
     ADEN(S+8,D)     .adding the player back to our given island
 
     .Fixing stack
