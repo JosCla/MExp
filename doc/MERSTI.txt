@@ -46,10 +46,9 @@ Lbl RSTI {
     GCEP(0)->A      .getting pointer to player
     Copy(A,S+8,8)   .putting player on stack
     RMEN(A)         .removing the player from the world
-    ADEN(S+8,D)->A  .adding the player back to our given island
-    .(actually setting their position to the starting point)
-    {D*2+Y_2}^r->G
-    {G+1+Y_2}^r->{A+1}^r
+    {D*2+Y_2}^r->G          .fixing the player's entity position via its
+    {G+1+Y_2}^r->{S+9}^r    .   copy on the stack
+    ADEN(S+8,D)     .adding the player back to our given island
 
     .Fixing stack
     {S}^r->A
