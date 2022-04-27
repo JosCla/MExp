@@ -121,7 +121,8 @@ Lbl MVEN {
             max({A+5},F)->I
             {S+15}e6?H=0
                 ->J .(is the target on water)
-            nib{GDB1ENTH*2+G}^r+{B+5}->F .(height just above target)
+            {B}->K
+            nib{GDB1ENTH*2+K}^r+{B+5}->F .(height just above target)
             {B+5}->{S+22} .(height of target)
             If F>I
                 .Above

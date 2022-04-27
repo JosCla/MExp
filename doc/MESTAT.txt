@@ -25,12 +25,7 @@ L_1+18->^CP
 .Use nib{}^r to correctly access entries
 [11101000]->GDB1MEAH
 
-."Entity height"
-.(Per collision type)
-.Use nib{}^r to correctly access entries
-[22211120]->GDB1ENTH
-
-"Can CLimb Ladder"
+"Can Climb Ladder"
 .(Per collision type)
 .Use nib{}^r to correctly access entries
 [10000000]->GDB1CCLL
@@ -69,6 +64,11 @@ L_1+18->^CP
 .  with another entity, this describes how each movement type should downgrade
 .Use nib{}^r to correctly access entries
 [66222666]->GDB1PIRD
+
+."Entity height"
+.(Per entity type)
+.Use nib{}^r to correctly access entries
+[2221111222]->GDB1ENTH
 
 ."Entity rendering upward displacement"
 .Effectively, we want to move certain entities up a certain number of pixels
