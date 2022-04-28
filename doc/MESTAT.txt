@@ -33,7 +33,7 @@ L_1+18->^CP
 "Can Move Off Raft"
 .(Per collision type)
 .Use nib{}^r to correctly access entries
-[01110000]->GDB1CMOR
+[01111000]->GDB1CMOR
 
 ."Entity interaction table (above)"
 .The rows are the actor, and the columns are what is acted upon
