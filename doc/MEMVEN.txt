@@ -282,9 +282,7 @@ Lbl MVEN {
             End
 
             If G
-                Select(U,
-                    MVENCHET(A,G)
-                )->U
+                MVENCHET(A,G)
                 0->T
             End
         ElseIf C=4
@@ -295,9 +293,7 @@ Lbl MVEN {
             0->T
 
             !If G
-                Select(U,
-                    MVENCHET(A,1)
-                )->U
+                MVENCHET(A,1)
                 0->T
             End
         ElseIf C=3
@@ -451,9 +447,14 @@ Lbl MVENRPTR {
 Lbl MVENCHET {
     .MVEN Change Entity Type
     .Moves any entities on top of the given entity if its height changes.
+    .Will preserve queued movements, with count stored in U
     .r1: Pointer to entity whose type should change
     .r2: New entity type
     .Returns nothing
+
+    .Allocating stack
+    -U*5-2+S->S
+    U->{S}^r
 
     .Getting change in height
     {r_1}->G
@@ -477,6 +478,10 @@ Lbl MVENCHET {
 
     .Finally, change the entity type
     r_2->{r_1}
+
+    .Fixing stack
+    {S}^r->U
+    U*5+2+S->S
 
     Return
 }
