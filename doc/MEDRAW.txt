@@ -62,28 +62,25 @@ Lbl DTIL {
     De7*2+(De6)->G .wall type
     B->H .curr render height
     While H<A
-        Pt-Mask(r_3, A-H*2+C, G+8*2*2*2*2+Pic1STIL)
+        Pt-Mask(r_3, A-H*2+C, G+4*2*2*2*2+Pic1STIL)
         H+4->H
     End
 
     .Rendering the tile atop the wall
     If De6
         .If water, render a water tile
-        Pt-Mask(r_3,C,Pic1STIL+112)
+        Pt-Mask(r_3,C,Pic1STIL+128)
     Else
         .If land, find the ground type and render it
         .(The and-mask finds the upper half-byte of the property byte)
         Pt-Mask(r_3,C,D and 240+Pic1STIL)
-
-        .And then, put a grid block on top of it
-        Pt-Mask(r_3,C,Pic1STIL+224)
     End
 
     .Render stumps/rocks if needed
     If De4
-        Pt-Mask(r_3,C-2,Pic1STIL+192)
+        Pt-Mask(r_3,C-2,Pic1STIL+144)
     ElseIf De5
-        Pt-Mask(r_3,C,Pic1STIL+208)
+        Pt-Mask(r_3,C,Pic1STIL+160)
     End
 
     .Then, we can draw the entities at that position if applicable

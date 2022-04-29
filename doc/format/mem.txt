@@ -14,35 +14,34 @@ nB: The max height that each entity collision type can ascend in movement
 
 Pic1SENT (Sprite ENTities) structure
 16*16B: 16 entities sprites
-0: Player
-1: Standing log
-2: Tree standing log
-3: Horizontal log
-4: Vertical log
-5: Horizontal raft
-6: Vertical raft
-7: Snowman (alt: dark snowman)
-8: Sign (alt: unmarked sign)
-9: Postbox (alt: dark postbox)
-10: Alt-Snowman
-11: Alt-Sign
-12: Alt-Postbox
-13: UNUSED
-14: Snowman icon
-15: Island icon
+    0: Player
+    1: Standing log
+    2: Tree standing log
+    3: Horizontal log
+    4: Vertical log
+    5: Horizontal raft
+    6: Vertical raft
+    7: Snowman (alt: dark snowman)
+    8: Sign (alt: unmarked sign)
+    9: Postbox (alt: dark postbox)
+    10: Alt-Snowman
+    11: Alt-Sign
+    12: Alt-Postbox
+    13: UNUSED
+    14: Snowman icon
+    15: Island icon
 
 Pic1STIL (Sprite TILes) structure
-8*16B: 8 tile type sprites
-0: Grass
-1: Rock
-2-6: UNUSED
-7: Water
-8*16B: More tile sprites
-0: Wall
-1: Waterfall (wall but water)
-2: Wall with ladder
-3: Unused, but would be waterfall with ladder?
-4: Impenetrable Rock
-5: Stump
-6: Tile grid
-7: UNUSED
+4*16B: 4 tile type sprites
+    0: Grass
+    1: Rock/Sand
+    2-3: UNUSED
+4*16B: 4 wall type sprites
+    0: Wall
+    1: Waterfall (wall but water)
+    2: Wall with ladder
+    3: Waterfall with ladder
+8*16B: Miscellaneous
+    0: Water
+    1: Impenetrable Rock
+    2: Stump
