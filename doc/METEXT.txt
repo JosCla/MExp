@@ -1,0 +1,69 @@
+.Text Routines
+
+Lbl DTEX {
+    .Display a block of text
+        .The text is stored contiguously in memory from a base pointer.
+        .Null bytes (\0) represent line breaks between strings.
+        .A string starting with a \n represents a page break, where the user
+        .   has to press enter to go to the next page.
+        .If the number of lines required to display the next string is too
+        .   great, a page break will automatically be created.
+        .   (unless there's no way to fit the string on a single page, in
+        .   which case the string will just keep displaying entirely on-page)
+        .A string that starts with a null byte (\0) ends the display.
+    .r1: Pointer to text
+
+    0->G    .lines consumed on current page
+
+    While {r_1} .(ends if current string starts with \0)
+        length(r_1)->H  .length of current string
+        H-1/16+1->I     .lines required for current string
+
+        .If our string starts with \n, insert a page break and goto next str
+        If {r_1}=32
+            DTEXPGBK()
+            Goto DTEXN
+        End
+
+        If G+I>8
+            .We don't have enough lines to display this string! Page break!
+            DTEXPGBK()
+        End
+
+        .Now display the string
+        Output(0,G,r_1)
+
+        .And add the lines it required to display to total lines used
+        G+I->G
+
+        .DTEX go to Next string
+        Lbl DTEXN
+
+        .Moving pointer to next string
+        r_1+H+1->r_1
+    End
+
+    .If there's any text left on the screen, wait for another enter press
+    If G
+        DTEXPGBK()
+    End
+
+    Return
+}
+
+Lbl DTEXPGBK {
+    .DTEX Page Break
+    .Creates a page break in DTEX
+
+    .Waiting for a release and press of the enter button
+    While getKey(9)
+    End
+    Repeat getKey(9)
+    End
+
+    .Clearing the screen, and setting lines to 0
+    ClrHome
+    0->G
+
+    Return
+}
