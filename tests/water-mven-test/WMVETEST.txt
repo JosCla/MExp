@@ -110,7 +110,18 @@ MVEF(A,1,0,0)
 ->D
 ASRT(B?C?D)
 
-.Test 9: Stack correctness
+.Test 9: Fail to move but don't raft
+.    If the player tries to move off a raft onto a rolling log, they should
+.    not be able to move, but they should also not raft away.
+GCEP(0)->A
+GCEP(9,1)->B
+GCEP(9,2)->C
+Return!If A?B?C
+MVER(A,3,8,2)
+MVEF(A,-1,0,0)
+ASRT({A+1}=3?{B+1}=2?{C+1}=3)
+
+.Test 10: Stack correctness
 .   The stack above S should not have been modified.
 CSTK()
 

@@ -6,6 +6,7 @@
 6.#~~~~r...r
 7.|#~~~~~..r
 8~~~~~p=#|~~
+9~|p~~~~~~~r
 
 Test 1: Push logs into water
     If you push rolling into water, it rolls in then stops
@@ -36,3 +37,6 @@ Test 8: Player trying to move on water
     The player should not be able to walk on water. However, if there is a
     vertical log or a raft (not a rolling log!), they should be good to move
     on those, even if they're on water.
+Test 9: Fail to move but don't raft
+    If the player tries to move off a raft onto a rolling log, they should
+    not be able to move, but they should also not raft away.
