@@ -51,7 +51,7 @@ L_1+18->^CP
 .The rows are the actor, and the columns are what is acted upon
 .Left half is land target, right half is water target
 .Use nib{}^r to correctly access entries
-[0333110000001100]->GDB1EITB
+[0333110006661100]->GDB1EITB
 [0105010001011100
 [0105010001011100
 [0303110001011100
