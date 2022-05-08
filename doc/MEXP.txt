@@ -1,0 +1,72 @@
+.MEXP Main File
+
+.Prerequisites
+L_1+768->S
+prgmMESTAT
+ReturnIf LSAV()
+
+.Drawing the screen for the first time
+ClrHome
+0->CP
+DRPL()
+
+.Main repeat loop
+Repeat getKey(15)
+    .DispGraph with parity
+    DGWP()
+
+    .Checking for player inputs
+    If getKey(1)
+        MVPL(0,1)
+    ElseIf getKey(2)
+        MVPL(-1,0)
+    ElseIf getKey(3)
+        MVPL(1,0)
+    ElseIf getKey(4)
+        MVPL(0,-1)
+    ElseIf getKey(54)
+        GCEP(0)->G
+        GEIA({G+1},{G+2})->G
+        RSTI(G)
+        DRPL()
+    End
+End
+Return
+
+Lbl MVPL {
+    .Moves the player by a given offset
+    .r1: MoveX
+    .r2: MoveY
+
+    .Stashing args
+    r_1->A
+    r_2->B
+
+    .Drawing to a parity of 1
+    DGUP(1)
+
+    .Moving the player
+    GCEP(0)->G
+    MVEI(G,A,B,0)
+
+    .Drawing the screen
+    DRPL()
+
+    Return
+}
+
+.Dependencies
+prgmMECEUT
+prgmMEDRAW
+prgmMEEUTL
+prgmMEGDUT
+prgmMEGMVF
+prgmMELSAV
+prgmMEMVEI
+prgmMEMVEN
+prgmMEMVER
+prgmMEMVET
+prgmMERSTI
+prgmMETEXT
+prgmMEUTIL
+prgmMEWORL

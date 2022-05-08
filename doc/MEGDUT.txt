@@ -1,0 +1,32 @@
+.Game Draw UTilities
+
+Lbl DRPL {
+    .Draw the screen, centered at the player
+
+    .Centering the camera at the player
+    CCAM()
+
+    .Redrawing the screen
+    ClrDrawClrDraw^r
+    DSCR(CX,CY,CZ)
+
+    Return
+}
+
+Lbl CCAM {
+    .Center the camera at the player
+    GCEP(0)->G
+
+    .Centering on X
+    {G+1}>=5?{G+1}-5->CX,0->CX
+    CX+12>=MW?MW-12->CX
+
+    .Centering on Y
+    {G+2}>=3?{G+2}-3->CY,0->CY
+    CY+8>=MH?MH-8->CY
+
+    .Centering on Z
+    {G+5}->CZ
+
+    Return
+}

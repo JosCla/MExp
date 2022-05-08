@@ -1,9 +1,8 @@
-.Move fully
+.Game MVEF
 
 Lbl MVEF {
-    .Fully moves an entity
-    .  (This version is used almost exclusively in unit testing - does not draw
-    .  between ticks)
+    .Fully moves an entity (game version)
+    .   (This version is used in the final game - draws between ticks)
     .r1: Entity pointer
     .r2: DispX
     .r3: DispY
@@ -33,6 +32,12 @@ Lbl MVEF {
         .Storing the previous number of frame actions in A
         U->A
 
+        .Redrawing the screen between ticks
+        .   The double DispGraph^r maintains draw parity.
+        DRPL()
+        DispGraph^r
+        DispGraph^r
+
         .Advancing a single tick
         MVET(A)
     End
@@ -41,4 +46,6 @@ Lbl MVEF {
     A*5+S->S
     {S}^r->A
     S+2->S
+
+    Return
 }
