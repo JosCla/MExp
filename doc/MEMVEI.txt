@@ -1,0 +1,35 @@
+.MVEN with Interactions
+
+Lbl MVEI {
+    .MVEN with Interactions
+    .A wrapper for MVEF that also checks IT and IP, interacting with signs and
+    .   snowfolk as needed.
+    .r1: Entity pointer
+    .r2: DispX
+    .r3: DispY
+    .r4: Layers of indirection from player push
+
+    .Clearing the interaction type before moving
+    0->IT
+
+    .Doing the movement
+    MVEF()
+
+    .Checking for interactions
+    If IT
+        ClrHome
+        If IT=1
+            .Sign interaction; for now, just display a sample message
+            Disp "SIGN"
+            Output(0,1,IP>Dec)
+        ElseIf IT=2
+            .Snowfolk interaction
+            Disp "SNOW"
+            Output(0,1,IP>Dec)
+        End
+        Repeat getKey(9)
+        End
+    End
+
+    Return
+}

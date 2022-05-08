@@ -265,6 +265,25 @@ Lbl MVEN {
     ElseIf {S+20}=6
         .Stop by refusal
         4->T
+    ElseIf {S+20}=7
+        .Interact (effectively stop by refusal)
+
+        .Setting interaction type and parameter
+        If {B}=7
+            .Snowman
+            2->IT
+            {B+6}->IP
+        ElseIf {B}=8
+            .Sign
+            1->IT
+            {B+6}^r->IP
+        ElseIf {B}=9
+            .Postbox
+            .TODO
+        End
+
+        .Marking refusal to move
+        4->T
     End
 
     .MVENP (MVEN Post-move)

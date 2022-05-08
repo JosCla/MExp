@@ -35,6 +35,7 @@ Entity Interaction Actions
 4: Push then climb (will move on top if push fails and target is top entity)
 5: Move twice (Standing log rolls over rolling log)
 6: Stop by refusal (player trying to move into water, off sideways log, etc)
+7: Interact (basically "stop by refusal" but also tries to interact)
 
 Entity Movement Results
 
@@ -42,4 +43,4 @@ Entity Movement Results
 1: Blocked normally (bump into wall, can't push something, oob, etc)
 2: Blocked by push (getting the push interaction with target entity)
 3: Blocked by movement queueing (usually from trying to move onto stack)
-4: Couldn't move (player trying to move into water, off sideways log, oob, etc)
+4: Refused move (player trying to move into water, off sideways log, oob, etc)

@@ -1,14 +1,11 @@
 .Static Memory
 
 .Addresses of various static variables
-L_1->^EM
-L_1+2->^CE
-L_1+4->^EP
-L_1+6->^PD
-L_1+8->^MW
-L_1+10->^MH
-L_1+12->^CX+2->^CY+2->^CZ
-L_1+18->^CP
+L_1->^EM+2->^CE+2->^EP+2->^PD
+    +2->^MW+2->^MH
+    +2->^CX+2->^CY+2->^CZ
+    +2->^CP
+    +2->^IT+2->^IP
 
 .Filenames
 "appvMEEMAP"->Str1FEMAP
@@ -39,7 +36,7 @@ L_1+18->^CP
 .The rows are the actor, and the columns are what is acted upon
 .Left half is land target, right half is water target
 .Use nib{}^r to correctly access entries
-[0333340002222200]->GDB1EITA
+[0333347002222200]->GDB1EITA
 [0303010003030000
 [0303010003030000
 [0202000002020000
@@ -51,7 +48,7 @@ L_1+18->^CP
 .The rows are the actor, and the columns are what is acted upon
 .Left half is land target, right half is water target
 .Use nib{}^r to correctly access entries
-[0333110006661100]->GDB1EITB
+[0333117006661100]->GDB1EITB
 [0105010001011100
 [0105010001011100
 [0303110001011100
