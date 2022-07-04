@@ -174,7 +174,7 @@ Lbl GHEB {
     .Returns 0 if no such entity exists
 
     0->r_6
-    GICT()Return
+    Goto GICT
 }
 
 Lbl GLEA {
@@ -184,7 +184,7 @@ Lbl GLEA {
     .Returns 0 if no such entity exists
 
     1->r_6
-    GICT()Return
+    Goto GICT
 }
 
 Lbl GLMA {
@@ -196,7 +196,7 @@ Lbl GLMA {
     .Returns 0 if no such entity exists
 
     2->r_6
-    GICT()Return
+    Goto GICT
 }
 
 Lbl GSEH {
@@ -207,7 +207,7 @@ Lbl GSEH {
     .  (the list has lower height at higher addresses, higher height at lower)
 
     3->r_6
-    GICT()Return
+    Goto GICT
 }
 
 Lbl GICT {
