@@ -55,8 +55,14 @@ Lbl RMEN {
     .Copying in the final entity in CENT to where this entity was
     {CE}^r->G       .num islands
     G*2+2+CE->H     .pointer to pointer to first empty slot
-    {H}^r-12+CE->I  .pointer to final entity
-    I-CE->{H}^r     .resetting first empty pointer
+    {H}^r-12->I     .pointer to final entity
+    I->{H}^r        .resetting first empty pointer
+    If B=I
+        .If the next entity in our list is what we're moving in, reset the
+        .   next pointer to where it will be
+        A->B
+    End
+    I+CE->I
     If A!=I
         MENC(I,A)   .performing movement
     End
