@@ -1,0 +1,47 @@
+.MExp Debug Tools
+
+Lbl PISL {
+    .Print island
+    .r1: Island num
+    .Returns nothing
+    .Displays the island's linked list on the screen
+    .   Outputs, for each entity: type, island id, entity id
+
+    ClrHome
+
+    {r_1*2+CE}^r->G .head pointer to island
+    0->H            .entity number
+
+    While G
+        .Getting entity pointer
+        G+CE->I
+
+        .Printing entity info
+        Output(10,H,{I+4}>Dec)
+        Output(7,H,{I+3}>Dec)
+        Output(0,H,{I}>Dec)
+
+        .Traversing to next entity
+        {I+10}^r->G
+        H++
+    End
+
+    .Outputting total number of entities
+    Output(0,H,H>Dec)
+
+    .Outputting pointer to first empty slot in file
+    {CE}->G
+    {G+1*2+CE}^r->H
+    Output(10,7,H>Dec)
+
+    While getKey(9)
+    End
+    Repeat getKey(9)
+        .Abort program if the user hits DEL
+        If getKey(56)
+            Return^r
+        End
+    End
+
+    Return
+}
