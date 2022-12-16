@@ -51,7 +51,7 @@ Lbl DTIL {
     GPBA()->D
     A-(De5)->A
     r_2++
-    GPBA()->B
+    GHAT()->B
     B-ISAT()->B
     r_2--
 
