@@ -24,8 +24,8 @@ Lbl MVEI {
             Output(0,1,IP>Dec)
         ElseIf IT=2
             .Snowfolk interaction
-            Disp "SNOW"
-            Output(0,1,IP>Dec)
+            Output(0,0,"You made a")
+            Output(0,1,"friend!")
         End
         Repeat getKey(9)
         End
