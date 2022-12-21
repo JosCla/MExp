@@ -18,10 +18,9 @@ Lbl LSAV {
     GetCalc(Str1FEMAP)->EM
     GetCalc(Str1FCENT)->CE
     GetCalc(Str1FEPTR)->EP
-    GetCalc(Str1FPDAT)->PD
 
     .Exiting if that failed
-    !If EM?CE?EP?PD
+    !If EM?CE?EP
         2Return
     End
 

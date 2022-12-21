@@ -24,13 +24,6 @@ Pic1SENT (Sprite ENTities) structure
     6: Vertical raft
     7: Snowman (alt: dark snowman)
     8: Sign (alt: unmarked sign)
-    9: Postbox (alt: dark postbox)
-    10: Alt-Snowman
-    11: Alt-Sign
-    12: Alt-Postbox
-    13: UNUSED
-    14: Snowman icon
-    15: Island icon
 
 Pic1STIL (Sprite TILes) structure
 4*16B: 4 tile type sprites

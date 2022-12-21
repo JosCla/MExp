@@ -119,20 +119,3 @@ MEEPTR {
     ]
     ...
 }
-
-MEPDAT {
-    Player data.
-    Effectively, any save-file information that doesn't fit elsewhere.
-    (UNARCHIVED)
-
-    1B: pointer to islands bitmap
-    1B: pointer to snowfolk bitmap
-    
-    1B: # islands
-    (n/8)B: bitmap for which islands are discovered
-
-    1B: # snowfolk
-    (n/8)B: bitmap for which snowfolk have been discovered
-}
-
-
