@@ -12,192 +12,101 @@ Lbl CSAV {
     .Requires MEIMAP.8xv for size
     .Requires MEIDAT.8xv for entities
 
-    .Saving some variables to the stack
-    S-13->S
+    .Saving variables to the stack
+    S-8->S
     A->{S}^r
     B->{S+2}^r
     C->{S+4}^r
     D->{S+6}^r
-    E->{S+8}^r
-    F->{S+10}^r
 
-    .Allocating space for:
-    .  S+12: number of snowfolk
-    0->{S+12}
-
-    .First opening all needed world files to make sure they're there
-    GetCalc(Str1FIMAP,Y_1)->A .IMAP
-    GetCalc(Str1FIDAT,Y_2)->B .IDAT
-    GetCalc(Str1FHMAP,Y_3)->C .HMAP
-    !If A?B?C
+    .First, opening all needed world files to make sure they're there
+    GetCalc(Str1FIMAP,Y_1)->G .IMAP
+    GetCalc(Str1FIDAT,Y_2)->H .IDAT
+    GetCalc(Str1FHMAP,Y_3)->I .HMAP
+    !If G?H?I
         1->T .Bad exit code (world files not present)
         Goto CSAVE
     End
 
-    .Finding stats like number of islands and total number of entities
-    {Y_2}^r->G  .number of islands
-    0->H  .number of entities
-    For(I,1,G)
-        {2*I+Y_2}^r->J
-        .if you switch {J+Y_2} and H in the following statement, it acts as
-        .  if the line was just {J+Y_2}->H. i don't get it.
-        {J+Y_2}+H->H
+    .Finding stats about this world file
+    {Y_2}^r->A  .number of islands
+    0->G        .number of entities
+    For(H,1,A)
+        {2*H+Y_2}^r->I
+        .when i first wrote this code a while ago, i found that if you switch
+        .   the terms in the sum, it acts as {I+Y_2}->G
+        {I+Y_2}+G->G
     End
-    {Y_1}->E      .map width
-    {Y_1+1}^r->F  .map height
+    {Y_1}->MW   .map width
+    {Y_1+1}->MH .map height
 
     .Deleting save file if it exists
     DelVar Str1FEMAP
     DelVar Str1FCENT
     DelVar Str1FEPTR
-    DelVar Str1FPDAT
 
     .Creating new save files
-    
-    .EMAP is same size as IMAP
-    GetCalc(Str1FEMAP, {Y_1-2}^r)->A
+
+    .EMAP is the same size as IMAP
+    GetCalc(Str1FEMAP,{Y_1-2}^r)->EM
 
     .CENT has 64B + (2B per island) + (12B per entity) + (12B player)
-    GetCalc(Str1FCENT, H*6+G*2+76)->B
+    GetCalc(Str1FCENT,G*6+A*2+76)->CE
 
     .EPTR has 2B num islands + 2B player entity pointer
         + (4B per island (pointer + ent count)) + (2B per entity pointer)
-    GetCalc(Str1FEPTR, G*2+H*2+4)->C
+    GetCalc(Str1FEPTR,A*2+G*2+4)->EP
 
     .Exit early if we couldn't allocate files
-    !If A?B?C
+    !If EM?CE?EP
         2->T .Bad exit code (could not allocate new files)
         Goto CSAVE
     End
 
     .Saving basic properties to files
-    E->{A}                .EMAP map width
-    F->{A+1}              .EMAP map height
-    For(I,2,{Y_1-2}^r-1)  .EMAP zeroing out
-    0->{A+I}
+    MW->{EM}                .EMAP map width
+    MH->{EM+1}              .EMAP map height
+    {Y_1-2}^r-1->H
+    For(G,2,H)              .EMAP zeroing out
+        0->{A+G}
     End
-    G->{B}^r  .CENT num islands
-    G*2+4->T  .CENT first island pointer
-    G->{C}^r  .EPTR num islands
-    G*2+4->U  .EPTR first island pointer
+    A->{CE}^r               .CENT num islands
+    A*2+4->{A*2+2+CE}^r     .CENT first empty pointer
+    A->{EP}^r               .EPTR num islands
+    A*2+4->C                .EPTR first island pointer
 
-    .Then, we iterate through each island
-    For(I,1,G)
-        .Get the pointer to the island
-        {2*I+Y_2}^r->J
+    .Iterating through each island
+    1->D    .first island
+    For(B,1,A)
+        .Getting number of entities on this island
+        {2*E+Y_2}^r->G
+        {G+Y_2}->H
 
-        .Add pointer to island data in CENT if applicable
-        If {J+Y_2}
-            T->{I*2+B}^r
-        Else
-            0->{I*2+B}^r
+        .Add pointer to first entity in CENT
+        0->{B*2+CE}^r
+
+        .Add pointer to island data in EPTR, and num ents on island
+        C->{B*2+EP}^r
+        H->{C+EP}
+        C+2->C
+
+        .Iterate entities, set their EPTR to zero
+        For(I,1,H)
+            0->{C+EP}^r
+            C+2->C
         End
 
-        .Add pointer to island data in EPTR, add num ents on island
-        U->{I*2+C}^r
-        {J+Y_2}->{U+C}
-        U+2->U
-
-        .Iterate through each island's entities
-        For(K,1,{J+Y_2})
-            .Get pointer to the entity
-            8*K+J->L
-
-            .If the entity is a snowfolk, increment snowfolk count
-            {L+Y_2}=7?{S+12}++
-
-            .Find its X and Y, put those in M and N
-            {L+1+Y_2}->M
-            {L+2+Y_2}->N
-
-            .Store the current island number to its pos in EMAP
-            I->{E*N+M+2+A}
-
-            .Copy entity to CENT, add linked list pointers
-            Copy(L+Y_2,T+B,8)
-            If (K=1)
-                0->{T+8+B}^r
-            Else
-                T-12->{T+8+B}^r
-            End
-            If (K={J+Y_2})
-                0->{T+10+B}^r
-            Else
-                T+12->{T+10+B}^r
-            End
-
-            .Add pointer in EPTR
-            T->{U+C}^r
-
-            .Increment positions in CENT and EPTR
-            T+12->T
-            U+2->U
+        .Check if this is the first island
+        If {G+4+Y_2}
+            B->D
         End
 
-        .If the island is our starting island, then insert our player
-        If {J+4+Y_2}
-            .Inserting the player entity data
-            0->{T+B}
-            0->{T+3+B}^r
-            0->{T+6+B}^r
-            {J+1+Y_2}->K->{T+1+B}
-            {J+2+Y_2}->L->{T+2+B}
-            {J+3+Y_2}->{T+5+B}
-
-            .Inserting linked list pointers
-            If {J+Y_2}
-                T-12->{T+8+B}^r
-                T->{T-2+B}^r
-            Else
-                0->{T+8+B}^r
-                T->{I*2+B}^r
-            End
-            0->{T+10+B}^r
-
-            .Updating EMAP
-            I->{L*E+K+2+A}
-
-            .Updating EPTR
-            {C}^r->K
-            T->{K*2+2+C}^r
-
-            T+12->T
-        End
+        .Reset the island
+        RSTI(B)
     End
 
-    .Add first empty pointer to CENT
-    T->{G*2+2+B}^r
-
-    .(And add the empty space in question)
-    For(I,0,59)
-        0->{T+I+B}
-    End
-
-    .Now, allocating space for PDAT
-    .  2B: Player entity, pointer to island and snowfolk bitmap
-    .  1+ceil(islands/8)B: Islands discovered
-    .  1+ceil(snowfolk/8)B: Snowfolk discovered
-    G-1//8+1->I
-    {S+12}-1//8+1->J
-    GetCalc(Str1FPDAT, I+J+4)->D
-    !If D
-        3->T .Bad exit code (Could not allocate PDAT)
-        Goto CSAVE
-    End
-
-    .Adding island bitmap
-    2->K->{D}
-    G->{K+D}
-    For(L,1,I)
-        0->{K+L+D}
-    End
-
-    .Adding snowfolk bitmap
-    3+I->K->{D+1}
-    {S+12}->{K+D}
-    For(L,1,J)
-        0->{K+L+D}
-    End
+    .Resetting the first island to put the player there
+    RSTI(D)
 
     .Good exit code
     0->T
@@ -210,9 +119,7 @@ Lbl CSAV {
     {S+2}^r->B
     {S+4}^r->C
     {S+6}^r->D
-    {S+8}^r->E
-    {S+10}^r->F
-    S+13->S
+    S+8->S
 
     .(return)
     TReturn
