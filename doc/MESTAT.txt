@@ -15,6 +15,7 @@ L_1->^EM+2->^CE+2->^EP
 "appvMEIDAT"->Str1FIDAT
 "appvMEHMAP"->Str1FHMAP
 "appvMEOMAP"->Str1FOMAP
+"appvMESTRS"->Str1FSTRS
 
 ."Max entity ascension height"
 .(Per collision type)

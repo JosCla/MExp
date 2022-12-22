@@ -19,9 +19,9 @@ Lbl MVEI {
     If IT
         ClrHome
         If IT=1
-            .Sign interaction; for now, just display a sample message
-            Disp "SIGN"
-            Output(0,1,IP>Dec)
+            .Sign interaction
+            {IP*2+Y_5}^r->G .relative pointer to sign text
+            DTEX(G)         .displaying text
         ElseIf IT=2
             .Snowfolk interaction
             Output(0,0,"You made a")

@@ -9,8 +9,9 @@ Lbl LSAV {
     GetCalc(Str1FIDAT,Y_2)->H
     GetCalc(Str1FHMAP,Y_3)->I
     GetCalc(Str1FOMAP,Y_4)->J
+    GetCalc(Str1FSTRS,Y_5)->K
 
-    !If G?H?I?J
+    !If G?H?I?J?K
         1Return
     End
 
