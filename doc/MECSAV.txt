@@ -19,11 +19,8 @@ Lbl CSAV {
     C->{S+4}^r
     D->{S+6}^r
 
-    .First, opening all needed world files to make sure they're there
-    GetCalc(Str1FIMAP,Y_1)->G .IMAP
-    GetCalc(Str1FIDAT,Y_2)->H .IDAT
-    GetCalc(Str1FHMAP,Y_3)->I .HMAP
-    !If G?H?I
+    .Loading all world files
+    !If LARC()
         1->T .Bad exit code (world files not present)
         Goto CSAVE
     End

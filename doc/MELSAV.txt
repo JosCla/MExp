@@ -5,13 +5,7 @@ Lbl LSAV {
     .Directly returns the load status (0 good, higher bad)
 
     .Loading all world files
-    GetCalc(Str1FIMAP,Y_1)->G
-    GetCalc(Str1FIDAT,Y_2)->H
-    GetCalc(Str1FHMAP,Y_3)->I
-    GetCalc(Str1FOMAP,Y_4)->J
-    GetCalc(Str1FSTRS,Y_5)->K
-
-    !If G?H?I?J?K
+    !If LARC()
         1Return
     End
 
@@ -31,4 +25,18 @@ Lbl LSAV {
 
     .(return)
     0Return
+}
+
+Lbl LARC {
+    .Loads archived files
+    .Returns whether or not they could all be loaded (1 good, 0 bad)
+
+    GetCalc(Str1FIMAP,Y_1)->G
+    GetCalc(Str1FIDAT,Y_2)->H
+    GetCalc(Str1FHMAP,Y_3)->I
+    GetCalc(Str1FOMAP,Y_4)->J
+    GetCalc(Str1FSTRS,Y_5)->K
+
+    G?H?I?J?K
+    Return
 }
