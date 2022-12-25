@@ -1,0 +1,49 @@
+2
+Welcome to the
+islands!
+  
+Press [ENTER] to
+continue.
+
+Walk
+around with the
+arrow keys and
+press [2ND] to
+reset an island.
+
+Have fun, and
+don't forget to
+hug the
+snowfolk!
+
+
+Here's another
+sign. It should
+contain
+different text
+from the first
+one. It should
+also naturally
+insert page
+breaks when the
+text gets too
+long. However,
+it would be good
+practice for me
+to insert those
+manually as
+well. Like...
+this!
+
+Like that.
+
+Awesome. That
+should work
+swimmingly.
+
+It's just a
+shame that long
+words tend to
+create big
+newlines!
+floccinaucinihilipilification
