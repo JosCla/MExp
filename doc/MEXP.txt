@@ -3,11 +3,39 @@
 .Prerequisites
 L_1+768->S
 prgmMESTAT
+0->CP
+
+.Main menu
+
+ClrHomeClrDraw^r^r
+
+.(text)
+Output(1,1,"MExp")
+Text(12,18,"New Game")
+Text(12,26,"Continue")
+Text(12,34,"Credits")
+Text(12,42,"How to Play")
+Text(12,50,"Exit")
+StoreGDB
+
+.(graphic)
+Pt-Mask(64,34,Pic1STIL+64)
+Pt-Mask(72,34,Pic1STIL+64)
+Pt-Mask(64,32,Pic1STIL)
+Pt-Mask(72,32,Pic1STIL)
+Pt-Mask(64,24,Pic1STIL)
+Pt-Mask(72,24,Pic1STIL)
+Pt-Mask(64,22,Pic1SENT)
+Pt-Mask(72,32,Pic1STIL+160)
+Pt-Mask(72,30,Pic1SENT+16)
+
+Repeat getKey(9)
+    DGWP()
+End
+
 ReturnIf LSAV()
 
 .Drawing the screen for the first time
-ClrHome
-0->CP
 DRPL()
 
 .Main repeat loop
