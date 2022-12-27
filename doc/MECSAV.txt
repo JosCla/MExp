@@ -62,19 +62,30 @@ Lbl CSAV {
         0->{A+G}
     End
     A->{CE}^r               .CENT num islands
-    A*2+4->{A*2+2+CE}^r     .CENT first empty pointer
+    A*2+16->{A*2+2+CE}^r    .CENT first empty pointer
     A->{EP}^r               .EPTR num islands
     A*2+4->C                .EPTR first island pointer
+
+    .Putting a dummy player entity in the world, for island resetting
+    .NOTE: all C in the following statements actually represent A*2+4
+    .   but they're just C since C already holds that value
+    For(G,0,11)
+        0->{C+G+CE}
+    End
+    C->{C-2+EP}^r
 
     .Iterating through each island
     1->D    .first island
     For(B,1,A)
         .Getting number of entities on this island
-        {2*E+Y_2}^r->G
+        {2*B+Y_2}^r->G
         {G+Y_2}->H
 
         .Add pointer to first entity in CENT
-        0->{B*2+CE}^r
+        .NOTE: all C in the following statements actually represent A*2+4
+        .   but they're just C since C already holds that value
+        B=1?C,0
+        ->{B*2+CE}^r
 
         .Add pointer to island data in EPTR, and num ents on island
         C->{B*2+EP}^r
