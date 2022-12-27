@@ -90,3 +90,24 @@ Lbl PAUS {
 
     Return
 }
+
+Lbl DERR {
+    .Display error
+    .r1: Error code
+
+    .Displaying
+    ClrHome
+    If r_1=1
+        "Failed to load world file."->G
+    ElseIf r_1=2
+        "Failed to load save file."->G
+    ElseIf r_1=3
+        "Failed to make save file."->G
+    End
+    Text(4,4,G)
+
+    .Pausing for further input
+    PAUS()
+
+    Return
+}

@@ -56,7 +56,7 @@ Lbl CSAV {
 
     .Exit early if we couldn't allocate files
     !If EM?CE?EP
-        2->T .Bad exit code (could not allocate new files)
+        3->T .Bad exit code (could not allocate new files)
         Goto CSAVE
     End
 

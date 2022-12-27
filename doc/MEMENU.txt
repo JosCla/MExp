@@ -1,0 +1,62 @@
+.MExp Menus
+
+Lbl MMEN {
+    .Main menu
+    .Displays the main menu and allows the user to navigate it
+    .Returns the menu choice:
+    .   0: Continue
+    .   1: New Game
+    .   2: Credits
+    .   3: How to Play
+    .   4: Exit
+
+    .Displaying the menu
+    .(text)
+    Output(1,1,"MExp")
+    Text(12,18,"Continue")
+    Text(12,26,"New Game")
+    Text(12,34,"Credits")
+    Text(12,42,"Exit")
+    StoreGDB
+    
+    .(graphic)
+    Pt-Mask(64,34,Pic1STIL+64)
+    Pt-Mask(72,34,Pic1STIL+64)
+    Pt-Mask(64,32,Pic1STIL)
+    Pt-Mask(72,32,Pic1STIL)
+    Pt-Mask(64,24,Pic1STIL)
+    Pt-Mask(72,24,Pic1STIL)
+    Pt-Mask(64,22,Pic1SENT)
+    Pt-Mask(72,32,Pic1STIL+160)
+    Pt-Mask(72,30,Pic1SENT+32)
+
+    .Getting user input
+    0->G
+    1->H
+    0->I
+    Repeat getKey(9)
+        DGWP()
+    
+        !If I
+            If getKey(1)?G<3
+                G++
+                1->H
+            ElseIf getKey(4)?G
+                G--
+                1->H
+            End
+        Else
+            I--
+        End
+    
+        If H
+            WRect(2,18,8,40)
+            WRect(2,18,8,40)^r
+            Pt-Mask(2,G*8+18,Pic1SENT+48)
+            0->H
+            15->I
+        End
+    End
+
+    GReturn
+}
