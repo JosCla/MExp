@@ -1,6 +1,7 @@
 .Reset Island
 
 Lbl RSTI {
+    .Reset a given island
     .r1: Island id to reset
 
     .Allocating stack

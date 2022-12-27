@@ -1,0 +1,67 @@
+MECEUT: Current Entities Utilities
+    RMEN: Removes an entity from CENT
+    MENC: Move entity in CENT
+MECSAV: Create Save
+    CSAV: Creates a new savefile for MExp
+MEDRAW: Drawing Utilities
+    DSCR: Draws the screen
+    DTIL: Draws a tile
+MEEUTL: Entity Utilities
+    GECT: Get entity collision type
+    MKRF: Make a raft from two entities
+    CHEI: Change entity island
+    GCEP: Get current entities pointer
+    GEPP: Get entity pointers pointer
+    GENI: Get entity island
+    GENP: Get entity position
+    GHEB: Get highest entity below
+    GLEA: Get lowest entity at
+    GLMA: Get Lowest "Move-off-raft" entity Above a certain height
+    GSEH: Get sorted entity list by height
+    GICT: Get (iterate current tile)
+    IMOW: Is this entity moving on water?
+MEGDUT: Game Draw UTilities
+    DRPL: Draw the screen, centered at the player
+    CCAM: Center the camera at the player
+MEGMVF: Game MVEF
+    MVEF: Fully moves an entity (game version)
+MELSAV: Load Save
+    LSAV: Loads a save file
+    LARC: Loads archived files
+MEMENU: MExp Menus
+    MMEN: Main menu
+MEMVEF: Move fully
+    MVEF: Fully moves an entity
+MEMVEI: MVEN with Interactions
+    MVEI: MVEN with Interactions
+MEMVEN: Move Entity
+    MVEN: Moves an entity
+MEMVER: Move Entity (Raw)
+    MVER: Move entity (raw)
+MEMVET: Move Entity (single Tick)
+    MVET: Moves entities through a single tick
+MERSTI: Reset Island
+    RSTI: Reset a given island
+    RMER: Remove entity (relative)
+    ADEN: Add entity
+MESTAT: Static Memory (no subroutines, just static data)
+METEXT: Text Routines
+    DTEX: Display a block of text
+    PAUS: Pauses, waiting for enter to be released and pressed again
+    DERR: Display error
+MEUTIL: General Utilities
+    CPRV: Just the Copy() command but copies bytes in reverse order
+    DGWP: DispGraph with parity
+    DGUP: DispGraph until a certain parity is met
+MEWORL: World File Reading Routines
+    GHAT: Get height at
+    GIAT: Get island at
+    GEIA: Get entity island at
+    ILAT: Is there a ladder at the given position?
+    IWAT: Is there water at the given position?
+    ISAT: Is there a stump at the given position?
+    IIAT: Is the map impenetrable (rock) at the given position?
+    GGTA: Get the ground type at the given position
+    GPBA: Get the "other properties" (OMAP) byte at
+MEXP: Main game file
+    MVPL: Moves the player by a given offset
