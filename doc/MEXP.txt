@@ -25,10 +25,6 @@ ElseIf A=1
         DERR(G)
         Goto MEXPSTRT
     End
-ElseIf A=2
-    .Credits
-    CRED()
-    Goto MEXPSTRT
 Else
     .Exit
     Return

@@ -6,17 +6,14 @@ Lbl MMEN {
     .Returns the menu choice:
     .   0: Continue
     .   1: New Game
-    .   2: Credits
-    .   3: How to Play
-    .   4: Exit
+    .   2: Exit
 
     .Displaying the menu
     .(text)
     Output(1,1,"MExp")
     Text(12,18,"Continue")
     Text(12,26,"New Game")
-    Text(12,34,"Credits")
-    Text(12,42,"Exit")
+    Text(12,34,"Exit")
     StoreGDB
     
     .(graphic)
@@ -38,7 +35,7 @@ Lbl MMEN {
         DGWP()
     
         !If I
-            If getKey(1)?G<3
+            If getKey(1)?G<2
                 G++
                 1->H
             ElseIf getKey(4)?G

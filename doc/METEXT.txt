@@ -43,40 +43,6 @@ Lbl DTEX {
     Return
 }
 
-Lbl CRED {
-    .Display the credits for MExp
-    .So many people to thank, and so few bytes to waste!
-    .Also, assuming about 4 spaces per line, must be 22 chars wide,
-    .   21 on lines that are indented
-
-    ClrHome
-
-    .Page 1
-    Text(4,4,"MExp: A Game by Silt")
-
-    Text(4,16,"Thanks to...")
-    Text(4,24,"Draknek and Friends")
-    Text(8,32,"For making A Monster's")
-    Text(8,40,"Expedition, which MExp")
-    Text(8,48,"is based on")
-
-    PAUS()
-
-    .Page 2
-    Text(4,4,"Kevin Horowitz et al.")
-    Text(8,12,"For the Axe Parser")
-    Text(8,20,"compiler, used to make")
-    Text(8,28,"MExp")
-
-    Text(4,40,"Friends and Family")
-    Text(8,48,"For support, playtesting,")
-    Text(8,56,"and encouragement")
-
-    PAUS()
-
-    Return
-}
-
 Lbl PAUS {
     .Pauses, waiting for enter to be released and pressed again
     .Clears the screen afterwards
