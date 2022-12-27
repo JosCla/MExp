@@ -60,6 +60,23 @@ MEOMAP {
         4-7: ground texture
 }
 
+MESTRS {
+    File of all strings that can be used on signs
+    (ARCHIVED)
+
+    Format:
+    2B: number of strings
+    2B: pointer to string 1
+    2B: pointer to string 2
+    ...
+
+    NB: string 1 (two null-bytes denote the end of a string)
+    MB: string 2
+    ...
+}
+
+
+
 UNARCHIVED
 
 MEEMAP {
