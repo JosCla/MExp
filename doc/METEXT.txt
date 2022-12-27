@@ -66,7 +66,7 @@ Lbl DERR {
     If r_1=1
         "Failed to load world file."->G
     ElseIf r_1=2
-        "Failed to load save file."->G
+        "No save file found."->G
     ElseIf r_1=3
         "Failed to make save file."->G
     End

@@ -5,27 +5,31 @@ L_1+768->S
 prgmMESTAT
 0->CP
 
-.(goto point for start of program)
-Lbl MEXPSTRT
+.Trying to load the world file (exiting if this fails)
+LARC()->G
+!If G
+    DERR(1)
+    Return
+End
+
+.Trying to load the save file (it's okay if this fails)
+LSAV()->A
+
+.(goto point for accessing the main menu
+Lbl MEXPMENU
 
 .Main menu
 ClrHomeClrDraw^r^r
-MMEN()->A
-!If A
-    .Continue
-    LSAV()->G
-    If G
-        DERR(G)
-        Goto MEXPSTRT
-    End
-ElseIf A=1
+MMEN(A)->B
+.(If B=0 condition is continue game; just do nothing)
+If B=1
     .New Game
     CSAV()->G
     If G
         DERR(G)
-        Goto MEXPSTRT
+        Goto MEXPMENU
     End
-Else
+ElseIf B=2
     .Exit
     Return
 End

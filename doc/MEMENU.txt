@@ -3,29 +3,37 @@
 Lbl MMEN {
     .Main menu
     .Displays the main menu and allows the user to navigate it
+    .r1: LSAV exit code (0 = save file present, 1 = no save file present)
     .Returns the menu choice:
     .   0: Continue
     .   1: New Game
     .   2: Exit
 
+    .Allocating stack
+    S-2->S
+    A->{S}^r
+    r_1->A
+
+    .MMEN Start
+    Lbl MMENS
+
     .Displaying the menu
+    .(rendering world if applicable)
+    !If A
+        DRPL()
+        WRect(4,4,46,38)
+        WRect(4,4,46,38)^r
+    End
+
     .(text)
-    Output(1,1,"MExp")
-    Text(12,18,"Continue")
-    Text(12,26,"New Game")
-    Text(12,34,"Exit")
-    StoreGDB
-    
-    .(graphic)
-    Pt-Mask(64,34,Pic1STIL+64)
-    Pt-Mask(72,34,Pic1STIL+64)
-    Pt-Mask(64,32,Pic1STIL)
-    Pt-Mask(72,32,Pic1STIL)
-    Pt-Mask(64,24,Pic1STIL)
-    Pt-Mask(72,24,Pic1STIL)
-    Pt-Mask(64,22,Pic1SENT)
-    Pt-Mask(72,32,Pic1STIL+160)
-    Pt-Mask(72,30,Pic1SENT+32)
+    Fix 5
+    Fix 1
+    Text(10,6,"MExp")
+    Fix 0
+    Text(14,16,"Continue")
+    Text(14,24,"New Game")
+    Text(14,32,"Exit")
+    Fix 4
 
     .Getting user input
     0->G
@@ -47,13 +55,23 @@ Lbl MMEN {
         End
     
         If H
-            WRect(2,18,8,40)
-            WRect(2,18,8,40)^r
-            Pt-Mask(2,G*8+18,Pic1SENT+48)
+            WRect(5,16,8,24)
+            WRect(5,16,8,24)^r
+            Pt-Mask(5,G*8+16,Pic1SENT+48)
             0->H
             15->I
         End
     End
+
+    .(going back if we chose an invalid option)
+    If A?G=0
+        DERR(2)
+        Goto MMENS
+    End
+
+    .Fixing stack
+    {S}^r->A
+    S+2->S
 
     GReturn
 }

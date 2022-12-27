@@ -19,12 +19,6 @@ Lbl CSAV {
     C->{S+4}^r
     D->{S+6}^r
 
-    .Loading all world files
-    !If LARC()
-        1->T .Bad exit code (world files not present)
-        Goto CSAVE
-    End
-
     .Finding stats about this world file
     {Y_2}^r->A  .number of islands
     0->G        .number of entities

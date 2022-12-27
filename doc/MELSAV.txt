@@ -4,11 +4,6 @@ Lbl LSAV {
     .Loads a save file
     .Directly returns the load status (0 good, higher bad)
 
-    .Loading all world files
-    !If LARC()
-        1Return
-    End
-
     .Getting pointers to all save data
     GetCalc(Str1FEMAP)->EM
     GetCalc(Str1FCENT)->CE
