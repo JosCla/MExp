@@ -59,7 +59,7 @@ Lbl CSAV {
     MH->{EM+1}              .EMAP map height
     {Y_1-2}^r-1->H
     For(G,2,H)              .EMAP zeroing out
-        0->{A+G}
+        0->{EM+G}
     End
     A->{CE}^r               .CENT num islands
     A*2+16->{A*2+2+CE}^r    .CENT first empty pointer
@@ -70,9 +70,10 @@ Lbl CSAV {
     .NOTE: all C in the following statements actually represent A*2+4
     .   but they're just C since C already holds that value
     For(G,0,11)
-        0->{C+G+CE}
+        0->{C+G+CE} .(CENT)
     End
-    C->{C-2+EP}^r
+    C->{C-2+EP}^r   .(EPTR)
+    1->{2+EM}       .(EMAP)
 
     .Iterating through each island
     1->D    .first island
@@ -89,7 +90,7 @@ Lbl CSAV {
 
         .Add pointer to island data in EPTR, and num ents on island
         C->{B*2+EP}^r
-        H->{C+EP}
+        H->{C+EP}^r
         C+2->C
 
         .Iterate entities, set their EPTR to zero
