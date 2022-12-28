@@ -8,10 +8,20 @@ Lbl LSAV {
     GetCalc(Str1FEMAP)->EM
     GetCalc(Str1FCENT)->CE
     GetCalc(Str1FEPTR)->EP
+    GetCalc(Str1FCSUM)->CS
 
     .Exiting if that failed
-    !If EM?CE?EP
+    !If EM?CE?EP?CS
         2Return
+    End
+
+    .Making sure the world file's checksum matches the save file's checksum
+    CCSM()
+    For(G,0,9)
+        {S-10+G}->H
+        If {CS+G}!=H
+            4Return
+        End
     End
 
     .Getting map dimensions

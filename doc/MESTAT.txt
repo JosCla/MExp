@@ -1,7 +1,7 @@
 .Static Memory
 
 .Addresses of various static variables
-L_1->^EM+2->^CE+2->^EP
+L_1->^EM+2->^CE+2->^EP+2->^CS
     +2->^MW+2->^MH
     +2->^CX+2->^CY+2->^CZ
     +2->^CP
@@ -11,6 +11,7 @@ L_1->^EM+2->^CE+2->^EP
 "appvMEEMAP"->Str1FEMAP
 "appvMECENT"->Str1FCENT
 "appvMEEPTR"->Str1FEPTR
+"appvMECSUM"->Str1FCSUM
 "appvMEIMAP"->Str1FIMAP
 "appvMEIDAT"->Str1FIDAT
 "appvMEHMAP"->Str1FHMAP

@@ -35,6 +35,7 @@ Lbl CSAV {
     DelVar Str1FEMAP
     DelVar Str1FCENT
     DelVar Str1FEPTR
+    DelVar Str1FCSUM
 
     .Creating new save files
 
@@ -48,8 +49,11 @@ Lbl CSAV {
         + (4B per island (pointer + ent count)) + (2B per entity pointer)
     GetCalc(Str1FEPTR,A*2+G*2+4)->EP
 
+    .CSUM has 10B
+    GetCalc(Str1FCSUM,10)->CS
+
     .Exit early if we couldn't allocate files
-    !If EM?CE?EP
+    !If EM?CE?EP?CS
         3->T .Bad exit code (could not allocate new files)
         Goto CSAVE
     End
@@ -65,6 +69,10 @@ Lbl CSAV {
     A*2+16->{A*2+2+CE}^r    .CENT first empty pointer
     A->{EP}^r               .EPTR num islands
     A*2+4->C                .EPTR first island pointer
+
+    .Putting the checksum into CSUM
+    CCSM()
+    Copy(S-10,CS,10)
 
     .Putting a dummy player entity in the world, for island resetting
     .NOTE: all C in the following statements actually represent A*2+4
@@ -126,4 +134,23 @@ Lbl CSAV {
 
     .(return)
     TReturn
+}
+
+Lbl CCSM {
+    .Calculate checksum
+    .Places the checksum in the 10 bytes below the stack pointer
+
+    .Getting file sizes
+    {Y_1-2}^r->G    .map size
+    {Y_2-2}^r->H    .idat size
+    {Y_5-2}^r->I    .strs size
+
+    .Putting checksums below stack pointer
+    {Y_1+G}^r->{S-10}^r
+    {Y_2+H}^r->{S-8}^r
+    {Y_3+G}^r->{S-6}^r
+    {Y_4+G}^r->{S-4}^r
+    {Y_5+I}^r->{S-2}^r
+
+    Return
 }

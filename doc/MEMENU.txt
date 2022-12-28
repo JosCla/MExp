@@ -65,7 +65,7 @@ Lbl MMEN {
 
     .(going back if we chose an invalid option)
     If A?G=0
-        DERR(2)
+        DERR(A)
         Goto MMENS
     End
 

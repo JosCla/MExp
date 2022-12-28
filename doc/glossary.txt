@@ -3,6 +3,7 @@ MECEUT: Current Entities Utilities
     MENC: Move entity in CENT
 MECSAV: Create Save
     CSAV: Creates a new savefile for MExp
+    CCSM: Calculate checksum
 MEDRAW: Drawing Utilities
     DSCR: Draws the screen
     DTIL: Draws a tile

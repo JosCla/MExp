@@ -136,3 +136,15 @@ MEEPTR {
     ]
     ...
 }
+
+MECSUM {
+    The combined checksum of the world files
+    (UNARCHIVED)
+
+    Format:
+    2B: checksum of MEIMAP
+    2B: checksum of MEIDAT
+    2B: checksum of MEHMAP
+    2B: checksum of MEOMAP
+    2B: checksum of MESTRS
+}

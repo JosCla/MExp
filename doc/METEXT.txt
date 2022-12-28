@@ -69,6 +69,8 @@ Lbl DERR {
         "No save file found."->G
     ElseIf r_1=3
         "Failed to make save file."->G
+    ElseIf r_1=4
+        "Save/world file mismatch."->G
     End
     Text(4,4,G)
 
