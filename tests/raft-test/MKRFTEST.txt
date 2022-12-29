@@ -1,7 +1,10 @@
 .PRELIMINARY
 L_1+768->S
 prgmMESTAT
-LSAV()
+LARC()->G
+ReturnIf G
+CSAV()->G
+ReturnIf G
 
 BSTK()
 
@@ -88,3 +91,17 @@ ASRT(A>CE?{A}=3?{B}=1?{A+5}=4)
 
 .Test 9: Stack Correctness
 CSTK()
+
+.DEPENDENCIES
+prgmMECEUT
+prgmMECSAV
+prgmMEEUTL
+prgmMEFILE
+prgmMELSAV
+prgmMEMVEF
+prgmMEMVEN
+prgmMEMVER
+prgmMEMVET
+prgmMERSTI
+prgmMEUTIL
+prgmMEWORL

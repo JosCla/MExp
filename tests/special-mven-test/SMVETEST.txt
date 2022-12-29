@@ -1,8 +1,10 @@
 .PRELIMINARY
 L_1+768->S
 prgmMESTAT
-LSAV()->A
-ReturnIf A
+LARC()->G
+ReturnIf G
+CSAV()->G
+ReturnIf G
 
 BSTK()
 
@@ -156,11 +158,15 @@ ASRT(E?F)
 CSTK()
 
 .DEPENDENCIES
-prgmMEWORL
-prgmMELSAV
+prgmMECEUT
+prgmMECSAV
 prgmMEEUTL
-prgmMEMVER
-prgmMEMVEN
+prgmMEFILE
+prgmMELSAV
 prgmMEMVEF
+prgmMEMVEN
+prgmMEMVER
 prgmMEMVET
+prgmMERSTI
 prgmMEUTIL
+prgmMEWORL
