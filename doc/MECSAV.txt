@@ -3,14 +3,7 @@
 Lbl CSAV {
     .Creates a new savefile for MExp
     .Directly returns the creation status (0 good, higher bad)
-
-    .Generates the entity map (MEEMAP.8xv)
-    .Generates the current entities (MECENT.8xv)
-    .Generates the current entity pointers (MEEPTR.8xv)
-    .Generates the player data (MEPDAT.8xv)
-
-    .Requires MEIMAP.8xv for size
-    .Requires MEIDAT.8xv for entities
+    .Must have loaded the world file first to create the save file from
 
     .Saving variables to the stack
     S-8->S
@@ -20,59 +13,71 @@ Lbl CSAV {
     D->{S+6}^r
 
     .Finding stats about this world file
-    {Y_2}^r->A  .number of islands
+    IDWO(0)->A  .number of islands
     0->G        .number of entities
     For(H,1,A)
-        {2*H+Y_2}^r->I
-        .when i first wrote this code a while ago, i found that if you switch
-        .   the terms in the sum, it acts as {I+Y_2}->G
-        {I+Y_2}+G->G
+        IDWO(H*2)->I
+        IDBY(I)+G->G
     End
-    {Y_1}->MW   .map width
-    {Y_1+1}->MH .map height
+    IMBY(0)->MW   .map width
+    IMBY(1)->MH   .map height
 
     .Deleting save file if it exists
-    DelVar Str1FEMAP
-    DelVar Str1FCENT
-    DelVar Str1FEPTR
-    DelVar Str1FCSUM
+    DelVar Str1FSAVE
 
-    .Creating new save files
+    .Creating new save file
+    22->H .cumulative size of save file (3*2B ptrs + 10B checksum + 3*2B sizes)
 
     .EMAP is the same size as IMAP
-    GetCalc(Str1FEMAP,{Y_1-2}^r)->EM
+    IMWO(-2)->I
+    I+H->H
 
     .CENT has 64B + (2B per island) + (12B per entity) + (12B player)
-    GetCalc(Str1FCENT,G*6+A*2+76)->CE
+    G*6+A*2+76->J
+    J+H->H
 
     .EPTR has 2B num islands + 2B player entity pointer
         + (4B per island (pointer + ent count)) + (2B per entity pointer)
-    GetCalc(Str1FEPTR,A*2+G*2+4)->EP
+    A*2+G*2+4->K
+    K+H->H
 
-    .CSUM has 10B
-    GetCalc(Str1FCSUM,10)->CS
+    .Allocating whole save file
+    GetCalc(Str1FSAVE,H)->SF
 
-    .Exit early if we couldn't allocate files
-    !If EM?CE?EP?CS
-        3->T .Bad exit code (could not allocate new files)
+    .Exit early if we couldn't allocate save file
+    !If SF
+        3->T .Bad exit code (could not allocate new save file)
         Goto CSAVE
     End
 
+    .Saving pointers to virtual files
+    18->{SF}^r      .offset to EMAP
+    SF+18->EM
+    20+I->G         .offset to CENT
+    G->{SF+2}^r
+    G+SF->CE
+    22+I+J->G       .offset to EPTR
+    G->{SF+4}^r
+    G+SF->EP
+
     .Saving basic properties to files
+    I->{EM-2}               .EMAP size
     MW->{EM}                .EMAP map width
     MH->{EM+1}              .EMAP map height
-    {Y_1-2}^r-1->H
+    I-1->H
     For(G,2,H)              .EMAP zeroing out
         0->{EM+G}
     End
+    J->{CE-2}^r             .CENT size
     A->{CE}^r               .CENT num islands
     A*2+16->{A*2+2+CE}^r    .CENT first empty pointer
+    K->{EP-2}^r             .EPTR size
     A->{EP}^r               .EPTR num islands
     A*2+4->C                .EPTR first island pointer
 
-    .Putting the checksum into CSUM
+    .Putting the checksum into the save file
     CCSM()
-    Copy(S-10,CS,10)
+    Copy(S-10,SF+6,10)
 
     .Putting a dummy player entity in the world, for island resetting
     .NOTE: all C in the following statements actually represent A*2+4
@@ -87,8 +92,8 @@ Lbl CSAV {
     1->D    .first island
     For(B,1,A)
         .Getting number of entities on this island
-        {2*B+Y_2}^r->G
-        {G+Y_2}->H
+        IDWO(B*2)->G
+        IDBY(G)->H
 
         .Add pointer to first entity in CENT
         .NOTE: all C in the following statements actually represent A*2+4
@@ -108,7 +113,7 @@ Lbl CSAV {
         End
 
         .Check if this is the first island
-        If {G+4+Y_2}
+        If IDBY(G+4)
             B->D
         End
 
@@ -134,23 +139,4 @@ Lbl CSAV {
 
     .(return)
     TReturn
-}
-
-Lbl CCSM {
-    .Calculate checksum
-    .Places the checksum in the 10 bytes below the stack pointer
-
-    .Getting file sizes
-    {Y_1-2}^r->G    .map size
-    {Y_2-2}^r->H    .idat size
-    {Y_5-2}^r->I    .strs size
-
-    .Putting checksums below stack pointer
-    {Y_1+G}^r->{S-10}^r
-    {Y_2+H}^r->{S-8}^r
-    {Y_3+G}^r->{S-6}^r
-    {Y_4+G}^r->{S-4}^r
-    {Y_5+I}^r->{S-2}^r
-
-    Return
 }

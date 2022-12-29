@@ -1,0 +1,71 @@
+.File access (world files in particular)
+
+Lbl IMBY {
+    .Island map byte
+    .r1: Offset in file
+
+    {r_1+IM+Y_1}Return
+}
+
+Lbl IDBY {
+    .Island data byte
+    .r1: Offset in file
+
+    {r_1+ID+Y_1}Return
+}
+
+Lbl HMBY {
+    .Height map byte
+    .r1: Offset in file
+
+    {r_1+HM+Y_1}Return
+}
+
+Lbl OMBY {
+    .Other map byte
+    .r1: Offset in file
+
+    {r_1+OM+Y_1}Return
+}
+
+Lbl STBY {
+    .Strings byte
+    .r1: Offset in file
+
+    {r_1+ST+Y_1}Return
+}
+
+Lbl IMWO {
+    .Island map word
+    .r1: Offset in file
+
+    {r_1+IM+Y_1}^rReturn
+}
+
+Lbl IDWO {
+    .Island data word
+    .r1: Offset in file
+
+    {r_1+ID+Y_1}^rReturn
+}
+
+Lbl HMWO {
+    .Height map word
+    .r1: Offset in file
+
+    {r_1+HM+Y_1}^rReturn
+}
+
+Lbl OMWO {
+    .Other map word
+    .r1: Offset in file
+
+    {r_1+OM+Y_1}^rReturn
+}
+
+Lbl STWO {
+    .Strings word
+    .r1: Offset in file
+
+    {r_1+ST+Y_1}^rReturn
+}

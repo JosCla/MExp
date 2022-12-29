@@ -30,16 +30,18 @@ Lbl RSTI {
 
     .Searching for all entities that this island initially owns, and
     .   moving them back onto this island
-    {D*2+Y_2}^r->A
-    {A+Y_2}->B
+    IDWO(D*2)->A
+    IDBY(A)->B
     For(C,1,B)
         .Removing the entity
         GEPP(D,C)->G
         RMER(G)
 
         .Re-adding it from IDAT
-        C*8+A->G            .pointer to entity to add, relative to Y_2
-        Copy(G+Y_2,S+8,8)   .putting entity to add on stack
+        C*8+A->G            .pointer to entity to add, relative to IDAT
+        For(H,0,7)          .putting entity to add on stack
+            IDBY(G+H)->{S+H+8}
+        End
         ADEN(S+8,D)         .adding entity to the world
     End
 
@@ -47,9 +49,9 @@ Lbl RSTI {
     GCEP(0)->A      .getting pointer to player
     Copy(A,S+8,8)   .putting player on stack
     RMEN(A)         .removing the player from the world
-    {D*2+Y_2}^r->G          .fixing the player's entity position via its
-    {G+1+Y_2}^r->{S+9}^r    .   copy on the stack
-    {G+3+Y_2}->{S+13}       .(fixing height too)
+    IDWO(D*2)->G            .fixing the player's entity position on the stack
+    IDWO(G+1)->{S+9}^r
+    IDBY(G+3)->{S+13}
     ADEN(S+8,D)     .adding the player back to our given island
 
     .Fixing stack

@@ -9,14 +9,14 @@ Lbl DTEX {
         .   the end of things to display.
     .r1: Pointer to text, relative to the archived strings file
 
-    While {r_1+Y_5} .(ends if current string starts with \0)
+    While STBY(r_1) .(ends if current string starts with \0)
         .G is column, H is row
         0->G->H
 
         .Displaying characters until we hit a page break
-        While {r_1+Y_5}
+        While STBY(r_1)->I
             .Keep displaying characters until we hit a null byte
-            Output(G,H,{r_1+Y_5}>Char)
+            Output(G,H,I>Char)
             r_1++
 
             .Moving cursor

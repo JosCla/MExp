@@ -1,22 +1,16 @@
 .Static Memory
 
 .Addresses of various static variables
-L_1->^EM+2->^CE+2->^EP+2->^CS
+L_1->^EM+2->^CE+2->^EP+2->^SF
+    +2->^IM+2->^ID+2->^HM+2->^OM+2->^ST
     +2->^MW+2->^MH
     +2->^CX+2->^CY+2->^CZ
     +2->^CP
     +2->^IT+2->^IP
 
 .Filenames
-"appvMEEMAP"->Str1FEMAP
-"appvMECENT"->Str1FCENT
-"appvMEEPTR"->Str1FEPTR
-"appvMECSUM"->Str1FCSUM
-"appvMEIMAP"->Str1FIMAP
-"appvMEIDAT"->Str1FIDAT
-"appvMEHMAP"->Str1FHMAP
-"appvMEOMAP"->Str1FOMAP
-"appvMESTRS"->Str1FSTRS
+"appvMEXPSAVE"->Str1FSAVE
+"appvMEXPWORL"->Str1FWORL
 
 ."Max entity ascension height"
 .(Per collision type)

@@ -7,8 +7,8 @@ prgmMESTAT
 
 .Trying to load the world file (exiting if this fails)
 LARC()->G
-!If G
-    DERR(1)
+If G
+    DERR(G)
     Return
 End
 

@@ -7,7 +7,7 @@ Lbl GHAT {
     If r_2>=MH??r_1>=MW
         0Return
     End
-    {r_2*MW+r_1+2+Y_3}Return
+    HMBY(r_2*MW+r_1+2)Return
 }
 
 Lbl GIAT {
@@ -17,7 +17,7 @@ Lbl GIAT {
     If r_2>=MH??r_1>=MW
         0Return
     End
-    {r_2*MW+r_1+2+Y_1}Return
+    IMBY(r_2*MW+r_1+2)Return
 }
 
 Lbl GEIA {
@@ -73,5 +73,5 @@ Lbl GPBA {
     If r_2>=MH??r_1>=MW
         0Return
     End
-    {r_2*MW+r_1+2+Y_4}Return
+    OMBY(r_2*MW+r_1+2)Return
 }

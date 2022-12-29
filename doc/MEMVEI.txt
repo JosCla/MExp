@@ -20,7 +20,7 @@ Lbl MVEI {
         ClrHome
         If IT=1
             .Sign interaction
-            {IP*2+Y_5}^r->G .relative pointer to sign text
+            STWO(IP*2)->G   .relative pointer to sign text
             DTEX(G)         .displaying text
         ElseIf IT=2
             .Snowfolk interaction
