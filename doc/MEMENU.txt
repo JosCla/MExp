@@ -21,10 +21,11 @@ Lbl MMEN {
     .(rendering world if applicable)
     !If A
         DRPL()
-        WRect(4,4,46,38)
-        WRect(4,4,46,38)^r
+        Rect(3,3,46,40)
+        WRect(4,4,44,38)
+        WRect(4,4,44,38)^r
     End
-
+    
     .(text)
     Fix 5
     Fix 1
