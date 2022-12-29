@@ -305,7 +305,10 @@ Lbl IMOW {
     .   2: Moving on a rolling log
 
     .If it's not even water, then not moving on water
-    Return!If IWAT()
+    Select(r_1,
+        IWAT()->G
+    )->r_1
+    Return!If G
 
     .Looking for entities underneath the given position
     GHEB()->G
