@@ -3,7 +3,6 @@ MECEUT: Current Entities Utilities
     MENC: Move entity in CENT
 MECSAV: Create Save
     CSAV: Creates a new savefile for MExp
-    CCSM: Calculate checksum
 MEDRAW: Drawing Utilities
     DSCR: Draws the screen
     DTIL: Draws a tile
@@ -21,6 +20,17 @@ MEEUTL: Entity Utilities
     GSEH: Get sorted entity list by height
     GICT: Get (iterate current tile)
     IMOW: Is this entity moving on water?
+MEFILE: File access (world files in particular)
+    IMBY: Island map byte
+    IDBY: Island data byte
+    HMBY: Height map byte
+    OMBY: Other map byte
+    STBY: Strings byte
+    IMWO: Island map word
+    IDWO: Island data word
+    HMWO: Height map word
+    OMWO: Other map word
+    STWO: Strings word
 MEGDUT: Game Draw UTilities
     DRPL: Draw the screen, centered at the player
     CCAM: Center the camera at the player
@@ -29,6 +39,7 @@ MEGMVF: Game MVEF
 MELSAV: Load Save
     LSAV: Loads a save file
     LARC: Loads archived files
+    CCSM: Calculate checksum
 MEMENU: MExp Menus
     MMEN: Main menu
 MEMVEF: Move fully
