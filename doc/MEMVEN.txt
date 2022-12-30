@@ -185,11 +185,13 @@ Lbl MVEN {
                 .Let's try to raft!
 
                 .Defer the opposite of our desired movement to the raft
+                .(adds two layers of indirection; it's like the we push on the
+                .   wall and it pushes back!)
                 S->I
                 -U*5+S->S
                 Select(T,
                 Select(U,
-                    MVEN(G,-signed{I+12},-signed{I+13},{I+23}+1)
+                    MVEN(G,-signed{I+12},-signed{I+13},{I+23}+2)
                 )->I
                 )->J
                 I*5+S->S
