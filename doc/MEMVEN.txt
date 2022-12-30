@@ -63,7 +63,7 @@ Lbl MVEN {
     .If we're one layer from the player, and we're on a water raft, defer
     .   movement to the raft, and only proceed if the raft move fails.
     If {S+23}=1?{S+14}e6
-        GLEA({A+1},{A+2})->G
+        GLEA({A+1},{A+2},0)->G
         If G?G!=A
             GECT({G},{S+12},{S+13})->H
             If H=5
@@ -175,7 +175,7 @@ Lbl MVEN {
         .Checking if the bottom entity is a raft
         Select(T,
         Select(U,
-            GLEA({A+1},{A+2})->G
+            GLEA({A+1},{A+2},0)->G
         )->U
         )->T
 

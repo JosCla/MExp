@@ -178,8 +178,9 @@ Lbl GHEB {
 }
 
 Lbl GLEA {
-    .Get lowest entity at
+    .Get lowest entity above
     .r1-r2: posX, posY
+    .r3: height it must be above
     .Directly returns the pointer to the lowest entity at the given pos
     .Returns 0 if no such entity exists
 
@@ -242,7 +243,7 @@ Lbl GICT {
             If r_6=0?{I+5}>=U?{I+5}<r_3
                 I->T
                 {I+5}->U
-            ElseIf r_6=1?{I+5}<=U
+            ElseIf r_6=1?{I+5}<=U?{I+5}>r_3
                 I->T
                 {I+5}->U
             ElseIf r_6=2?{I+5}<=U?{I+5}>r_3

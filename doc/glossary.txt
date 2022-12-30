@@ -15,7 +15,7 @@ MEEUTL: Entity Utilities
     GENI: Get entity island
     GENP: Get entity position
     GHEB: Get highest entity below
-    GLEA: Get lowest entity at
+    GLEA: Get lowest entity above
     GLMA: Get Lowest "Move-off-raft" entity Above a certain height
     GSEH: Get sorted entity list by height
     GICT: Get (iterate current tile)
