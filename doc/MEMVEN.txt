@@ -141,7 +141,7 @@ Lbl MVEN {
     Else
         .Too high to move to; we've been blocked!
         0->{S+20}
-        .Goto MVENA
+        Goto MVENA
     End
 
     .In any case, if we are the player, then downgrade certain movement types
