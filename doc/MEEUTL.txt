@@ -13,7 +13,7 @@ Lbl GECT {
         .Raft
         5Return
     ElseIf r_1>6
-        .Immobile (snowman or sign)
+        .Immobile (snowman)
         6Return
     ElseIf r_2
         .Laid down logs (horizontal movement)

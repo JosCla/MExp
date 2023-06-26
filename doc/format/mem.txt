@@ -23,8 +23,7 @@ Pic1SENT (Sprite ENTities) structure
     4: Vertical log
     5: Horizontal raft
     6: Vertical raft
-    7: Snowman (alt: dark snowman)
-    8: Sign (alt: unmarked sign)
+    7: Snowman
 
 Pic1STIL (Sprite TILes) structure
 16B: Ground sprite
