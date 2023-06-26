@@ -5,8 +5,7 @@ L1 structure (768B total):
     10-11: Map height (MH)
     12-17: Camera position (CX, CY, CZ)
     18-19: Camera draw parity (CP)
-    20-23: Interaction event variables (IT, IP)
-    24-99: UNUSED
+    20-99: UNUSED
 100-767: Stack (S is initially L1+768)
 
 Str1F....: File strings

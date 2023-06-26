@@ -74,7 +74,7 @@ Lbl MVPL {
 
     .Moving the player
     GCEP(0)->G
-    MVEI(G,A,B,0)
+    MVEF(G,A,B,0)
 
     .Drawing the screen
     DRPL()
@@ -89,7 +89,6 @@ prgmMEEUTL
 prgmMEGDUT
 prgmMEGMVF
 prgmMELSAV
-prgmMEMVEI
 prgmMEMVEN
 prgmMEMVER
 prgmMEMVET
