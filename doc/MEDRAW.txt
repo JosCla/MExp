@@ -80,11 +80,11 @@ Lbl DTIL {
     .Rendering the tile atop the wall
     If De6
         .If water, render a water tile
-        Pt-Mask(r_3,C,Pic1STIL+128)
+        Pt-Mask(r_3,C,Pic1STIL+16)
     Else
         .If land, find the ground type and render it
         .(The and-mask finds the upper half-byte of the property byte)
-        Pt-Mask(r_3,C,D and 240+Pic1STIL)
+        Pt-Mask(r_3,C,Pic1STIL)
 
         .Rendering borders with surrounding tiles
         .(bottom)
@@ -110,9 +110,9 @@ Lbl DTIL {
 
     .Render stumps/rocks if needed
     If De4
-        Pt-Mask(r_3,C-2,Pic1STIL+144)
+        Pt-Mask(r_3,C-2,Pic1STIL+32)
     ElseIf De5
-        Pt-Mask(r_3,C,Pic1STIL+160)
+        Pt-Mask(r_3,C,Pic1STIL+48)
     End
 
     .Then, we can draw the entities at that position if applicable

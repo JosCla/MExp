@@ -26,16 +26,14 @@ Pic1SENT (Sprite ENTities) structure
     8: Sign (alt: unmarked sign)
 
 Pic1STIL (Sprite TILes) structure
-4*16B: 4 tile type sprites
+16B: Ground sprite
     0: Grass
-    1: Rock/Sand
-    2-3: UNUSED
+3*16B: Miscellaneous
+    0: Water
+    1: Impenetrable Rock
+    2: Stump
 4*16B: 4 wall type sprites
     0: Wall
     1: Waterfall (wall but water)
     2: Wall with ladder
     3: Waterfall with ladder
-3*16B: Miscellaneous
-    0: Water
-    1: Impenetrable Rock
-    2: Stump
