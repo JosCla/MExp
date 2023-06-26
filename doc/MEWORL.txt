@@ -30,39 +30,11 @@ Lbl GEIA {
     {r_2*MW+r_1+2+EM}Return
 }
 
-Lbl ILAT {
-    .Is there a ladder at the given position?
-    .r1-r2: posX, posY
-    .Directly returns whether or not there's a ladder here
-    GPBA()e7 Return
-}
-
 Lbl IWAT {
     .Is there water at the given position?
     .r1-r2: posX, posY
     .Directly returns whether or not there's water here
     GPBA()e6 Return
-}
-
-Lbl ISAT {
-    .Is there a stump at the given position?
-    .r1-r2: posX, posY
-    .Directly returns whether or not there's a stump here
-    GPBA()e5 Return
-}
-
-Lbl IIAT {
-    .Is the map impenetrable (rock) at the given position?
-    .r1-r2: posX, posY
-    .Directly returns whether or not the position is impenetrable
-    GPBA()e4 Return
-}
-
-Lbl GGTA {
-    .Get the ground type at the given position
-    .r1-r2: posX, posY
-    .Directly returns the ground type
-    GPBA()/16 Return
 }
 
 Lbl GPBA {
