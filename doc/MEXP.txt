@@ -56,6 +56,9 @@ Repeat getKey(15)
         GEIA({G+1},{G+2})->G
         RSTI(G)
         DRPL()
+    ElseIf getKey(48)
+        UNDO()
+        DRPL()
     End
 End
 Return

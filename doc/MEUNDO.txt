@@ -52,6 +52,8 @@ Lbl UNDO {
         {UP}->G
         If G=1
             .undo movement
+            GCEP({UP+1},{UP+2})->G
+            MVER(G,{UP+3},{UP+4},{UP+5})
         ElseIf G=2
             .undo type change
         ElseIf G=3

@@ -20,6 +20,13 @@ Lbl MVER {
     E->{S+12}^r
     F->{S+14}^r
 
+    .Logging MVER for undo
+    1->{S-6}
+    {r_1+3}^r->{S-5}^r
+    {r_1+1}^r->{S-3}^r
+    {r_1+5}->{S-1}
+    LGUN()
+
     .Storing entity start position on stack
     {r_1+1}->{S+16}
     {r_1+2}->{S+17}
