@@ -6,6 +6,7 @@ L_1->^EM+2->^CE+2->^EP+2->^UN+2->^SF
     +2->^MW+2->^MH
     +2->^CX+2->^CY+2->^CZ
     +2->^CP
+    +2->^UP+2->^NU
 
 .Filenames
 "appvMEXPSAVE"->Str1FSAVE

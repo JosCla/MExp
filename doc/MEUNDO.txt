@@ -1,0 +1,98 @@
+.MExp Undo
+
+Lbl LGUN {
+    .Log Undo
+    .Will take the six bytes below the stack pointer and log them in
+    .  the current undo block
+
+    .Copying the bytes
+    Copy(S-6,UP,6)
+
+    .Moving the undo pointer
+    INUP()
+
+    .Incrementing number of undos
+    NU++
+
+    Return
+}
+
+Lbl UNDO {
+    .Undo a single move
+
+    .Allocating stack
+    S-4->S
+    A->{S}^r
+    B->{S+2}^r
+
+    .Putting pointer to block header in undo pointer
+    {UN}^r+UN->UP
+
+    .Making sure this block header has not been consumed
+    Return!If {UP+1}
+
+    .Iterating through undo units, making sure none have been overriden by
+    .   block headers
+    {UP+2}->A   .num units to undo
+    For(B,1,A)
+        DCUP()
+        Return!If {UP}
+    End
+
+    .Returning pointer to current block header, marking it as consumed
+    {UN}^r+UN->UP
+    0->{UP+1}
+
+    .Finally, iterating through each undo unit and undoing them
+    For(B,1,A)
+        .Moving undo pointer to next unit to undo
+        DCUP()
+
+        .Undoing this unit
+        {UP}->G
+        If G=1
+            .undo movement
+        ElseIf G=2
+            .undo type change
+        ElseIf G=3
+            .undo raft creation
+        ElseIf G=4
+            .undo entity deletion (1)
+        ElseIf G=5
+            .undo entity deletion (2)
+        ElseIf G=6
+            .undo entity creation
+        ElseIf G=7
+            .undo raft split
+        End
+    End
+
+    .Restoring stack
+    {S}^r->A
+    {S+2}^r->B
+    S+4->S
+
+    Return
+}
+
+Lbl INUP {
+    .Increment undo pointer
+
+    UP+6->UP
+    If UP-UN>=1802
+        2+UN->UP
+    End
+
+    Return
+}
+
+Lbl DCUP {
+    .Decrement undo pointer
+
+    UP-6->UP
+    If UP<UN
+        1796+UN->UP
+    End
+
+    Return
+}
