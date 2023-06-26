@@ -16,7 +16,7 @@ Lbl LSAV {
     CCSM()
     For(G,0,7)
         {S-8+G}->H
-        If {SF+6+G}!=H
+        If {SF+8+G}!=H
             4Return
         End
     End
@@ -25,6 +25,7 @@ Lbl LSAV {
     {SF}^r+SF->EM
     {SF+2}^r+SF->CE
     {SF+4}^r+SF->EP
+    {SF+6}^r+SF->UN
 
     .Getting map dimensions
     {EM}->MW

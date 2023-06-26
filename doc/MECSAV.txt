@@ -26,7 +26,7 @@ Lbl CSAV {
     DelVar Str1FSAVE
 
     .Creating new save file
-    20->H .cumulative size of save file (3*2B ptrs + 8B checksum + 3*2B sizes)
+    24->H .cumulative size of save file (4*2B ptrs + 8B checksum + 4*2B sizes)
 
     .EMAP is the same size as IMAP
     IMWO(-2)->I
@@ -41,6 +41,9 @@ Lbl CSAV {
     A*2+G*2+4->K
     K+H->H
 
+    .UNDO has 1800B undo space + 2B last move pointer
+    1802+H->H
+
     .Allocating whole save file
     GetCalc(Str1FSAVE,H)->SF
 
@@ -51,14 +54,17 @@ Lbl CSAV {
     End
 
     .Saving pointers to virtual files
-    16->{SF}^r      .offset to EMAP
-    SF+16->EM
-    18+I->G         .offset to CENT
+    18->{SF}^r      .offset to EMAP
+    SF+18->EM
+    20+I->G         .offset to CENT
     G->{SF+2}^r
     G+SF->CE
-    20+I+J->G       .offset to EPTR
+    G+J+2->G        .offset to EPTR
     G->{SF+4}^r
     G+SF->EP
+    G+K+2->G        .offset to UNDO
+    G->{SF+6}^r
+    G+SF->UN
 
     .Saving basic properties to files
     I->{EM-2}               .EMAP size
@@ -74,10 +80,13 @@ Lbl CSAV {
     K->{EP-2}^r             .EPTR size
     A->{EP}^r               .EPTR num islands
     A*2+4->C                .EPTR first island pointer
+    1802->{UN-2}^r          .UNDO size
+    2->{UN}^r               .UNDO first block pointer
+    0->{UN+2}^r             .UNDO first block header
 
     .Putting the checksum into the save file
     CCSM()
-    Copy(S-8,SF+6,8)
+    Copy(S-8,SF+8,8)
 
     .Putting a dummy player entity in the world, for island resetting
     .NOTE: all C in the following statements actually represent A*2+4

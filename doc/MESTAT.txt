@@ -1,7 +1,7 @@
 .Static Memory
 
 .Addresses of various static variables
-L_1->^EM+2->^CE+2->^EP+2->^SF
+L_1->^EM+2->^CE+2->^EP+2->^UN+2->^SF
     +2->^IM+2->^ID+2->^HM+2->^OM
     +2->^MW+2->^MH
     +2->^CX+2->^CY+2->^CZ
