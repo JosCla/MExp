@@ -1,11 +1,13 @@
 L1 structure (768B total):
 0-99: Various non-const static variables
-    0-7: Files (EM, CE, EP, PD)
-    8-9: Map width (MW)
-    10-11: Map height (MH)
-    12-17: Camera position (CX, CY, CZ)
-    18-19: Camera draw parity (CP)
-    20-99: UNUSED
+    0-5: Files (EM, CE, EP)
+    6-7: Overall save file pointer (SF)
+    8-15: Relative world file pointers (IM, ID, HM, OM)
+    16-17: Map width (MW)
+    18-19: Map height (MH)
+    20-25: Camera position (CX, CY, CZ)
+    26-27: Camera draw parity (CP)
+    28-99: UNUSED
 100-767: Stack (S is initially L1+768)
 
 Str1F....: File strings
