@@ -21,13 +21,13 @@ Lbl DERR {
     .Displaying
     ClrHome
     If r_1=1
-        "Failed to load world file."->G
+        "Failed to load world"->G
     ElseIf r_1=2
-        "No save file found."->G
+        "No save found"->G
     ElseIf r_1=3
-        "Failed to make save file."->G
+        "Failed to make save"->G
     ElseIf r_1=4
-        "Save/world file mismatch."->G
+        "Save/world file mismatch"->G
     End
     Text(4,4,G)
 
