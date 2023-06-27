@@ -50,13 +50,14 @@ Lbl UNDO {
         DCUP()
 
         .Undoing this unit
+        GCEP({UP+1},{UP+2})->H
         {UP}->G
         If G=1
             .undo movement
-            GCEP({UP+1},{UP+2})->G
-            MVER(G,{UP+3},{UP+4},{UP+5})
+            MVER(H,{UP+3},{UP+4},{UP+5})
         ElseIf G=2
             .undo type change
+            CHET(H,{UP+3})
         ElseIf G=3
             .undo raft creation
         ElseIf G=4

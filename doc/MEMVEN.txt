@@ -270,7 +270,7 @@ Lbl MVEN {
             End
 
             If G
-                MVENCHET(A,G)
+                CHET(A,G)
                 0->T
             End
         ElseIf C=4
@@ -279,7 +279,7 @@ Lbl MVEN {
             0->T
 
             !If G
-                MVENCHET(A,1)
+                CHET(A,1)
                 0->T
             End
         ElseIf C=3
@@ -302,7 +302,7 @@ Lbl MVEN {
     Else
         If C=2
             .Tree standing log, through any interaction, loses leaves
-            1->{A}  .(could be done through MVENCHET, but no height change)
+            CHET(A,1)
         ElseIf C=5?{S+23}!=2
             .If a raft stops, try moving stuff off of it if applicable
             .   (also, the not-equal-two check ensures that the raft actually
@@ -393,39 +393,6 @@ Lbl MVENRPTR {
     {G}^r+CE->A
     {S+18}^r->G
     {G}^r+CE->B
-
-    Return
-}
-
-Lbl MVENCHET {
-    .MVEN Change Entity Type
-    .Moves any entities on top of the given entity if its height changes.
-    .r1: Pointer to entity whose type should change
-    .r2: New entity type
-    .Returns nothing
-
-    .Getting change in height
-    {r_1}->G
-    nib{GDB1ENTH*2+G}^r->G      .old height
-    nib{GDB1ENTH*2+r_2}^r->H    .new height
-    H-G->I                      .height change
-
-    If I
-        .If there's a change in height, use MVER to shift all entities above
-        Select(r_1,
-        Select(r_2,
-        Select(I,
-            MVER(r_1,{r_1+1},{r_1+2},{r_1+5}+I)
-        )->I
-        )->r_2
-        )->r_1
-
-        .Then, move our original entity the opposite of the change in height
-        {r_1+5}-I->{r_1+5}
-    End
-
-    .Finally, change the entity type
-    r_2->{r_1}
 
     Return
 }
