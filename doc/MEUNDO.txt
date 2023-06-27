@@ -5,13 +5,16 @@ Lbl LGUN {
     .Will take the six bytes below the stack pointer and log them in
     .  the current undo block
 
+    .If we're not currently recording undos, exit early
+    Return!If RU
+
     .Copying the bytes
     Copy(S-6,UP,6)
 
     .Moving the undo pointer
     INUP()
 
-    .Incrementing number of undos
+    .Incrementing number of undo units in this block
     NU++
 
     Return
@@ -66,6 +69,10 @@ Lbl UNDO {
             .undo raft split
         End
     End
+
+    .Setting new block header
+    DCUP()
+    UP-UN->{UN}^r
 
     .Restoring stack
     RSRG()

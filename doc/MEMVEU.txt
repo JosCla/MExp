@@ -14,6 +14,9 @@ Lbl MVEU {
     .Num units to undo = 0
     0->NU
 
+    .Start recording undos
+    1->RU
+
     .Doing movement
     MVEF()
 
@@ -23,6 +26,9 @@ Lbl MVEU {
     1->{S-5}
     NU->{S-4}
     LGUN()
+
+    .Stop recording undos
+    0->RU
 
     Return
 }
