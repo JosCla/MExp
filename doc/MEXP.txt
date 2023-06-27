@@ -56,9 +56,9 @@ Repeat getKey(15)
     ElseIf getKey(54)
         GCEP(0)->G
         GEIA({G+1},{G+2})->G
-        1->RU .start recording undos
+        STUN()
         RSTI(G)
-        0->RU .stop recording undos
+        FIUN()
         DRPL()
     ElseIf getKey(48)
         UNDO()
@@ -79,9 +79,15 @@ Lbl MVPL {
     .Drawing to a parity of 1
     DGUP(1)
 
+    .Start recording undo
+    STUN()
+
     .Moving the player
     GCEP(0)->G
-    MVEU(G,A,B,0)
+    MVEF(G,A,B,0)
+
+    .Finish recording undo
+    FIUN()
 
     .Drawing the screen
     DRPL()
@@ -99,7 +105,6 @@ prgmMELSAV
 prgmMEMVEN
 prgmMEMVER
 prgmMEMVET
-prgmMEMVEU
 prgmMERSTI
 prgmMETEXT
 prgmMEUNDO

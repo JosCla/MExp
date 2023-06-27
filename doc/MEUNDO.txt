@@ -20,6 +20,38 @@ Lbl LGUN {
     Return
 }
 
+Lbl STUN {
+    .Start Undo
+
+    .Setting undo pointer from current undo block header
+    {UN}^r+UN->UP
+    INUP()
+
+    .Num units to undo = 0
+    0->NU
+
+    .Start recording undos
+    1->RU
+
+    Return
+}
+
+Lbl FIUN {
+    .Finish undo
+
+    .Log undo header
+    UP-UN->{UN}^r
+    0->{S-6}
+    1->{S-5}
+    NU->{S-4}
+    LGUN()
+
+    .Stop recording undos
+    0->RU
+
+    Return
+}
+
 Lbl UNDO {
     .Undo a single move
 
@@ -50,7 +82,9 @@ Lbl UNDO {
         DCUP()
 
         .Undoing this unit
-        GCEP({UP+1},{UP+2})->H
+        !If {UP}=4
+            GCEP({UP+1},{UP+2})->H
+        End
         {UP}->G
         If G=1
             .undo movement
@@ -75,12 +109,21 @@ Lbl UNDO {
             ADEN(S-8,G)
             S+8->S
         ElseIf G=4
-            .undo entity deletion (1)
+            .undo entity deletion
+            S-8->S
+            Copy(UP-6,S-8,6)    .most props from entity deletion 2 block
+            {UP+2}^r->{S-2}^r   .extra bytes from entity deletion 1 block
+            ADEN(S-8,{UP+1})    .island from entity deletion 1 block
+            S+8->S
+
+            .move an additional undo unit length, since this code consumes
+            .  two units
+            DCUP()
+            B++
         ElseIf G=5
-            .undo entity deletion (2)
-        ElseIf G=6
             .undo entity creation
-        ElseIf G=7
+            RMEN(H)
+        ElseIf G=6
             .undo raft split
         End
     End

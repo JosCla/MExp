@@ -137,6 +137,11 @@ Lbl ADEN {
     .r2: Island to add it to
     .Returns the pointer to the entity in CENT
 
+    .Logging creation
+    5->{S-6}
+    {r_1+3}^r->{S-5}^r
+    LGUN()
+
     .Finding first empty slot in CENT
     {CE}^r->G       .num islands
     G*2+2+CE->H     .pointer to pointer to first empty slot
