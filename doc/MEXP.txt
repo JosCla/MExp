@@ -56,7 +56,9 @@ Repeat getKey(15)
     ElseIf getKey(54)
         GCEP(0)->G
         GEIA({G+1},{G+2})->G
+        1->RU .start recording undos
         RSTI(G)
+        0->RU .stop recording undos
         DRPL()
     ElseIf getKey(48)
         UNDO()
