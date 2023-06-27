@@ -40,6 +40,12 @@ Lbl MKRF {
     .Allocating stack
     SSRG()
 
+    .Logging this event
+    3->{S-6}
+    {r_1+3}^r->{S-5}^r
+    {r_2}->{S-3}
+    LGUN()
+
     .Storing pointers in A and B
     r_1->A
     r_2->B

@@ -60,6 +60,20 @@ Lbl UNDO {
             CHET(H,{UP+3})
         ElseIf G=3
             .undo raft creation
+
+            .changing raft back into a single log
+            .(raft type is always 2 greater than respective log type)
+            {H}-2->{H}
+
+            .creating the log on top of the raft
+            S-8->S
+            {UP+3}->{S-8}           .type from undo unit
+            {H+1}^r->{S-7}^r        .position from raft
+            {H+6}^r->{S-5}^r        .id from raft extra bytes
+            {H+5}+1->{S-3}          .height is just above raft
+            GEIA({H+1},{H+2})->G    .island from raft's position
+            ADEN(S-8,G)
+            S+8->S
         ElseIf G=4
             .undo entity deletion (1)
         ElseIf G=5
