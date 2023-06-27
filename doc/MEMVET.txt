@@ -10,15 +10,10 @@ Lbl MVET {
     .  (put in U instead of T to be consistent with MVEN)
 
     .Allocating stack
-    S-10->S
-    A->{S}^r
-    B->{S+2}^r
-    C->{S+4}^r
-    D->{S+6}^r
-    E->{S+8}^r
+    SSRG()
 
     .Storing the base pointer of actions to execute in D
-    S+10->D
+    S+12->D
 
     .Storing num actions to execute in A
     r_1->A
@@ -42,18 +37,13 @@ Lbl MVET {
     C->U
 
     .Recovering stack
-    D-10->S
-    {S}^r->A
-    {S+2}^r->B
-    {S+4}^r->C
-    {S+6}^r->D
-    {S+8}^r->E
-    S+10->S
+    D-12->S
+    RSRG()
 
     .Moving newly added actions directly underneath stack pointer
     U*5->G
     S-G->H
-    CPRV(H-10,H,G)
+    CPRV(H-12,H,G)
 
     .(return)
     Return

@@ -38,9 +38,7 @@ Lbl MKRF {
     .Returns nothing
 
     .Allocating stack
-    S-4->S
-    A->{S}^r
-    B->{S+2}^r
+    SSRG()
 
     .Storing pointers in A and B
     r_1->A
@@ -68,9 +66,7 @@ Lbl MKRF {
     CE-A->{G}^r
 
     .Fixing stack
-    {S}^r->A
-    {S+2}^r->B
-    S+4->S
+    RSRG()
 
     Return
 }

@@ -26,13 +26,8 @@ Lbl MVEN {
     .   S+21: is target top/bottom of stack
     .   S+22: target z if push-then-move interaction
     .   S+23: r_4 (layers from player push)
+    SSRG()
     S-24->S
-    A->{S}^r
-    B->{S+2}^r
-    C->{S+4}^r
-    D->{S+6}^r
-    E->{S+8}^r
-    F->{S+10}^r
     r_2->{S+12}
     r_3->{S+13}
     r_4->{S+23}
@@ -413,13 +408,8 @@ Lbl MVEN {
 
     .MVENE (MVEN End)
     Lbl MVENE
-    {S}^r->A
-    {S+2}^r->B
-    {S+4}^r->C
-    {S+6}^r->D
-    {S+8}^r->E
-    {S+10}^r->F
     S+24->S
+    RSRG()
 
     .If we put movements on stack, copy them just below stack pointer
     If U

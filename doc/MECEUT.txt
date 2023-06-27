@@ -8,9 +8,8 @@ Lbl RMEN {
     .  (returns 0 if there is none)
 
     .Allocating stack
+    SSRG()
     S-7->S
-    A->{S}^r
-    B->{S+2}^r
 
     .Saving pointer to entity to remove in A
     r_1->A
@@ -81,9 +80,8 @@ Lbl RMEN {
     B->G
 
     .Fixing stack
-    {S}^r->A
-    {S+2}^r->B
     S+7->S
+    RSRG()
 
     GReturn
 }
@@ -96,9 +94,7 @@ Lbl MENC {
     .Returns nothing
 
     .Allocating stack
-    S-4->S
-    A->{S}^r
-    B->{S+2}^r
+    SSRG()
 
     .Saving entity pointers in A and B
     r_1->A
@@ -139,9 +135,7 @@ Lbl MENC {
     -1->{A}
 
     .Fixing stack
-    {S}^r->A
-    {S+2}^r->B
-    S+4->S
+    RSRG()
 
     Return
 }

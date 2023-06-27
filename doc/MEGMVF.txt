@@ -9,8 +9,7 @@ Lbl MVEF {
     .r4: Layers of indirection from player push
 
     .Allocating stack
-    S-2->S
-    A->{S}^r
+    SSRG()
 
     .Moving the original entity
     MVEN()
@@ -44,8 +43,7 @@ Lbl MVEF {
 
     .Restoring stack
     A*5+S->S
-    {S}^r->A
-    S+2->S
+    RSRG()
 
     Return
 }

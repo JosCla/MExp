@@ -6,11 +6,7 @@ Lbl CSAV {
     .Must have loaded the world file first to create the save file from
 
     .Saving variables to the stack
-    S-8->S
-    A->{S}^r
-    B->{S+2}^r
-    C->{S+4}^r
-    D->{S+6}^r
+    SSRG()
 
     .Finding stats about this world file
     IDWO(0)->A  .number of islands
@@ -140,11 +136,7 @@ Lbl CSAV {
     Lbl CSAVE
 
     .Recover the stack
-    {S}^r->A
-    {S+2}^r->B
-    {S+4}^r->C
-    {S+6}^r->D
-    S+8->S
+    RSRG()
 
     .(return)
     TReturn

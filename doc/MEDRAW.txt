@@ -7,13 +7,11 @@ Lbl DSCR {
     .r3: CamZ (0-255)
 
     .Saving args and vars to stack
+    SSRG()
     S-201->S
     r_1->{S+192}
     r_2->{S+193}
     r_3->{S+194}
-    A->{S+195}^r
-    B->{S+197}^r
-    C->{S+199}^r
     .S+0 through S+95 is property bytes for each tile on-screen
     .S+96 through S+191 is ground heights for each tile on-screen (w/o stumps)
 
@@ -36,10 +34,8 @@ Lbl DSCR {
     End
 
     .Recovering the stack
-    {S+195}^r->A
-    {S+197}^r->B
-    {S+199}^r->C
     S+201->S
+    RSRG()
 
     Return
 }
@@ -53,16 +49,12 @@ Lbl DTIL {
     .r5: CameraZ
 
     .Storing args and variables
-    S-8->S
-    A->{S}^r
-    B->{S+2}^r
-    C->{S+4}^r
-    D->{S+6}^r
+    SSRG()
 
     .Finding terrain height and property byte for this tile
     r_3/2/2/2->G
     r_4/2/2/2->H
-    H*12+G+8+S->G
+    H*12+G+12+S->G
     {G}->D
     {G+96}->A
 
@@ -131,11 +123,7 @@ Lbl DTIL {
     End
 
     .Recovering the stack
-    {S}^r->A
-    {S+2}^r->B
-    {S+4}^r->C
-    {S+6}^r->D
-    S+8->S
+    RSRG()
 
     Return
 }

@@ -5,11 +5,8 @@ Lbl RSTI {
     .r1: Island id to reset
 
     .Allocating stack
+    SSRG()
     S-16->S
-    A->{S}^r
-    B->{S+2}^r
-    C->{S+4}^r
-    D->{S+6}^r
     r_1->D
 
     .Deleting all entities on the island
@@ -55,11 +52,8 @@ Lbl RSTI {
     ADEN(S+8,D)     .adding the player back to our given island
 
     .Fixing stack
-    {S}^r->A
-    {S+2}^r->B
-    {S+4}^r->C
-    {S+6}^r->D
     S+16->S
+    RSRG()
 
     Return
 }
@@ -80,10 +74,7 @@ Lbl RMER {
     .   2 if the entity was removed, leaving a log behind
 
     .Allocating the stack
-    S-6->S
-    A->{S}^r
-    B->{S+2}^r
-    C->{S+4}^r
+    SSRG()
 
     r_1->A
     {A}^r->B
@@ -134,10 +125,7 @@ Lbl RMER {
     End
 
     .Fixing the stack
-    {S}^r->A
-    {S+2}^r->B
-    {S+4}^r->C
-    S+6->S
+    RSRG()
 
     TReturn
 }
