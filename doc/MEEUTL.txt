@@ -128,28 +128,28 @@ Lbl CHET {
     {r_1}->{S-3}
     LGUN()
 
-    .Getting change in height
+    .Recording this entity's previous type
     {r_1}->G
+
+    .Changing our entity type
+    r_2->{r_1}
+
+    .Getting change in height
     nib{GDB1ENTH*2+G}^r->G      .old height
     nib{GDB1ENTH*2+r_2}^r->H    .new height
-    H-G->I                      .height change
 
-    If I
-        .If there's a change in height, use MVER to shift all entities above
+    If H!=G
+        .If there's a change in height, shift the entity above accordingly
+        r_1->G
         Select(r_1,
-        Select(r_2,
-        Select(I,
-            MVER(r_1,{r_1+1},{r_1+2},{r_1+5}+I)
+        Select(H,
+            GLEA({G+1},{G+2},{G+5})->G
+        )->H
         )->I
-        )->r_2
-        )->r_1
-
-        .Then, move our original entity the opposite of the change in height
-        {r_1+5}-I->{r_1+5}
+        If G
+            MVER(G,{I+1},{I+2},{I+5}+H)
+        End
     End
-
-    .Finally, change the entity type
-    r_2->{r_1}
 
     Return
 }
