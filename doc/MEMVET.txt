@@ -4,10 +4,6 @@ Lbl MVET {
     .Moves entities through a single tick
     .r1: Number of actions to execute in the current queue frame
     .  The movements should be executed from high to low memory addresses
-    .U: Number of movements pushed to stack
-    .  New movements will be pushed below stack pointer, to be executed from
-    .  high to low memory addresses
-    .  (put in U instead of T to be consistent with MVEN)
 
     .Allocating stack
     SSRG()
@@ -18,32 +14,23 @@ Lbl MVET {
     .Storing num actions to execute in A
     r_1->A
 
-    .Executing all actions (storing total actions pushed in C)
-    0->C
-    For(B,1,A)
+    .Executing all actions
+    0->NM
+    QB->MQ
+    For(B,0,A-1)
         .Getting pointer to current action
-        A-B*5+D->E
+        B*5+D->E
 
         .Getting pointer to entity in question
         GCEP({E},{E+1})->G
 
         .Performing movement
         MVEN(G,signed{E+2},signed{E+3},{E+4})
-        C+U->C
-        -U*5+S->S
     End
-
-    .(Putting number of movements added into U)
-    C->U
 
     .Recovering stack
     D-12->S
     RSRG()
-
-    .Moving newly added actions directly underneath stack pointer
-    U*5->G
-    S-G->H
-    CPRV(H-12,H,G)
 
     .(return)
     Return

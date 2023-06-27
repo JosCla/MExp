@@ -7,7 +7,6 @@ Lbl MVEN {
     .r3: dispY
     .r4: layers of indirection from player push
     .T: movement result
-    .U: number of movements pushed to stack
 
     .Storing to stack
     .   A: entity pointer
@@ -153,8 +152,6 @@ Lbl MVEN {
     .MVENA (MVEN Action section)
     Lbl MVENA
 
-    0->U (no queued actions by default)
-
     .Handling pushes in interactions
     If {S+20}=2??{S+20}=3??{S+20}=4
         .Performing push
@@ -169,9 +166,7 @@ Lbl MVEN {
             ?{S+20}!=1?{S+20}<5 .and if it's either a push/block interaction
         .Checking if the bottom entity is a raft
         Select(T,
-        Select(U,
             GLEA({A+1},{A+2},0)->G
-        )->U
         )->T
 
         If G
@@ -182,15 +177,9 @@ Lbl MVEN {
                 .Defer the opposite of our desired movement to the raft
                 .(adds two layers of indirection; it's like the we push on the
                 .   wall and it pushes back!)
-                S->I
-                -U*5+S->S
                 Select(T,
-                Select(U,
-                    MVEN(G,-signed{I+12},-signed{I+13},{I+23}+2)
-                )->I
+                    MVEN(G,-signed{S+12},-signed{S+13},{S+23}+2)
                 )->J
-                I*5+S->S
-                U+I->U
 
                 .Restoring pointers to curr/target ent
                 MVENRPTR()
@@ -229,12 +218,7 @@ Lbl MVEN {
         !If T
             If {S+21}e7
                 .Bottom of stack; just move there
-                S->G
-                -U*5+S->S
-                Select(U,
-                    MVER(A,D,E,{G+22})
-                )->U
-                U*5+S->S
+                MVER(A,D,E,{S+22})
                 0->T
             Else
                 .Not bottom of stack; defer movement
@@ -244,11 +228,7 @@ Lbl MVEN {
         Else
             If T=1?{S+20}=4?{S+21}e6
                 .If blocked, push-then-climb, and top ent, move on top!
-                -U*5+S->S
-                Select(U,
-                    MVER(A,D,E,F)
-                )->U
-                U*5+S->S
+                MVER(A,D,E,F)
                 0->T
             End
         End
@@ -295,9 +275,7 @@ Lbl MVEN {
             End
         ElseIf C=4
             .Vertical log to standing log (if grounded)
-            Select(U,
-                IMOW({A+1},{A+2},{A+5},{S+12},{S+13})->G
-            )->U
+            IMOW({A+1},{A+2},{A+5},{S+12},{S+13})->G
             0->T
 
             !If G
@@ -306,9 +284,7 @@ Lbl MVEN {
             End
         ElseIf C=3
             .Rolling log continues to roll (if grounded)
-            Select(U,
-                IMOW({A+1},{A+2},{A+5},{S+12},{S+13})->G
-            )->U
+            IMOW({A+1},{A+2},{A+5},{S+12},{S+13})->G
             0->T
 
             !If G
@@ -316,9 +292,7 @@ Lbl MVEN {
             End
         ElseIf C=5
             .Raft continues moving if on water
-            Select(U,
-                IMOW({A+1},{A+2},{A+5},{S+12},{S+13})->G
-            )->U
+            IMOW({A+1},{A+2},{A+5},{S+12},{S+13})->G
             0->T
 
             !If G!=1??{S+14}e6=0
@@ -336,22 +310,14 @@ Lbl MVEN {
 
             .Finding an entity we can try to move off
             Select(T,
-            Select(U,
                 GLMA({A+1},{A+2},{A+5},{S+12},{S+13})->G
-            )->U
             )->T
 
             .Moving it off
             If G
-                S->H
-                -U*5+S->S
                 Select(T,
-                Select(U,
-                    MVEN(G,signed{H+12},signed{H+13},{H+23}+1)
-                )->I
+                    MVEN(G,signed{S+12},signed{S+13},{S+23}+1)
                 )->T
-                I*5+S->S
-                U+I->U
 
                 .Restoring pointers to curr/target ent
                 MVENRPTR()
@@ -368,26 +334,21 @@ Lbl MVEN {
     .   not be standing), and neither should have any pending movements in
     .   the building queue.
     If {A}=1??{A}=3??{A}=4
-        -U*5+S->S .(absorbing queue into stack)
-
         Select(T,
-        Select(U,
             GHEB({A+1},{A+2},{A+5})->G
-        )->U
         )->T
 
         If G?{G}=3??{G}=4
             .Both entities are single logs
 
             .Checking for queued movements
-            If U
-                For(H,0,U-1)
-                    H*5+S->I
+            If NM
+                For(H,0,NM-1)
+                    H*5+QB->I
                     {I}={A+3}?{I+1}={A+4}
                         ->J
                     If J??{I}={G+3}?{I+1}={G+4}
                         .Found a queued movement for one log or the other
-                        U*5+S->S
                         Goto MVENE
                     End
                 End
@@ -395,28 +356,17 @@ Lbl MVEN {
 
             .If no queued movements, combine our two entities into a raft!
             Select(T,
-            Select(U,
                 MKRF(G,A)
-            )->U
             )->T
 
             .(no need to restore ent pointers since we're at MVENE)
         End
-
-        U*5+S->S .(recovering stack)
     End
 
     .MVENE (MVEN End)
     Lbl MVENE
     S+24->S
     RSRG()
-
-    .If we put movements on stack, copy them just below stack pointer
-    If U
-        U*5->G
-        S-G->H
-        CPRV(H-24,H,G)
-    End
 
     .(return)
     Return
@@ -426,11 +376,11 @@ Lbl MVENPMTQ {
     .MVEN Push Movement To Queue
     .Pushes the current movement in MVEN to the movement queue
 
-    -U-1*5+S->G
-    {A+3}^r->{G}^r
-    {S+12}^r->{G+2}^r
-    {S+23}+1->{G+4}
-    U++
+    {A+3}^r->{MQ}^r
+    {S+12}^r->{MQ+2}^r
+    {S+23}+1->{MQ+4}
+    NM++
+    MQ+5->MQ
 
     Return
 }
@@ -450,14 +400,9 @@ Lbl MVENRPTR {
 Lbl MVENCHET {
     .MVEN Change Entity Type
     .Moves any entities on top of the given entity if its height changes.
-    .Will preserve queued movements, with count stored in U
     .r1: Pointer to entity whose type should change
     .r2: New entity type
     .Returns nothing
-
-    .Allocating stack
-    -U*5-2+S->S
-    U->{S}^r
 
     .Getting change in height
     {r_1}->G
@@ -481,10 +426,6 @@ Lbl MVENCHET {
 
     .Finally, change the entity type
     r_2->{r_1}
-
-    .Fixing stack
-    {S}^r->U
-    U*5+2+S->S
 
     Return
 }
