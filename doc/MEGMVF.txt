@@ -27,7 +27,7 @@ Lbl MVEF {
         A*5->G
         NM*5->H
         G-H+S->S
-        Copy(MQ,S,H)
+        Copy(QB,S,H)
 
         .Storing the previous number of frame actions in A
         NM->A
