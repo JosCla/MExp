@@ -128,6 +128,19 @@ Lbl UNDO {
             RMEN(H)
         ElseIf G=7
             .undo raft split
+
+            .firstly, making the log back into a raft
+            .(raft type is always 2 greater than respective log type)
+            {H}+2->{H}
+
+            .then adding back the extra bytes
+            {UP+3}^r->{H+6}^r
+
+            .finally marking the extra log as absorbed by the raft
+            Select(H,
+                GEPP({UP+3},{UP+4})->G
+            )->H
+            CE-H->{G}^r
         End
     End
 

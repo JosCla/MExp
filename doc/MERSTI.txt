@@ -97,6 +97,12 @@ Lbl RMER {
             .Change entity type to log
             {C}-2->{C}
 
+            .Log splitting of raft
+            7->{S-6}
+            {C+6}^r->{S-5}^r
+            {C+3}^r->{S-3}^r
+            LGUN()
+
             .Make this entity have the entity id of the contained log
             {C+6}^r->{C+3}^r
             0->{C+6}^r
@@ -114,6 +120,12 @@ Lbl RMER {
     Else
         .Negative relative pointer. Entity is part of raft - leave single log
         -B+CE->C
+
+        .Log splitting of raft
+        7->{S-6}
+        {C+3}^r->{S-5}^r
+        {C+6}^r->{S-3}^r
+        LGUN()
 
         .Deleting the owned part of the raft
         0->{C+6}^r
