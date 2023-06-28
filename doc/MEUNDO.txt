@@ -114,8 +114,8 @@ Lbl UNDO {
 
             .then put the entity back
             S-8->S
-            Copy(UP-6,S,6)      .most props from entity deletion 2 block
-            {UP+2}^r->{S+6}^r   .extra bytes from entity deletion 1 block
+            Copy(UP-5,S,5)      .props from entity deletion 2 block
+            Copy(UP+2,S+5,3)    .props from entity deletion 1 block
             ADEN(S,{UP+1})      .island from entity deletion 1 block
             S+8->S
 
@@ -123,10 +123,10 @@ Lbl UNDO {
             .  two units
             DCUP()
             B++
-        ElseIf G=5
+        ElseIf G=6
             .undo entity creation
             RMEN(H)
-        ElseIf G=6
+        ElseIf G=7
             .undo raft split
         End
     End

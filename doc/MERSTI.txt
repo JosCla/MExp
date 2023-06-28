@@ -138,7 +138,7 @@ Lbl ADEN {
     .Returns the pointer to the entity in CENT
 
     .Logging creation
-    5->{S-6}
+    6->{S-6}
     {r_1+3}^r->{S-5}^r
     LGUN()
 
