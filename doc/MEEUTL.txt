@@ -137,17 +137,16 @@ Lbl CHET {
     .Getting change in height
     nib{GDB1ENTH*2+G}^r->G      .old height
     nib{GDB1ENTH*2+r_2}^r->H    .new height
+    H-G->H                      .height change
 
-    If H!=G
+    If H
         .If there's a change in height, shift the entity above accordingly
         r_1->G
-        Select(r_1,
         Select(H,
             GLEA({G+1},{G+2},{G+5})->G
         )->H
-        )->I
         If G
-            MVER(G,{I+1},{I+2},{I+5}+H)
+            MVER(G,{G+1},{G+2},{G+5}+H)
         End
     End
 

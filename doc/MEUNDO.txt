@@ -91,7 +91,10 @@ Lbl UNDO {
             MVER(H,{UP+3},{UP+4},{UP+5})
         ElseIf G=2
             .undo type change
-            CHET(H,{UP+3})
+            {UP+3}->{H}
+
+            .we would need to also move the entities above this entity if its
+            .  height changes, but that is handled by a separate MVER unit.
         ElseIf G=3
             .undo raft creation
 
