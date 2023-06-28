@@ -33,7 +33,8 @@ Lbl RSTI {
         .Removing the entity
         GEPP(D,C)->G
         RMER(G)
-
+    End
+    For(C,1,B)
         .Re-adding it from IDAT
         C*8+A->G            .pointer to entity to add, relative to IDAT
         For(H,0,7)          .putting entity to add on stack
