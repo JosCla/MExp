@@ -3,7 +3,6 @@
 .Prerequisites
 L_1+768->S
 prgmMESTAT
-L_1+100->QB
 0->CP
 0->RU
 

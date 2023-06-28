@@ -181,7 +181,7 @@ Lbl INUP {
     .Increment undo pointer
 
     UP+6->UP
-    If UP-UN>=1802
+    If UP-UN-2>=US
         2+UN->UP
     End
 
@@ -193,7 +193,7 @@ Lbl DCUP {
 
     UP-6->UP
     If UP<UN
-        1796+UN->UP
+        US-4+UN->UP
     End
 
     Return
