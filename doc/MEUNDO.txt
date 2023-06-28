@@ -40,10 +40,18 @@ Lbl FIUN {
     .Finish undo
 
     .Log undo header
+    If NU=1
+        .This was just a single player movement; log it as such
+        DCUP()
+        2->{S-5}
+        Copy(UP+3,S-4,3)
+    Else
+        .This undo has more than just player movement; log it as such
+        1->{S-5}
+        NU->{S-4}
+    End
     UP-UN->{UN}^r
     0->{S-6}
-    1->{S-5}
-    NU->{S-4}
     LGUN()
 
     .Stop recording undos
@@ -63,6 +71,15 @@ Lbl UNDO {
 
     .Making sure this block header has not been consumed
     Return!If {UP+1}
+
+    .Seeing if this is just a single player movement to undo
+    If {UP+1}=2
+        GCEP(0,0)->G                    .getting player pointer
+        MVER(G,{UP+2},{UP+3},{UP+4})    .moving them
+        0->{UP+1}                       .marking block as consumed
+        UNDOE()                         .book-keeping
+        Return
+    End
 
     .Iterating through undo units, making sure none have been overriden by
     .   block headers
@@ -146,6 +163,9 @@ Lbl UNDO {
             CE-H->{G}^r
         End
     End
+
+    .UNDO End
+    Lbl UNDOE
 
     .Setting new block header
     DCUP()
