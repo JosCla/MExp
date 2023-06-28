@@ -114,9 +114,9 @@ Lbl UNDO {
 
             .then put the entity back
             S-8->S
-            Copy(UP-6,S-8,6)    .most props from entity deletion 2 block
-            {UP+2}^r->{S-2}^r   .extra bytes from entity deletion 1 block
-            ADEN(S-8,{UP+1})    .island from entity deletion 1 block
+            Copy(UP-6,S,6)      .most props from entity deletion 2 block
+            {UP+2}^r->{S+6}^r   .extra bytes from entity deletion 1 block
+            ADEN(S,{UP+1})      .island from entity deletion 1 block
             S+8->S
 
             .move an additional undo unit length, since this code consumes
