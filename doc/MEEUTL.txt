@@ -13,7 +13,7 @@ Lbl GECT {
         .Raft
         5Return
     ElseIf r_1>6
-        .Immobile (snowman or sign)
+        .Immobile (snowman)
         6Return
     ElseIf r_2
         .Laid down logs (horizontal movement)
@@ -38,9 +38,13 @@ Lbl MKRF {
     .Returns nothing
 
     .Allocating stack
-    S-4->S
-    A->{S}^r
-    B->{S+2}^r
+    SSRG()
+
+    .Logging this event
+    3->{S-6}
+    {r_1+3}^r->{S-5}^r
+    {r_2}->{S-3}
+    LGUN()
 
     .Storing pointers in A and B
     r_1->A
@@ -68,9 +72,7 @@ Lbl MKRF {
     CE-A->{G}^r
 
     .Fixing stack
-    {S}^r->A
-    {S+2}^r->B
-    S+4->S
+    RSRG()
 
     Return
 }
@@ -109,6 +111,44 @@ Lbl CHEI {
         r_1-CE->{G+8+CE}^r
     End
     G->{r_1+10}^r
+
+    Return
+}
+
+Lbl CHET {
+    .Change Entity Type
+    .Moves any entities on top of the given entity if its height changes.
+    .r1: Pointer to entity whose type should change
+    .r2: New entity type
+    .Returns nothing
+
+    .Logging entity type change
+    2->{S-6}
+    {r_1+3}^r->{S-5}^r
+    {r_1}->{S-3}
+    LGUN()
+
+    .Recording this entity's previous type
+    {r_1}->G
+
+    .Changing our entity type
+    r_2->{r_1}
+
+    .Getting change in height
+    nib{GDB1ENTH*2+G}^r->G      .old height
+    nib{GDB1ENTH*2+r_2}^r->H    .new height
+    H-G->H                      .height change
+
+    If H
+        .If there's a change in height, shift the entity above accordingly
+        r_1->G
+        Select(H,
+            GLEA({G+1},{G+2},{G+5})->G
+        )->H
+        If G
+            MVER(G,{G+1},{G+2},{G+5}+H)
+        End
+    End
 
     Return
 }

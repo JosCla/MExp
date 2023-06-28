@@ -6,11 +6,7 @@ Lbl CSAV {
     .Must have loaded the world file first to create the save file from
 
     .Saving variables to the stack
-    S-8->S
-    A->{S}^r
-    B->{S+2}^r
-    C->{S+4}^r
-    D->{S+6}^r
+    SSRG()
 
     .Finding stats about this world file
     IDWO(0)->A  .number of islands
@@ -26,7 +22,7 @@ Lbl CSAV {
     DelVar Str1FSAVE
 
     .Creating new save file
-    22->H .cumulative size of save file (3*2B ptrs + 10B checksum + 3*2B sizes)
+    24->H .cumulative size of save file (4*2B ptrs + 8B checksum + 4*2B sizes)
 
     .EMAP is the same size as IMAP
     IMWO(-2)->I
@@ -40,6 +36,9 @@ Lbl CSAV {
         + (4B per island (pointer + ent count)) + (2B per entity pointer)
     A*2+G*2+4->K
     K+H->H
+
+    .UNDO has constant US undo space + 2B last move pointer
+    US+2+H->H
 
     .Allocating whole save file
     GetCalc(Str1FSAVE,H)->SF
@@ -56,9 +55,12 @@ Lbl CSAV {
     20+I->G         .offset to CENT
     G->{SF+2}^r
     G+SF->CE
-    22+I+J->G       .offset to EPTR
+    G+J+2->G        .offset to EPTR
     G->{SF+4}^r
     G+SF->EP
+    G+K+2->G        .offset to UNDO
+    G->{SF+6}^r
+    G+SF->UN
 
     .Saving basic properties to files
     I->{EM-2}               .EMAP size
@@ -74,10 +76,13 @@ Lbl CSAV {
     K->{EP-2}^r             .EPTR size
     A->{EP}^r               .EPTR num islands
     A*2+4->C                .EPTR first island pointer
+    US+2->{UN-2}^r          .UNDO size
+    2->{UN}^r               .UNDO first block pointer
+    0->{UN+2}^r             .UNDO first block header
 
     .Putting the checksum into the save file
     CCSM()
-    Copy(S-10,SF+6,10)
+    Copy(S-8,SF+8,8)
 
     .Putting a dummy player entity in the world, for island resetting
     .NOTE: all C in the following statements actually represent A*2+4
@@ -131,11 +136,7 @@ Lbl CSAV {
     Lbl CSAVE
 
     .Recover the stack
-    {S}^r->A
-    {S+2}^r->B
-    {S+4}^r->C
-    {S+6}^r->D
-    S+8->S
+    RSRG()
 
     .(return)
     TReturn

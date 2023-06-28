@@ -14,9 +14,9 @@ Lbl LSAV {
 
     .Making sure the world file's checksum matches the save file's checksum
     CCSM()
-    For(G,0,9)
-        {S-10+G}->H
-        If {SF+6+G}!=H
+    For(G,0,7)
+        {S-8+G}->H
+        If {SF+8+G}!=H
             4Return
         End
     End
@@ -25,6 +25,7 @@ Lbl LSAV {
     {SF}^r+SF->EM
     {SF+2}^r+SF->CE
     {SF+4}^r+SF->EP
+    {SF+6}^r+SF->UN
 
     .Getting map dimensions
     {EM}->MW
@@ -49,26 +50,23 @@ Lbl LARC {
     {Y_1+2}^r->ID
     {Y_1+4}^r->HM
     {Y_1+6}^r->OM
-    {Y_1+8}^r->ST
 
     0Return
 }
 
 Lbl CCSM {
     .Calculate checksum of the world file
-    .Places the checksum in the 10 bytes below the stack pointer
+    .Places the checksum in the 8 bytes below the stack pointer
 
     .Getting file sizes
     IMWO(-2)->G    .map size
     IDWO(-2)->H    .idat size
-    STWO(-2)->I    .strs size
 
     .Putting checksums below stack pointer
-    IMWO(G)->{S-10}^r
-    IDWO(H)->{S-8}^r
-    HMWO(G)->{S-6}^r
-    OMWO(G)->{S-4}^r
-    STWO(I)->{S-2}^r
+    IMWO(G)->{S-8}^r
+    IDWO(H)->{S-6}^r
+    HMWO(G)->{S-4}^r
+    OMWO(G)->{S-2}^r
 
     Return
 }

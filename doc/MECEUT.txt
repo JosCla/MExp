@@ -8,12 +8,22 @@ Lbl RMEN {
     .  (returns 0 if there is none)
 
     .Allocating stack
+    SSRG()
     S-7->S
-    A->{S}^r
-    B->{S+2}^r
 
     .Saving pointer to entity to remove in A
     r_1->A
+
+    .Logging first part of entity removal
+    5->{S-6}
+    Copy(A,S-5,5)
+    LGUN()
+    .Logging second part of entity removal
+    GEIA({A+1},{A+2})->G
+    4->{S-6}
+    G->{S-5}
+    Copy(A+5,S-4,3)
+    LGUN()
 
     .Saving entity's position on the stack for later use
     {A+1}^r->{S+4}^r
@@ -81,9 +91,8 @@ Lbl RMEN {
     B->G
 
     .Fixing stack
-    {S}^r->A
-    {S+2}^r->B
     S+7->S
+    RSRG()
 
     GReturn
 }
@@ -96,9 +105,7 @@ Lbl MENC {
     .Returns nothing
 
     .Allocating stack
-    S-4->S
-    A->{S}^r
-    B->{S+2}^r
+    SSRG()
 
     .Saving entity pointers in A and B
     r_1->A
@@ -139,9 +146,7 @@ Lbl MENC {
     -1->{A}
 
     .Fixing stack
-    {S}^r->A
-    {S+2}^r->B
-    S+4->S
+    RSRG()
 
     Return
 }

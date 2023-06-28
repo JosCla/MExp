@@ -7,7 +7,6 @@ Lbl MVEN {
     .r3: dispY
     .r4: layers of indirection from player push
     .T: movement result
-    .U: number of movements pushed to stack
 
     .Storing to stack
     .   A: entity pointer
@@ -26,13 +25,8 @@ Lbl MVEN {
     .   S+21: is target top/bottom of stack
     .   S+22: target z if push-then-move interaction
     .   S+23: r_4 (layers from player push)
+    SSRG()
     S-24->S
-    A->{S}^r
-    B->{S+2}^r
-    C->{S+4}^r
-    D->{S+6}^r
-    E->{S+8}^r
-    F->{S+10}^r
     r_2->{S+12}
     r_3->{S+13}
     r_4->{S+23}
@@ -158,8 +152,6 @@ Lbl MVEN {
     .MVENA (MVEN Action section)
     Lbl MVENA
 
-    0->U (no queued actions by default)
-
     .Handling pushes in interactions
     If {S+20}=2??{S+20}=3??{S+20}=4
         .Performing push
@@ -174,9 +166,7 @@ Lbl MVEN {
             ?{S+20}!=1?{S+20}<5 .and if it's either a push/block interaction
         .Checking if the bottom entity is a raft
         Select(T,
-        Select(U,
             GLEA({A+1},{A+2},0)->G
-        )->U
         )->T
 
         If G
@@ -187,15 +177,9 @@ Lbl MVEN {
                 .Defer the opposite of our desired movement to the raft
                 .(adds two layers of indirection; it's like the we push on the
                 .   wall and it pushes back!)
-                S->I
-                -U*5+S->S
                 Select(T,
-                Select(U,
-                    MVEN(G,-signed{I+12},-signed{I+13},{I+23}+2)
-                )->I
+                    MVEN(G,-signed{S+12},-signed{S+13},{S+23}+2)
                 )->J
-                I*5+S->S
-                U+I->U
 
                 .Restoring pointers to curr/target ent
                 MVENRPTR()
@@ -234,12 +218,7 @@ Lbl MVEN {
         !If T
             If {S+21}e7
                 .Bottom of stack; just move there
-                S->G
-                -U*5+S->S
-                Select(U,
-                    MVER(A,D,E,{G+22})
-                )->U
-                U*5+S->S
+                MVER(A,D,E,{S+22})
                 0->T
             Else
                 .Not bottom of stack; defer movement
@@ -249,11 +228,7 @@ Lbl MVEN {
         Else
             If T=1?{S+20}=4?{S+21}e6
                 .If blocked, push-then-climb, and top ent, move on top!
-                -U*5+S->S
-                Select(U,
-                    MVER(A,D,E,F)
-                )->U
-                U*5+S->S
+                MVER(A,D,E,F)
                 0->T
             End
         End
@@ -270,19 +245,11 @@ Lbl MVEN {
     ElseIf {S+20}=7
         .Interact (effectively stop by refusal)
 
-        .Setting interaction type and parameter
-        If {B}=7
-            .Snowman
-            2->IT
-            {B+6}->IP
-        ElseIf {B}=8
-            .Sign
-            1->IT
-            {B+6}^r->IP
-        ElseIf {B}=9
-            .Postbox
-            .TODO
-        End
+        .Currently, only interaction type is snowfolk
+        ClrHome
+        Output(0,0,"You made a")
+        Output(0,1,"friend!")
+        PAUS()
 
         .Marking refusal to move
         4->T
@@ -303,25 +270,21 @@ Lbl MVEN {
             End
 
             If G
-                MVENCHET(A,G)
+                CHET(A,G)
                 0->T
             End
         ElseIf C=4
             .Vertical log to standing log (if grounded)
-            Select(U,
-                IMOW({A+1},{A+2},{A+5},{S+12},{S+13})->G
-            )->U
+            IMOW({A+1},{A+2},{A+5},{S+12},{S+13})->G
             0->T
 
             !If G
-                MVENCHET(A,1)
+                CHET(A,1)
                 0->T
             End
         ElseIf C=3
             .Rolling log continues to roll (if grounded)
-            Select(U,
-                IMOW({A+1},{A+2},{A+5},{S+12},{S+13})->G
-            )->U
+            IMOW({A+1},{A+2},{A+5},{S+12},{S+13})->G
             0->T
 
             !If G
@@ -329,9 +292,7 @@ Lbl MVEN {
             End
         ElseIf C=5
             .Raft continues moving if on water
-            Select(U,
-                IMOW({A+1},{A+2},{A+5},{S+12},{S+13})->G
-            )->U
+            IMOW({A+1},{A+2},{A+5},{S+12},{S+13})->G
             0->T
 
             !If G!=1??{S+14}e6=0
@@ -341,7 +302,7 @@ Lbl MVEN {
     Else
         If C=2
             .Tree standing log, through any interaction, loses leaves
-            1->{A}  .(could be done through MVENCHET, but no height change)
+            CHET(A,1)
         ElseIf C=5?{S+23}!=2
             .If a raft stops, try moving stuff off of it if applicable
             .   (also, the not-equal-two check ensures that the raft actually
@@ -349,22 +310,14 @@ Lbl MVEN {
 
             .Finding an entity we can try to move off
             Select(T,
-            Select(U,
                 GLMA({A+1},{A+2},{A+5},{S+12},{S+13})->G
-            )->U
             )->T
 
             .Moving it off
             If G
-                S->H
-                -U*5+S->S
                 Select(T,
-                Select(U,
-                    MVEN(G,signed{H+12},signed{H+13},{H+23}+1)
-                )->I
+                    MVEN(G,signed{S+12},signed{S+13},{S+23}+1)
                 )->T
-                I*5+S->S
-                U+I->U
 
                 .Restoring pointers to curr/target ent
                 MVENRPTR()
@@ -381,26 +334,21 @@ Lbl MVEN {
     .   not be standing), and neither should have any pending movements in
     .   the building queue.
     If {A}=1??{A}=3??{A}=4
-        -U*5+S->S .(absorbing queue into stack)
-
         Select(T,
-        Select(U,
             GHEB({A+1},{A+2},{A+5})->G
-        )->U
         )->T
 
         If G?{G}=3??{G}=4
             .Both entities are single logs
 
             .Checking for queued movements
-            If U
-                For(H,0,U-1)
-                    H*5+S->I
+            If NM
+                For(H,0,NM-1)
+                    H*5+QB->I
                     {I}={A+3}?{I+1}={A+4}
                         ->J
                     If J??{I}={G+3}?{I+1}={G+4}
                         .Found a queued movement for one log or the other
-                        U*5+S->S
                         Goto MVENE
                     End
                 End
@@ -408,33 +356,17 @@ Lbl MVEN {
 
             .If no queued movements, combine our two entities into a raft!
             Select(T,
-            Select(U,
                 MKRF(G,A)
-            )->U
             )->T
 
             .(no need to restore ent pointers since we're at MVENE)
         End
-
-        U*5+S->S .(recovering stack)
     End
 
     .MVENE (MVEN End)
     Lbl MVENE
-    {S}^r->A
-    {S+2}^r->B
-    {S+4}^r->C
-    {S+6}^r->D
-    {S+8}^r->E
-    {S+10}^r->F
     S+24->S
-
-    .If we put movements on stack, copy them just below stack pointer
-    If U
-        U*5->G
-        S-G->H
-        CPRV(H-24,H,G)
-    End
+    RSRG()
 
     .(return)
     Return
@@ -444,11 +376,11 @@ Lbl MVENPMTQ {
     .MVEN Push Movement To Queue
     .Pushes the current movement in MVEN to the movement queue
 
-    -U-1*5+S->G
-    {A+3}^r->{G}^r
-    {S+12}^r->{G+2}^r
-    {S+23}+1->{G+4}
-    U++
+    {A+3}^r->{MQ}^r
+    {S+12}^r->{MQ+2}^r
+    {S+23}+1->{MQ+4}
+    NM++
+    MQ+5->MQ
 
     Return
 }
@@ -461,48 +393,6 @@ Lbl MVENRPTR {
     {G}^r+CE->A
     {S+18}^r->G
     {G}^r+CE->B
-
-    Return
-}
-
-Lbl MVENCHET {
-    .MVEN Change Entity Type
-    .Moves any entities on top of the given entity if its height changes.
-    .Will preserve queued movements, with count stored in U
-    .r1: Pointer to entity whose type should change
-    .r2: New entity type
-    .Returns nothing
-
-    .Allocating stack
-    -U*5-2+S->S
-    U->{S}^r
-
-    .Getting change in height
-    {r_1}->G
-    nib{GDB1ENTH*2+G}^r->G      .old height
-    nib{GDB1ENTH*2+r_2}^r->H    .new height
-    H-G->I                      .height change
-
-    If I
-        .If there's a change in height, use MVER to shift all entities above
-        Select(r_1,
-        Select(r_2,
-        Select(I,
-            MVER(r_1,{r_1+1},{r_1+2},{r_1+5}+I)
-        )->I
-        )->r_2
-        )->r_1
-
-        .Then, move our original entity the opposite of the change in height
-        {r_1+5}-I->{r_1+5}
-    End
-
-    .Finally, change the entity type
-    r_2->{r_1}
-
-    .Fixing stack
-    {S}^r->U
-    U*5+2+S->S
 
     Return
 }

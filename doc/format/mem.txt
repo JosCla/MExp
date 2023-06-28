@@ -1,12 +1,13 @@
 L1 structure (768B total):
 0-99: Various non-const static variables
-    0-7: Files (EM, CE, EP, PD)
-    8-9: Map width (MW)
-    10-11: Map height (MH)
-    12-17: Camera position (CX, CY, CZ)
-    18-19: Camera draw parity (CP)
-    20-23: Interaction event variables (IT, IP)
-    24-99: UNUSED
+    0-5: Files (EM, CE, EP)
+    6-7: Overall save file pointer (SF)
+    8-15: Relative world file pointers (IM, ID, HM, OM)
+    16-17: Map width (MW)
+    18-19: Map height (MH)
+    20-25: Camera position (CX, CY, CZ)
+    26-27: Camera draw parity (CP)
+    28-99: UNUSED
 100-767: Stack (S is initially L1+768)
 
 Str1F....: File strings
@@ -22,20 +23,17 @@ Pic1SENT (Sprite ENTities) structure
     4: Vertical log
     5: Horizontal raft
     6: Vertical raft
-    7: Snowman (alt: dark snowman)
-    8: Sign (alt: unmarked sign)
+    7: Snowman
 
 Pic1STIL (Sprite TILes) structure
-4*16B: 4 tile type sprites
+16B: Ground sprite
     0: Grass
-    1: Rock/Sand
-    2-3: UNUSED
+3*16B: Miscellaneous
+    0: Water
+    1: Impenetrable Rock
+    2: Stump
 4*16B: 4 wall type sprites
     0: Wall
     1: Waterfall (wall but water)
     2: Wall with ladder
     3: Waterfall with ladder
-3*16B: Miscellaneous
-    0: Water
-    1: Impenetrable Rock
-    2: Stump

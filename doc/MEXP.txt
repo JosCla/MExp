@@ -4,6 +4,7 @@
 L_1+768->S
 prgmMESTAT
 0->CP
+0->RU
 
 .Trying to load the world file (exiting if this fails)
 LARC()->G
@@ -54,7 +55,12 @@ Repeat getKey(15)
     ElseIf getKey(54)
         GCEP(0)->G
         GEIA({G+1},{G+2})->G
+        STUN()
         RSTI(G)
+        FIUN()
+        DRPL()
+    ElseIf getKey(48)
+        UNDO()
         DRPL()
     End
 End
@@ -72,9 +78,15 @@ Lbl MVPL {
     .Drawing to a parity of 1
     DGUP(1)
 
+    .Start recording undo
+    STUN()
+
     .Moving the player
     GCEP(0)->G
-    MVEI(G,A,B,0)
+    MVEF(G,A,B,0)
+
+    .Finish recording undo
+    FIUN()
 
     .Drawing the screen
     DRPL()
@@ -89,11 +101,11 @@ prgmMEEUTL
 prgmMEGDUT
 prgmMEGMVF
 prgmMELSAV
-prgmMEMVEI
 prgmMEMVEN
 prgmMEMVER
 prgmMEMVET
 prgmMERSTI
 prgmMETEXT
+prgmMEUNDO
 prgmMEUTIL
 prgmMEWORL

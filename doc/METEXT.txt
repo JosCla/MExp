@@ -1,48 +1,5 @@
 .Text Routines
 
-Lbl DTEX {
-    .Display a block of text
-        .The text is stored contiguously in memory from a base pointer.
-        .Null bytes (\0) represent page breaks, and just calling Disp on the
-        .   page should be sufficient to display it.
-        .A double null byte (basically a page starting with a null byte) marks
-        .   the end of things to display.
-    .r1: Pointer to text, relative to the archived strings file
-
-    While STBY(r_1) .(ends if current string starts with \0)
-        .G is column, H is row
-        0->G->H
-
-        .Displaying characters until we hit a page break
-        While STBY(r_1)->I
-            .Keep displaying characters until we hit a null byte
-            Output(G,H,I>Char)
-            r_1++
-
-            .Moving cursor
-            G++
-            If G>15
-                0->G
-                H++
-                If H>7
-                    0->H
-                End
-            End
-
-            .Pausing briefly (the text slowly flows onto the screen!)
-            Pause 8
-        End
-
-        .Waiting for a release and press of the enter button
-        PAUS()
-
-        .Incrementing to the next page
-        r_1++
-    End
-
-    Return
-}
-
 Lbl PAUS {
     .Pauses, waiting for enter to be released and pressed again
     .Clears the screen afterwards
@@ -64,13 +21,13 @@ Lbl DERR {
     .Displaying
     ClrHome
     If r_1=1
-        "Failed to load world file."->G
+        "Failed to load world"->G
     ElseIf r_1=2
-        "No save file found."->G
+        "No save found"->G
     ElseIf r_1=3
-        "Failed to make save file."->G
+        "Failed to make save"->G
     ElseIf r_1=4
-        "Save/world file mismatch."->G
+        "Save/world file mismatch"->G
     End
     Text(4,4,G)
 

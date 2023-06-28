@@ -10,8 +10,7 @@ Lbl MMEN {
     .   2: Exit
 
     .Allocating stack
-    S-2->S
-    A->{S}^r
+    SSRG()
     r_1->A
 
     .MMEN Start
@@ -71,8 +70,7 @@ Lbl MMEN {
     End
 
     .Fixing stack
-    {S}^r->A
-    S+2->S
+    RSRG()
 
     GReturn
 }

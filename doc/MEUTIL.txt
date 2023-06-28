@@ -34,3 +34,31 @@ Lbl DGUP {
 
     Return
 }
+
+Lbl SSRG {
+    .Store Saved ReGisters on stack
+
+    S-12->S
+    A->{S}^r
+    B->{S+2}^r
+    C->{S+4}^r
+    D->{S+6}^r
+    E->{S+8}^r
+    F->{S+10}^r
+
+    Return
+}
+
+Lbl RSRG {
+    .Recover Saved ReGisters from stack
+
+    {S}^r->A
+    {S+2}^r->B
+    {S+4}^r->C
+    {S+6}^r->D
+    {S+8}^r->E
+    {S+10}^r->F
+    S+12->S
+
+    Return
+}

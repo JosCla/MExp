@@ -9,8 +9,11 @@ Lbl MVEF {
     .r4: Layers of indirection from player push
 
     .Allocating stack
-    S-2->S
-    A->{S}^r
+    SSRG()
+
+    .Resetting queueing variables
+    QB->MQ
+    0->NM
 
     .Moving the original entity
     MVEN()
@@ -19,18 +22,15 @@ Lbl MVEF {
     0->A
 
     .Performing successive movements
-    While U
+    While NM
         .Moving next queue frame into the stack
-        If A
-            A*5->G
-            U*5->H
-            -H+S->I
-            CPRV(I,I+G,H)
-        End
-        A-U*5+S->S
+        A*5->G
+        NM*5->H
+        G-H+S->S
+        Copy(QB,S,H)
 
         .Storing the previous number of frame actions in A
-        U->A
+        NM->A
 
         .Redrawing the screen between ticks
         .   The double DispGraph^r maintains draw parity.
@@ -44,8 +44,7 @@ Lbl MVEF {
 
     .Restoring stack
     A*5+S->S
-    {S}^r->A
-    S+2->S
+    RSRG()
 
     Return
 }

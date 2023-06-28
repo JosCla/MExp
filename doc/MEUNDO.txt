@@ -1,0 +1,205 @@
+.MExp Undo
+
+Lbl LGUN {
+    .Log Undo
+    .Will take the six bytes below the stack pointer and log them in
+    .  the current undo block
+
+    .If we're not currently recording undos, exit early
+    Return!If RU
+
+    .Copying the bytes
+    Copy(S-6,UP,6)
+
+    .Moving the undo pointer
+    INUP()
+
+    .Incrementing number of undo units in this block
+    NU++
+
+    Return
+}
+
+Lbl STUN {
+    .Start Undo
+
+    .Setting undo pointer from current undo block header
+    {UN}^r+UN->UP
+    INUP()
+
+    .Num units to undo = 0
+    0->NU
+
+    .Start recording undos
+    1->RU
+
+    Return
+}
+
+Lbl FIUN {
+    .Finish undo
+
+    .Log undo header
+    If NU=1
+        .This was just a single player movement; log it as such
+        DCUP()
+        2->{S-5}
+        Copy(UP+3,S-4,3)
+    Else
+        .This undo has more than just player movement; log it as such
+        1->{S-5}
+        NU->{S-4}
+    End
+    UP-UN->{UN}^r
+    0->{S-6}
+    LGUN()
+
+    .Stop recording undos
+    0->RU
+
+    Return
+}
+
+Lbl UNDO {
+    .Undo a single move
+
+    .Allocating stack
+    SSRG()
+
+    .Putting pointer to block header in undo pointer
+    {UN}^r+UN->UP
+
+    .Making sure this block header has not been consumed
+    Return!If {UP+1}
+
+    .Seeing if this is just a single player movement to undo
+    If {UP+1}=2
+        GCEP(0,0)->G                    .getting player pointer
+        MVER(G,{UP+2},{UP+3},{UP+4})    .moving them
+        0->{UP+1}                       .marking block as consumed
+        UNDOE()                         .book-keeping
+        Return
+    End
+
+    .Iterating through undo units, making sure none have been overriden by
+    .   block headers
+    {UP+2}->A   .num units to undo
+    For(B,1,A)
+        DCUP()
+        Return!If {UP}
+    End
+
+    .Returning pointer to current block header, marking it as consumed
+    {UN}^r+UN->UP
+    0->{UP+1}
+
+    .Finally, iterating through each undo unit and undoing them
+    For(B,1,A)
+        .Moving undo pointer to next unit to undo
+        DCUP()
+
+        .Undoing this unit
+        !If {UP}=4
+            GCEP({UP+1},{UP+2})->H
+        End
+        {UP}->G
+        If G=1
+            .undo movement
+            MVER(H,{UP+3},{UP+4},{UP+5})
+        ElseIf G=2
+            .undo type change
+            {UP+3}->{H}
+
+            .we would need to also move the entities above this entity if its
+            .  height changes, but that is handled by a separate MVER unit.
+        ElseIf G=3
+            .undo raft creation
+
+            .changing raft back into a single log
+            .(raft type is always 2 greater than respective log type)
+            {H}-2->{H}
+
+            .we would need to create the log atop the raft, but this will
+            .  be undone by a subsequent undo entity deletion
+        ElseIf G=4
+            .undo entity deletion
+
+            .grabbing bytes from both relevant undo units
+            .the bytes of the entity are then positioned as such:
+            .   UP : .tppii (type, position, id)
+            .   S+8: .shee. (island, height, extra)
+            S-14->S
+            Copy(UP,S+8,6)
+            DCUP()
+            B++
+
+            .first raise things above where this entity was
+            GLEA({UP+2},{UP+3},{S+10}-1)->G .pointer to lowest entity above
+            {UP+1}->H                       .type of our entity
+            nib{GDB1ENTH*2+H}^r->H          .height of our entity
+            If G
+                MVER(G,{UP+2},{UP+3},{S+10}+H)
+            End
+
+            .then put the entity back
+            Copy(UP+1,S,5)      .props from entity deletion 2 block
+            Copy(S+10,S+5,3)    .props from entity deletion 1 block
+            ADEN(S,{S+9})      .island from entity deletion 1 block
+
+            .restoring stack pointer
+            S+14->S
+        ElseIf G=6
+            .undo entity creation
+            RMEN(H)
+        ElseIf G=7
+            .undo raft split
+
+            .firstly, making the log back into a raft
+            .(raft type is always 2 greater than respective log type)
+            {H}+2->{H}
+
+            .then adding back the extra bytes
+            {UP+3}^r->{H+6}^r
+
+            .finally marking the extra log as absorbed by the raft
+            Select(H,
+                GEPP({UP+3},{UP+4})->G
+            )->H
+            CE-H->{G}^r
+        End
+    End
+
+    .UNDO End
+    Lbl UNDOE
+
+    .Setting new block header
+    DCUP()
+    UP-UN->{UN}^r
+
+    .Restoring stack
+    RSRG()
+
+    Return
+}
+
+Lbl INUP {
+    .Increment undo pointer
+
+    UP+6->UP
+    If UP-UN-2>=US
+        2+UN->UP
+    End
+
+    Return
+}
+
+Lbl DCUP {
+    .Decrement undo pointer
+
+    UP-6->UP
+    If UP<UN
+        US-4+UN->UP
+    End
+
+    Return
+}

@@ -9,16 +9,18 @@ Lbl MVER {
 
     .Storing arguments and vars to stack
     .Also allocating a little space to store the entity's prev. position
+    SSRG()
     S-18->S
     r_1->{S}^r
     r_2->{S+2}
     r_3->{S+3}
-    A->{S+4}^r
-    B->{S+6}^r
-    C->{S+8}^r
-    D->{S+10}^r
-    E->{S+12}^r
-    F->{S+14}^r
+
+    .Logging MVER for undo
+    1->{S-6}
+    {r_1+3}^r->{S-5}^r
+    {r_1+1}^r->{S-3}^r
+    {r_1+5}->{S-1}
+    LGUN()
 
     .Storing entity start position on stack
     {r_1+1}->{S+16}
@@ -72,13 +74,8 @@ Lbl MVER {
     F->{H*MW+G+2+EM}
     
     .Restoring stack and variables
-    {S+4}^r->A
-    {S+6}^r->B
-    {S+8}^r->C
-    {S+10}^r->D
-    {S+12}^r->E
-    {S+14}^r->F
     S+18->S
+    RSRG()
 
     .(return)
     Return
