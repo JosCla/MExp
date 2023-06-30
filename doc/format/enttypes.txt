@@ -6,15 +6,23 @@ MExp Entity Types
 3: Horizontal log
 4: Vertical log
 5: Horizontal raft
-    B1-2: ID of other log in raft
+    EB1-2: ID of other log in raft
 6: Vertical raft
-    B1-2: ID of other log in raft
+    EB1-2: ID of other log in raft
 7: Snowman
-    B1: Snowman number
 8: Sign
-    B1: Sign number
-9: Postbox
-    B1: Postbox number
+    EB1: Sign number
+
+Entity Memory Layout
+
+Byte 0: Entity Type
+Byte 1: Entity X Position
+Byte 2: Entity Y Position
+Byte 3: Entity ID (Island number)
+Byte 4: Entity ID (Entity number)
+Byte 5: Entity Z Position
+Byte 6: Extra byte 1
+Byte 7: Extra byte 2
 
 Entity Collision Types
 
@@ -40,7 +48,7 @@ Entity Interaction Actions
 Entity Movement Results
 
 0: Success
-1: Blocked normally (bump into wall, can't push something, oob, etc)
+1: Blocked normally (bump into wall, can't push something, etc)
 2: Blocked by push (getting the push interaction with target entity)
 3: Blocked by movement queueing (usually from trying to move onto stack)
 4: Refused move (player trying to move into water, off sideways log, oob, etc)
