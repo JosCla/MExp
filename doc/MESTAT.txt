@@ -8,6 +8,7 @@ L_1->^EM+2->^CE+2->^EP+2->^UN+2->^SF
     +2->^CP
     +2->^UP+2->^NU+2->^RU+2->^US
     +2->^QB+2->^MQ+2->^NM
+    +2->^IT+2->^IP
 
 .Numeric constants
 2400->US
