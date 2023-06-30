@@ -1,0 +1,85 @@
+MEXPWORL, World File {
+    The overall world file, in the flash ROM archive.
+    Contains all of the following files as "virtual files" at offsets
+    from the start of the overall file.
+
+    Format:
+    2B: pointer to Island Data file
+    2B: pointer to Island Map file
+    2B: pointer to Height Map file
+    2B: pointer to Other Map file
+    2B: pointer to Strings file
+    XB: all contained files
+}
+
+Island Data (formerly MEIDAT) {
+    Data about each island.
+
+    Format:
+    2B: # islands
+    2B: pointer to island 1 data
+    2B: pointer to island 2 data
+    ...
+
+    [ island 1
+        1B: # entities on this island
+        3B: respawn position
+        1B: is this the initial island for this map
+        3B: nothing
+
+        8B: entity 1 spawn information
+        8B: entity 2 spawn information
+        ...
+    ]
+    ...
+}
+
+Island Map (formerly MEIMAP) {
+    Map of which tile belongs to which island.
+
+    Format:
+    2B: map width and height
+    M*N B: the map
+        n=0 on map means water
+        n=1-127 on map means a tile of island n is here
+}
+
+Height Map (formerly MEHMAP) {
+    Map of height of each tile.
+
+    Format:
+    2B: map width and height
+    M*N B: the map
+        n=0 on map is base height
+        n=1-255 is higher heights. surprise!
+}
+
+Other Map (formerly MEOMAP) {
+    Map of other tile properties.
+
+    Format:
+    2B: map width and height
+    M*NB: the map
+        each map position has 8 bits
+        0 (lsb): is ladder
+        1: is water
+        2: is stump
+        3: is impassable (rock)
+        4-7: unused
+}
+
+Strings (formerly MESTRS) {
+    File of all strings that can be used on signs.
+
+    Format:
+    2B: number of strings
+    2B: pointer to string 1
+    2B: pointer to string 2
+    ...
+
+    NB: string 1
+        one null byte denotes a page break
+        two null bytes denote the end of the string
+    MB: string 2
+    ...
+}

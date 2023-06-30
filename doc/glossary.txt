@@ -10,6 +10,7 @@ MEEUTL: Entity Utilities
     GECT: Get entity collision type
     MKRF: Make a raft from two entities
     CHEI: Change entity island
+    CHET: Change Entity Type
     GCEP: Get current entities pointer
     GEPP: Get entity pointers pointer
     GENI: Get entity island
@@ -65,15 +66,20 @@ MEUTIL: General Utilities
     CPRV: Just the Copy() command but copies bytes in reverse order
     DGWP: DispGraph with parity
     DGUP: DispGraph until a certain parity is met
+    SSRG: Store Saved ReGisters on stack
+    RSRG: Recover Saved ReGisters from stack
+MEUNDO: Undo-related Routines
+    LGUN: Log Undo Unit
+    STUN: Start Undo Block
+    FIUN: Finish Undo Block
+    UNDO: Undo a single move
+    INUP: Increment undo pointer
+    DCUP: Decrement undo pointer
 MEWORL: World File Reading Routines
     GHAT: Get height at
     GIAT: Get island at
     GEIA: Get entity island at
-    ILAT: Is there a ladder at the given position?
     IWAT: Is there water at the given position?
-    ISAT: Is there a stump at the given position?
-    IIAT: Is the map impenetrable (rock) at the given position?
-    GGTA: Get the ground type at the given position
     GPBA: Get the "other properties" (OMAP) byte at
 MEXP: Main game file
     MVPL: Moves the player by a given offset

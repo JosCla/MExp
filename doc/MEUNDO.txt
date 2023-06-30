@@ -1,7 +1,7 @@
 .MExp Undo
 
 Lbl LGUN {
-    .Log Undo
+    .Log Undo Unit
     .Will take the six bytes below the stack pointer and log them in
     .  the current undo block
 
@@ -21,7 +21,7 @@ Lbl LGUN {
 }
 
 Lbl STUN {
-    .Start Undo
+    .Start Undo Block
 
     .Setting undo pointer from current undo block header
     {UN}^r+UN->UP
@@ -37,7 +37,7 @@ Lbl STUN {
 }
 
 Lbl FIUN {
-    .Finish undo
+    .Finish Undo Block
 
     .Log undo header
     If NU=1
