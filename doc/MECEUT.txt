@@ -9,7 +9,6 @@ Lbl RMEN {
 
     .Allocating stack
     SSRG()
-    S-7->S
 
     .Saving pointer to entity to remove in A
     r_1->A
@@ -25,9 +24,10 @@ Lbl RMEN {
     Copy(A+5,S-4,3)
     LGUN()
 
-    .Saving entity's position on the stack for later use
-    {A+1}^r->{S+4}^r
-    {A+5}->{S+6}
+    .Saving entity's position for later use
+    {A+1}->C
+    {A+2}->D
+    {A+5}->E
 
     .First removing the entity from its linked list
     {A+8}^r->G    .prev pointer
@@ -82,16 +82,15 @@ Lbl RMEN {
     End
 
     .Moving down all entities above the entity, if applicable
-    GLEA({S+4},{S+5},{S+6})->G .Lowest entity above (0 if none)
+    GLEA(C,D,E)->G .Lowest entity above (0 if none)
     If G
-        MVER(G,{S+4},{S+5},{S+6})
+        MVER(G,C,D,E)
     End
 
     .Getting ready to return B (pointer to next entity)
     B->G
 
     .Fixing stack
-    S+7->S
     RSRG()
 
     GReturn

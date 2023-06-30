@@ -6,7 +6,7 @@ Lbl RSTI {
 
     .Allocating stack
     SSRG()
-    S-16->S
+    S-8->S
     r_1->D
 
     .Deleting all entities on the island
@@ -38,22 +38,22 @@ Lbl RSTI {
         .Re-adding it from IDAT
         C*8+A->G            .pointer to entity to add, relative to IDAT
         For(H,0,7)          .putting entity to add on stack
-            IDBY(G+H)->{S+H+8}
+            IDBY(G+H)->{S+H}
         End
-        ADEN(S+8,D)         .adding entity to the world
+        ADEN(S,D)           .adding entity to the world
     End
 
     .Moving the player back onto this island's starting point
     GCEP(0)->A      .getting pointer to player
-    Copy(A,S+8,8)   .putting player on stack
+    Copy(A,S,8)     .putting player on stack
     RMEN(A)         .removing the player from the world
-    IDWO(D*2)->G            .fixing the player's entity position on the stack
-    IDWO(G+1)->{S+9}^r
-    IDBY(G+3)->{S+13}
-    ADEN(S+8,D)     .adding the player back to our given island
+    IDWO(D*2)->G    .fixing the player's entity position on the stack
+    IDWO(G+1)->{S+1}^r
+    IDBY(G+3)->{S+5}
+    ADEN(S,D)       .adding the player back to our given island
 
     .Fixing stack
-    S+16->S
+    S+8->S
     RSRG()
 
     Return

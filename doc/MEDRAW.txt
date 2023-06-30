@@ -8,7 +8,7 @@ Lbl DSCR {
 
     .Saving args and vars to stack
     SSRG()
-    S-201->S
+    S-195->S
     r_1->{S+192}
     r_2->{S+193}
     r_3->{S+194}
@@ -34,7 +34,7 @@ Lbl DSCR {
     End
 
     .Recovering the stack
-    S+201->S
+    S+195->S
     RSRG()
 
     Return
