@@ -22,7 +22,7 @@ Lbl CSAV {
     DelVar Str1FSAVE
 
     .Creating new save file
-    24->H .cumulative size of save file (4*2B ptrs + 8B checksum + 4*2B sizes)
+    26->H .cumulative size of save file (4*2B ptrs + 10B checksum + 4*2B sizes)
 
     .EMAP is the same size as IMAP
     IMWO(-2)->I
@@ -50,9 +50,9 @@ Lbl CSAV {
     End
 
     .Saving pointers to virtual files
-    18->{SF}^r      .offset to EMAP
-    SF+18->EM
-    20+I->G         .offset to CENT
+    20->{SF}^r      .offset to EMAP
+    SF+20->EM
+    22+I->G         .offset to CENT
     G->{SF+2}^r
     G+SF->CE
     G+J+2->G        .offset to EPTR
@@ -82,7 +82,7 @@ Lbl CSAV {
 
     .Putting the checksum into the save file
     CCSM()
-    Copy(S-8,SF+8,8)
+    Copy(S-10,SF+8,10)
 
     .Putting a dummy player entity in the world, for island resetting
     .NOTE: all C in the following statements actually represent A*2+4
