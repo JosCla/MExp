@@ -57,7 +57,7 @@ Lbl LARC {
 
 Lbl CCSM {
     .Calculate checksum of the world file
-    .Places the checksum in the 8 bytes below the stack pointer
+    .Places the checksum in the 10 bytes below the stack pointer
 
     .Getting file sizes
     IMWO(-2)->G    .map size
