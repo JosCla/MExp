@@ -157,6 +157,12 @@ ASRT(E?F)
 .Test C: Stack correctness
 CSTK()
 
+.Creating a dummy undo logging function
+Lbl LGUN {
+    .(does nothing)
+    Return
+}
+
 .DEPENDENCIES
 prgmMECEUT
 prgmMECSAV

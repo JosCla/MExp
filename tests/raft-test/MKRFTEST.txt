@@ -92,6 +92,12 @@ ASRT(A>CE?{A}=3?{B}=1?{A+5}=4)
 .Test 9: Stack Correctness
 CSTK()
 
+.Creating a dummy undo logging function
+Lbl LGUN {
+    .(does nothing)
+    Return
+}
+
 .DEPENDENCIES
 prgmMECEUT
 prgmMECSAV
