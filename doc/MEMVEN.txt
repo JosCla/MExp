@@ -306,10 +306,11 @@ Lbl MVEN {
         If C=2
             .Tree standing log, through any interaction, loses leaves
             CHET(A,1)
-        ElseIf C=5?{S+3}!=2
-            .If a raft stops, try moving stuff off of it if applicable
-            .   (also, the not-equal-two check ensures that the raft actually
-            .   sailed some distance before dropping its items)
+        ElseIf C=5?{S+3}>2
+            .If a raft stops, try moving stuff off of it.
+            .The check for this being more than two layers of indirection
+            .   from the player is to make the raft only do this if it has
+            .   sailed at least one block.
 
             .Finding an entity we can try to move off
             Select(T,
