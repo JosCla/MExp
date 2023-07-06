@@ -333,10 +333,10 @@ Lbl MVEN {
 
     .Finally, checking if we should combine this entity with the one below it
     .   to form a raft
-    .The top and bottom entities must both be single logs (the bottom should
-    .   not be standing), and neither should have any pending movements in
-    .   the building queue.
-    If {A}=1??{A}=3??{A}=4
+    .The top and bottom entities must both be single logs, and neither should
+    .   be standing. Also, neither should have any pending movements in the
+    .   building queue.
+    If {A}=3??{A}=4
         Select(T,
             GHEB({A+1},{A+2},{A+5})->G
         )->T
