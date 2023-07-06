@@ -132,6 +132,12 @@ ASRT(B=14?C?D)
 .Test 12 (make sure stack is okay)
 CSTK()
 
+.Creating a dummy undo logging function
+Lbl LGUN {
+    .(does nothing)
+    Return
+}
+
 .DEPENDENCIES
 prgmMECEUT
 prgmMECSAV
@@ -140,4 +146,5 @@ prgmMEFILE
 prgmMELSAV
 prgmMEMVER
 prgmMERSTI
+prgmMEUTIL
 prgmMEWORL

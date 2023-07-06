@@ -1,0 +1,77 @@
+MEXPSAVE, Save File {
+    The save file for the current map, in RAM.
+    Contains all of the following files as "virtual files" at offsets
+    from the start of the overall file.
+
+    Format:
+    2B: pointer to Entity Map file
+    2B: pointer to Current Entities file
+    2B: pointer to Entity Pointers file
+    2B: pointer to Undos file
+    10B: combined checksums of all world file components
+        each world file has a 2-byte checksum. the five in order make up
+        this segment of the save file.
+    XB: all contained files
+}
+
+Entity Map (formerly MEEMAP) {
+    Map of where entities are located.
+
+    Format:
+    2B: map width and height
+    M*N B: the map
+        n=0 on map means no entity
+        n=1-127 on map means entity here, belongs to island n
+}
+
+Current Entities (formerly MECENT) {
+    Current entities throughout the map.
+    Tracks entities per island that currently owns them.
+    Uses a linked list for each island to track entities.
+
+    Format:
+    2B: # islands
+    2B: pointer to head of island 1 entities (0 if none)
+    2B: pointer to head of island 2 entities (0 if none)
+    ...
+    2B: first empty slot in list
+
+    8B: entity 1
+    2B: entity 1 pointer to prev. entity in linked list (0 if none)
+    2B: entity 1 pointer to next entity in linked list (0 if none)
+    12B: entity 2 (same format)
+    ...
+    60B: five empty slots at the end for good measure (and so first empty slot can point to something)
+}
+
+Entity Pointers (formerly MEEPTR) {
+    The current pointers to entities in MECENT.
+    All "pointers" are relative to start of MECENT.
+    Very much resembles MEIDAT, but only tracking pointers.
+
+    Format:
+    2B: # islands
+    2B: pointer to island 1 data
+    2B: pointer to island 2 data
+    ...
+    2B: pointer to island n data
+    2B: pointer to player entity
+
+    [ island 1
+        1B: # entities on this island
+        1B: nothing
+
+        2B: entity 1 pointer
+        2B: entity 2 pointer
+        ...
+    ]
+    ...
+}
+
+Undos {
+    The file containing data related to undoing moves.
+
+    Format:
+    2B: pointer to next undo block header to undo
+    2400B: undo units
+}

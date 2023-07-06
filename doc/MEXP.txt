@@ -83,7 +83,7 @@ Lbl MVPL {
 
     .Moving the player
     GCEP(0)->G
-    MVEF(G,A,B,0)
+    MVEI(G,A,B,0)
 
     .Finish recording undo
     FIUN()
@@ -101,6 +101,7 @@ prgmMEEUTL
 prgmMEGDUT
 prgmMEGMVF
 prgmMELSAV
+prgmMEMVEI
 prgmMEMVEN
 prgmMEMVER
 prgmMEMVET

@@ -28,6 +28,13 @@ Lbl OMBY {
     {r_1+OM+Y_1}Return
 }
 
+Lbl STBY {
+    .Strings byte
+    .r1: Offset in file
+
+    {r_1+ST+Y_1}Return
+}
+
 Lbl IMWO {
     .Island map word
     .r1: Offset in file
@@ -54,4 +61,11 @@ Lbl OMWO {
     .r1: Offset in file
 
     {r_1+OM+Y_1}^rReturn
+}
+
+Lbl STWO {
+    .Strings word
+    .r1: Offset in file
+
+    {r_1+ST+Y_1}^rReturn
 }

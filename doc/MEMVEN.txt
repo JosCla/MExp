@@ -14,22 +14,22 @@ Lbl MVEN {
     .   C: entity collision type
     .   D: target x
     .   E: target y
-    .   F: target z
-    .   S+12: r_2 (dispX)
-    .   S+13: r_3 (dispY)
-    .   S+14: curr space property byte
-    .   S+15: target space property byte
-    .   S+16^r: pointer to curr entity pointer
-    .   S+18^r: pointer to target entity pointer
-    .   S+20: entity interaction
-    .   S+21: is target top/bottom of stack
-    .   S+22: target z if push-then-move interaction
-    .   S+23: r_4 (layers from player push)
+    .   F: entity interaction
+    .   S+0 : target z
+    .   S+1 : r_2 (dispX)
+    .   S+2 : r_3 (dispY)
+    .   S+3 : r_4 (layers from player push)
+    .   S+4 : curr space property byte
+    .   S+5 : target space property byte
+    .   S+6 : pointer to curr entity pointer
+    .   S+8 : pointer to target entity pointer
+    .   S+10: is target top/bottom of stack
+    .   S+11: target z if push-then-move interaction
     SSRG()
-    S-24->S
-    r_2->{S+12}
-    r_3->{S+13}
-    r_4->{S+23}
+    S-12->S
+    r_2->{S+1}
+    r_3->{S+2}
+    r_4->{S+3}
 
     .Keeping entity pointer in A
     r_1->A
@@ -51,18 +51,18 @@ Lbl MVEN {
     End
 
     .Putting property bytes for current position and target position on stack
-    GPBA({A+1},{A+2})->{S+14}
-    GPBA(D,E)->{S+15}
+    GPBA({A+1},{A+2})->{S+4}
+    GPBA(D,E)->{S+5}
 
     .If we're one layer from the player, and we're on a water raft, defer
     .   movement to the raft, and only proceed if the raft move fails.
-    If {S+23}=1?{S+14}e6
+    If {S+3}=1?{S+4}e6
         GLEA({A+1},{A+2},0)->G
         If G?G!=A
-            GECT({G},{S+12},{S+13})->H
+            GECT({G},{S+1},{S+2})->H
             If H=5
                 .Try moving the raft
-                MVEN(G,signed{S+12},signed{S+13},{S+23}+1)
+                MVEN(G,signed{S+1},signed{S+2},{S+3}+1)
 
                 .If the move succeeded, then just abort this movement
                 !If T
@@ -73,79 +73,79 @@ Lbl MVEN {
     End
 
     .If we're trying to move into an impenetrable rock, we're blocked
-    If {S+15}e4
-        0->{S+20}
+    If {S+5}e4
+        0->F
         Goto MVENA
     End
 
     .Getting the pointer to our entity
-    GEPP({A+3},{A+4})->{S+16}^r
+    GEPP({A+3},{A+4})->{S+6}^r
 
     .Getting our collision type
-    GECT({A},{S+12},{S+13})->C
+    GECT({A},{S+1},{S+2})->C
 
     .Finding the relative height of the target space
-    GHAT(D,E)+1->F
-    F-{A+5}->G
+    GHAT(D,E)+1->{S}
+    {S}-{A+5}->G
 
     If nib{GDB1MEAH*2+C}^r>=>=G
-        ??{S+15}e7?nib{GDB1CCLL*2+C}^r
+        ??{S+5}e7?nib{GDB1CCLL*2+C}^r
         .Ground is low enough to move to or there's a ladder we can climb
 
         .Checking for entities on this spot
         If GSEH(D,E)->H
             .Finding the highest entity at/below the player (push target)
-            max({A+5},F)->I
+            max({A+5},{S})->I
             For(J,1,H)
                 {-H+J-1*2+S}^r->B
             EndIf {B+5}<=I
 
             .Determining where our entity is in our stack
-            .If bottom of stack, LSB ({S+21}e7) is set
-            .If top of stack, 2nd LSB ({S+21}e6) is set
-            0->{S+21}
-            J=H?{S+21}+1->{S+21}
-            J=1?{S+21}+2->{S+21}
+            .If bottom of stack, LSB ({S+10}e7) is set
+            .If top of stack, 2nd LSB ({S+10}e6) is set
+            0->{S+10}
+            J=H?{S+10}+1->{S+10}
+            J=1?{S+10}+2->{S+10}
 
             .Getting interaction type between the two entities
-            GECT({B},signed{S+12},signed{S+13})->G .(target collision type)
+            GECT({B},signed{S+1},signed{S+2})->G .(target collision type)
             Select(G,
                 GHEB({B+1},{B+2},{B+5})->H
             )->G
-            max({A+5},F)->I
-            {S+15}e6?H=0
+            max({A+5},{S})->I
+            {S+5}e6?H=0
                 ->J .(is the target on water)
             {B}->K
-            nib{GDB1ENTH*2+K}^r+{B+5}->F .(height just above target)
-            {B+5}->{S+22} .(height of target)
-            If F>I
+            nib{GDB1ENTH*2+K}^r+{B+5}->{S} .(height just above target)
+            {B+5}->{S+11} .(height of target)
+            If {S}>I
                 .Above
-                nib{C*2+J*4+GDB1EITA*2+G}^r->{S+20}
+                nib{C*2+J*4+GDB1EITA*2+G}^r->F
             Else
                 .Below
-                nib{C*2+J*4+GDB1EITB*2+G}^r->{S+20}
+                nib{C*2+J*4+GDB1EITB*2+G}^r->F
             End
 
             .Finally, putting pointer to target on stack before proceeding
-            GEPP({B+3},{B+4})->{S+18}^r
+            GEPP({B+3},{B+4})->{S+8}^r
         Else
             .If no entities, we can move here
-            1->{S+20}
+            1->F
         End
     Else
         .Too high to move to; we've been blocked!
-        0->{S+20}
+        0->F
         Goto MVENA
     End
 
     .In any case, if we are the player, then downgrade certain movement types
     .   if we're trying to walk on water or trying to push from a rolling log
     If {A}=0
-        If {S+15}e6?B=0
-            6->{S+20}
-        ElseIf IMOW({A+1},{A+2},{A+5},{S+12},{S+13})=2
-            {S+20}->I
-            nib{GDB1PIRD*2+I}^r->{S+20}
+        If {S+5}e6?B=0
+            6->F
+        ElseIf IMOW({A+1},{A+2},{A+5},{S+1},{S+2})=2
+            F->I
+            nib{GDB1PIRD*2+I}^r->F
         End
     End
 
@@ -153,24 +153,24 @@ Lbl MVEN {
     Lbl MVENA
 
     .Handling pushes in interactions
-    If {S+20}=2??{S+20}=3??{S+20}=4
+    If F=2??F=3??F=4
         .Performing push
-        MVEN(B,signed{S+12},signed{S+13},{S+23}+1)
+        MVEN(B,signed{S+1},signed{S+2},{S+3}+1)
 
         .Restoring pointers to curr/target ent
         MVENRPTR()
     End
 
     .Handling potential rafting from player pushing
-    If {S+23}=0?{S+14}e6        .If it's the player and we're on water
-            ?{S+20}!=1?{S+20}<5 .and if it's either a push/block interaction
+    If {S+3}=0?{S+4}e6        .If it's the player and we're on water
+            ?F!=1?F<5 .and if it's either a push/block interaction
         .Checking if the bottom entity is a raft
         Select(T,
             GLEA({A+1},{A+2},0)->G
         )->T
 
         If G
-            GECT({G},{S+12},{S+13})->H
+            GECT({G},{S+1},{S+2})->H
             If H=5
                 .Let's try to raft!
 
@@ -178,7 +178,7 @@ Lbl MVEN {
                 .(adds two layers of indirection; it's like the we push on the
                 .   wall and it pushes back!)
                 Select(T,
-                    MVEN(G,-signed{S+12},-signed{S+13},{S+23}+2)
+                    MVEN(G,-signed{S+1},-signed{S+2},{S+3}+2)
                 )->J
 
                 .Restoring pointers to curr/target ent
@@ -197,28 +197,28 @@ Lbl MVEN {
     End
 
     .Handing movements in interactions
-    !If {S+20}
+    !If F
         .Blocked
         1->T
-    ElseIf {S+20}=1
+    ElseIf F=1
         .Move if target is top entity or no entity
-        If B=0??{S+21}e6
-            MVER(A,D,E,F)
+        If B=0??{S+10}e6
+            MVER(A,D,E,{S})
             0->T
         Else
             1->T
         End
-    ElseIf {S+20}=2
+    ElseIf F=2
         .Push (but also blocked)
         2->T
-    ElseIf {S+20}=3??{S+20}=4
+    ElseIf F=3??F=4
         .Push then move
 
         .Moving into previously occupied space if available
         !If T
-            If {S+21}e7
+            If {S+10}e7
                 .Bottom of stack; just move there
-                MVER(A,D,E,{S+22})
+                MVER(A,D,E,{S+11})
                 0->T
             Else
                 .Not bottom of stack; defer movement
@@ -226,30 +226,33 @@ Lbl MVEN {
                 3->T
             End
         Else
-            If T=1?{S+20}=4?{S+21}e6
+            If T=1?F=4?{S+10}e6
                 .If blocked, push-then-climb, and top ent, move on top!
-                MVER(A,D,E,F)
+                MVER(A,D,E,{S})
                 0->T
             End
         End
-    ElseIf {S+20}=5
+    ElseIf F=5
         .Double move
-        MVER(A,D,E,F)
+        MVER(A,D,E,{S})
 
         0->U
         MVENPMTQ()
         0->T
-    ElseIf {S+20}=6
+    ElseIf F=6
         .Stop by refusal
         4->T
-    ElseIf {S+20}=7
+    ElseIf F=7
         .Interact (effectively stop by refusal)
 
-        .Currently, only interaction type is snowfolk
-        ClrHome
-        Output(0,0,"You made a")
-        Output(0,1,"friend!")
-        PAUS()
+        If {B}=7
+            .Snowfolk
+            2->IT
+        ElseIf {B}=8
+            .Sign
+            1->IT
+            {B+6}^r->IP
+        End
 
         .Marking refusal to move
         4->T
@@ -263,9 +266,9 @@ Lbl MVEN {
         If C=1??C=2
             .Standing log to "lying" log
             0->G
-            If {S+12}
+            If {S+1}
                 3->G
-            ElseIf {S+13}
+            ElseIf {S+2}
                 4->G
             End
 
@@ -275,7 +278,7 @@ Lbl MVEN {
             End
         ElseIf C=4
             .Vertical log to standing log (if grounded)
-            IMOW({A+1},{A+2},{A+5},{S+12},{S+13})->G
+            IMOW({A+1},{A+2},{A+5},{S+1},{S+2})->G
             0->T
 
             !If G
@@ -284,7 +287,7 @@ Lbl MVEN {
             End
         ElseIf C=3
             .Rolling log continues to roll (if grounded)
-            IMOW({A+1},{A+2},{A+5},{S+12},{S+13})->G
+            IMOW({A+1},{A+2},{A+5},{S+1},{S+2})->G
             0->T
 
             !If G
@@ -292,10 +295,10 @@ Lbl MVEN {
             End
         ElseIf C=5
             .Raft continues moving if on water
-            IMOW({A+1},{A+2},{A+5},{S+12},{S+13})->G
+            IMOW({A+1},{A+2},{A+5},{S+1},{S+2})->G
             0->T
 
-            !If G!=1??{S+14}e6=0
+            !If G!=1??{S+4}e6=0
                 MVENPMTQ()
             End
         End
@@ -303,20 +306,21 @@ Lbl MVEN {
         If C=2
             .Tree standing log, through any interaction, loses leaves
             CHET(A,1)
-        ElseIf C=5?{S+23}!=2
-            .If a raft stops, try moving stuff off of it if applicable
-            .   (also, the not-equal-two check ensures that the raft actually
-            .   sailed some distance before dropping its items)
+        ElseIf C=5?{S+3}>2
+            .If a raft stops, try moving stuff off of it.
+            .The check for this being more than two layers of indirection
+            .   from the player is to make the raft only do this if it has
+            .   sailed at least one block.
 
             .Finding an entity we can try to move off
             Select(T,
-                GLMA({A+1},{A+2},{A+5},{S+12},{S+13})->G
+                GLMA({A+1},{A+2},{A+5},{S+1},{S+2})->G
             )->T
 
             .Moving it off
             If G
                 Select(T,
-                    MVEN(G,signed{S+12},signed{S+13},{S+23}+1)
+                    MVEN(G,signed{S+1},signed{S+2},{S+3}+1)
                 )->T
 
                 .Restoring pointers to curr/target ent
@@ -330,10 +334,10 @@ Lbl MVEN {
 
     .Finally, checking if we should combine this entity with the one below it
     .   to form a raft
-    .The top and bottom entities must both be single logs (the bottom should
-    .   not be standing), and neither should have any pending movements in
-    .   the building queue.
-    If {A}=1??{A}=3??{A}=4
+    .The top and bottom entities must both be single logs, and neither should
+    .   be standing. Also, neither should have any pending movements in the
+    .   building queue.
+    If {A}=3??{A}=4
         Select(T,
             GHEB({A+1},{A+2},{A+5})->G
         )->T
@@ -365,7 +369,7 @@ Lbl MVEN {
 
     .MVENE (MVEN End)
     Lbl MVENE
-    S+24->S
+    S+12->S
     RSRG()
 
     .(return)
@@ -377,8 +381,8 @@ Lbl MVENPMTQ {
     .Pushes the current movement in MVEN to the movement queue
 
     {A+3}^r->{MQ}^r
-    {S+12}^r->{MQ+2}^r
-    {S+23}+1->{MQ+4}
+    {S+1}^r->{MQ+2}^r
+    {S+3}+1->{MQ+4}
     NM++
     MQ+5->MQ
 
@@ -389,9 +393,9 @@ Lbl MVENRPTR {
     .MVEN Restore Pointers
     .Restores the pointers to the current and target entities
 
-    {S+16}^r->G
+    {S+6}^r->G
     {G}^r+CE->A
-    {S+18}^r->G
+    {S+8}^r->G
     {G}^r+CE->B
 
     Return

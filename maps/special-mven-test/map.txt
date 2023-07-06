@@ -1,7 +1,7 @@
 1^^#~~~~~~^^
 2r~~##~....r
-3.p1###^^^~~
-4..p1#.~~~~~
+3.11.==...~~
+4..p1#..~~~~
 5.p1#..~~~~~
 6=|.~~~~~~~~
 7||...r~~~~~
@@ -19,9 +19,9 @@ Test 2: Complex raft push
     When the player pushes right, the two rafts should depart oppositely,
     and when the right raft reaches the shore, the log on it should roll off
     (This is mainly to test that complex movement queueing works)
-Test 3: Raft stairs
-    The player should be able to walk up the raft stairs, and should be able
-    to push a log up those stairs as well
+Test 3: Normal-T and Inverse-T
+    Pushing a standing log onto a standing log should produce a normal-T.
+    Pushing a vertical log onto a vertical log should produce an inverse-T.
 Test 4: Lean a log onto the raft
     The player should be able to tip a standing log onto a raft
 Test 5: Push over a stuck raft

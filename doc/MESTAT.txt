@@ -2,12 +2,13 @@
 
 .Addresses of various static variables
 L_1->^EM+2->^CE+2->^EP+2->^UN+2->^SF
-    +2->^IM+2->^ID+2->^HM+2->^OM
+    +2->^IM+2->^ID+2->^HM+2->^OM+2->^ST
     +2->^MW+2->^MH
     +2->^CX+2->^CY+2->^CZ
     +2->^CP
     +2->^UP+2->^NU+2->^RU+2->^US
     +2->^QB+2->^MQ+2->^NM
+    +2->^IT+2->^IP
 
 .Numeric constants
 2400->US
@@ -30,7 +31,7 @@ L_1+100->QB
 "Can Move Off Raft"
 .(Per collision type)
 .Use nib{}^r to correctly access entries
-[01111000]->GDB1CMOR
+[01110000]->GDB1CMOR
 
 ."Entity interaction table (above)"
 .The rows are the actor, and the columns are what is acted upon
@@ -50,9 +51,9 @@ L_1+100->QB
 .Use nib{}^r to correctly access entries
 [0333117006661100]->GDB1EITB
 [0105010001011100
-[0105010001011100
+[0105110001011100
 [0303110001011100
-[0103010001011100
+[0103110001011100
 [0101110001011100
 [0000000000000000
 

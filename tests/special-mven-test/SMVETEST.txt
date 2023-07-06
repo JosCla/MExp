@@ -33,17 +33,22 @@ MVER(A,4,1,2)
 MVEF(A,1,0,0)
 ASRT({A+1}=2?{B+1}=2?{C+1}=6?{D+1}=10)
 
-.Test 3: Raft stairs
-.    The player should be able to walk up the raft stairs, and should be able
-.    to push a log up those stairs as well
+.Test 3: Normal-T and Inverse-T
+.    Pushing a standing log onto a standing log should produce a normal-T.
+.    Pushing a vertical log onto a vertical log should produce an inverse-T.
 GCEP(0)->A
 GCEP(3,1)->B
-Return!If A?B
-MVER(A,2,2,2)
-For(C,1,8)
-    MVEF(A,1,0,0)
-End
-ASRT({A+1}=7?{B+1}=8?{B}=3)
+GCEP(3,2)->C
+GCEP(3,3)->D
+GCEP(3,4)->E
+Return!If A?B?C?D?E
+MVER(A,1,2,3)
+MVEF(A,1,0,0)
+{B}=3?{B+1}=3?{C}=1?{C+1}=3
+    ->F
+MVER(A,4,2,2)
+MVEF(A,1,0,0)
+ASRT(F?{D}=1?{D+1}=6?{E}=3?{E+1}=6)
 
 .Test 4: Lean a log onto the raft
 .    The player should be able to tip a standing log onto a raft
@@ -156,6 +161,12 @@ ASRT(E?F)
 
 .Test C: Stack correctness
 CSTK()
+
+.Creating a dummy undo logging function
+Lbl LGUN {
+    .(does nothing)
+    Return
+}
 
 .DEPENDENCIES
 prgmMECEUT

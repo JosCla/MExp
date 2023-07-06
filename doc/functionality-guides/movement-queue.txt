@@ -1,0 +1,167 @@
+Movement Queueing in MExp
+
+Stack-Based Movement
+------------------------------------------------------------------------------
+
+Movement in A Monster's Expedition is generally stack-like. If a row of
+standing logs is pushed to fall like dominoes, the log closest to you is the
+first one you try to push, but we first need to make sure that the final log
+can fall over, then the log before that, so on and so forth until finally the
+first log and then you can move.
+
+As a consequence of this, if the player rolls a log to knock over a standing
+log, we effectively compute all of that movement immediately, rolling the log
+all the way to the standing log, and interacting the rolling log with the
+standing log before concluding the rolling log's movement and then the player's
+movement.
+
+In the original A Monster's Expedition, however, the rolling log does not
+appear to immediately move into the standing log. An animation is placed on top
+of the movement, making it look as if the log is slowly rolling. But if you
+move immediately after rolling the log, the animation is canceled, showing the
+log's final position immediately!
+
+However, this sort of animation is generally infeasible for MExp. Due to the
+low computational power of the calculator, it would be quite difficult to
+separate a log's position from where it is animated.
+
+
+Stack-and-Queue-Based Movement
+------------------------------------------------------------------------------
+
+Given this limitation, we have to further segment the movement in the game.
+Although movement in general is still stack-like, certain multi-movement
+actions like a log rolling are put into queues, occurring across multiple
+"ticks". Between each tick, we can render the screen, showing the smaller
+movement that happened in the last tick.
+
+If a log starts rolling, it will only roll a single tile at a time, queueing a
+repeat movement to happen again on the next tick. The same happens for moving
+rafts.
+
+A few examples to show this in action, pictured from above:
+
+Ex. Player pushes rolling log
+STATE: ..p|... (no queue)
+    . = ground
+    p = player
+    | = rolling log
+ACTION: p.push(1,0) (invokes |.push(1,0))
+
+STATE: ...p|.. [|.push(1,0)]
+RE-ACTION: |.push(1,0)
+
+STATE: ...p.|. [] [|.push(1,0)]
+RE-ACTION: |.push(1,0)
+...
+
+Ex. Player pushes a log on a raft
+STATE: ..p|~~. (no queue)
+    . = ground
+    ~ = water
+    p = player
+    | = rolling log atop raft
+    # = raft
+ACTION: p.push(1,0) (invokes #.push(1,0))
+
+STATE: ..p~|~. [#.push(1,0)]
+RE-ACTION: #.push(1,0) (invokes |.push(1,0))
+
+STATE: ..p~~#| [|.push(1,0)]
+...
+
+Ex. Player pushes a log to raft
+STATE: ~~#|.. (player on #) (no queue)
+    . = ground
+    ~ = water
+    # = raft with player on top
+    | = rolling log
+ACTION: p.push(1,0) (invokes |.push(1,0) and then #.push(-1,0))
+
+STATE: ~#~.|. [|.push(1,0), #.push(-1,0)]
+RE-ACTION: |.push(1,0)
+RE-ACTION: #.push(-1,0)
+
+STATE: #~~..| [|.push(1,0), #.push(-1,0)]
+...
+
+As shown in the last example, multiple actions can be queued in a single tick.
+
+
+
+Here are some more examples, viewed from the side rather than above.
+
+The first example showcases another use for the movement queue: If the player
+is trying to move onto a stack of items, and pushes off the top one, then their
+interaction with the items below will be deferred to the next tick to prevent
+the player from interacting with the whole stack instantly.
+
+Ex. Player is trying to move into a stack
+STATE:
+^#^ (air, raft, air)
+p*^ (player, rolling log, air)
+.|^ (ground, standing log, air)
+... (ground, ground, ground)
+(no queue)
+ACTION: p.push(1,0) (invokes *.push(1,0))
+STATE:
+^^^
+p^#
+.|*
+...
+[*.push(1,0), p.push(1,0)]
+RE-ACTION: *.push(1,0)
+RE-ACTION: p.push(1,0) (invokes |.push(1,0))
+STATE:
+^^^^
+^^^#
+.p-* (- is vertical log)
+....
+[] [*.push(1,0)]
+RE-ACTION: *.push(1,0)
+STATE:
+^^^
+^^^
+.p-
+...
+[log's still rolling away]
+
+Ex. Big pile of logs
+STATE:
+^^^^
+^1^^
+..2^ (1, 2, 3, and 4 are all rolling logs)
+..3^
+..4^^^r
+.......
+(no queue)
+ACTION: 1.push(1,0) (invokes 2.push(1,0))
+STATE:
+^^^^
+^1^^
+..^^
+..3^
+..42^^r
+.......
+[2.push(1,0), 1.push(1,0)]
+RE-ACTION: 2.push(1,0)
+RE-ACTION: 1.push(1,0) (invokes 3.push(1,0))
+STATE:
+^^^^
+^1^^
+..^^
+..^^
+..432^r
+.......
+[] [2.push(1,0), 3.push(1,0), 1.push(1,0)]
+RE-ACTION: 2, 3
+RE-ACTION: 1.push(1,0) (invokes 4.push(1,0))
+^^^^
+^^^^
+..^^
+..^^
+..1432r
+.......
+[] [] [2.push(1,0), 3.push(1,0), 4.push(1,0), 1.push(1,0)]
+RE-ACTION: 2, 3, 4, 1 (all are stopped either by the rock
+    or by the log in front of them being stopped)

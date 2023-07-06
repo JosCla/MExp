@@ -120,6 +120,12 @@ ASRT({A}=4?{A+1}=3?{A+5}=3?{B}=3?{B+1}=5)
 .   The stack above S should not have been modified.
 CSTK()
 
+.Creating a dummy undo logging function
+Lbl LGUN {
+    .(does nothing)
+    Return
+}
+
 .DEPENDENCIES
 prgmMECEUT
 prgmMECSAV

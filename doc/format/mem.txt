@@ -1,14 +1,39 @@
 L1 structure (768B total):
-0-99: Various non-const static variables
-    0-5: Files (EM, CE, EP)
-    6-7: Overall save file pointer (SF)
-    8-15: Relative world file pointers (IM, ID, HM, OM)
-    16-17: Map width (MW)
-    18-19: Map height (MH)
-    20-25: Camera position (CX, CY, CZ)
-    26-27: Camera draw parity (CP)
-    28-99: UNUSED
-100-767: Stack (S is initially L1+768)
+0-99: Various static variables
+    0-7: Files (EM, CE, EP, UN)
+        EM: Entity map
+        CE: Current entities
+        EP: Entity pointers
+        UN: Undos
+    8-9: Overall save file pointer (SF)
+        SF: Save file
+    10-19: Relative world file pointers (IM, ID, HM, OM, ST)
+        IM: Island map
+        ID: Island data
+        HM: Height map
+        OM: Other map
+        ST: Strings
+    20-23: Map dimensions (MW, MH)
+        MW: Map width
+        MH: Map height
+    24-29: Camera position (CX, CY, CZ)
+    30-31: Camera draw parity (CP)
+    32-39: Undo-related variables (UP, NU, RU, US)
+        UP: Undo pointer
+        NU: Number of Undos in current block
+        RU: Record Undos (boolean)
+        US: Undo file Size
+    40-45: Movement queue-related variables (QB, MQ, NM)
+        QB: Queue Base
+        MQ: Movement Queue pointer
+        NM: Number of Moves queued
+    46-49: Interaction-related variables (IT, IP)
+        IT: Interaction Type
+        IP: Interaction Parameter
+    50-99: UNUSED
+100-767: Stack and Movement Queue
+    The stack pointer is S, and the stack builds down from L1+768
+    The movement queue builds upward from L1+100
 
 Str1F....: File strings
 

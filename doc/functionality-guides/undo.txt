@@ -1,0 +1,114 @@
+Undoing in MExp
+
+Categorizing Changes in the World
+------------------------------------------------------------------------------
+
+In order to undo changes in the world, we first need to understand all of the
+different types of changes that could possibly happen in world-state, whether
+from the player moving things around or from resetting an island.
+
+In general, there are six main types of things that can happen in the world:
+- Entity position change
+- Entity type change
+- Raft creation from 2 logs
+- Entity deletion
+- Entity creation (on island reset)
+- Raft splitting (on island reset)
+    - If a raft includes one log from island 1 and another from island 2, then
+      resetting island 1 should leave just the island 2 log as a single log.
+
+
+General Undo Structure
+------------------------------------------------------------------------------
+
+Firstly, some vocabulary surrounding undoing of moves:
+- Undo unit: An individual world change to undo, like a position change.
+- Undo block: A group of undo units all caused by a single action by the
+  player.
+- Undo block header: A header on an undo block, specifying details like how
+  many undo units are in that block.
+
+A general intuition for how the undo system works is that when the player
+performs an action in the game, like moving or resetting an island, we create
+various undo units which record all of the effects of that action, and store
+them sequentially in a single undo block. Then on top of that block, we place
+one more block header which says how many undo units there are in that block.
+
+When the player presses the undo button, we then read the block header to see
+how many units to undo, and then go backward through the undo units, reversing
+their effects sequentially.
+
+
+Undo File
+------------------------------------------------------------------------------
+
+The undo file in the save file is formatted as such:
+    2B: Pointer to current undo block header
+    2400B: Space for undo units and block headers
+
+Each unit and block header takes up 6 bytes of space, so there is room for 400
+units and/or block headers in the undo file.
+
+The file is cyclic, so when the end of the file is reached, the next undo unit
+or block header will be recorded at the start of the file.
+
+
+Block Headers
+------------------------------------------------------------------------------
+
+Block Header format:
+    Byte 0: 0 (marks a block header)
+    Byte 1: Type of block header
+        (0: consumed, 1: basic, 2: player movement)
+    Byte 2: Number of moves to undo
+
+One of the block header types is "player movement". Since simple player
+movements that don't have any other effect in the world are such a common
+operation, I created a special block header to represent that, in order to save
+space.
+
+Block Header format (player movement type):
+    Byte 0: 0
+    Byte 1: 2
+    Byte 2-4: Previous player position
+
+
+Undo Units
+------------------------------------------------------------------------------
+
+Undo Unit format:
+    Byte 0: Type of undo unit
+    Byte 1-5: Undo unit data
+
+Type 1: Entity position change
+    Byte 1-2: Entity ID
+    Byte 3-5: Previous Position
+
+Type 2: Entity type change
+    Byte 1-2: Entity ID
+    Byte 3: Old Type
+
+Type 3: Raft creation
+    Byte 1-2: Raft ID
+    Byte 3: Inserted log's type
+
+Type 4: Entity deletion (1)
+    Byte 1: Island removed from
+    Byte 2: Entity height
+    Byte 3-4: Entity extra bytes
+
+Type 5: Entity deletion (2)
+    Byte 1: Entity type
+    Byte 2-3: Entity X,Y
+    Byte 4-5: Entity ID
+
+Type 6: Entity creation
+    Byte 1-2: Entity ID
+
+Type 7: Raft splitting
+    Byte 1-2: Entity ID of remaining log
+    Byte 3-4: Entity ID of removed log
+
+Notably, entity deletion had to be split into two units due to its size. The
+two units are processed together, with the code effectively consuming two units
+at the same time.
