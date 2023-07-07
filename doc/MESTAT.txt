@@ -66,13 +66,13 @@ L_1+100->QB
 ."Entity height"
 .(Per entity type)
 .Use nib{}^r to correctly access entries
-[2221111222]->GDB1ENTH
+[2221111220]->GDB1ENTH
 
 ."Entity rendering upward displacement"
 .Effectively, we want to move certain entities up a certain number of pixels
 .  while rendering to give a greater appearance of depth.
 .Use nib{}^r to correctly access entries
-[2000000222]->GDB1ERUD
+[2110011220]->GDB1ERUD
 
 ."Sprite table (Entity)"
 [1824183C66243C24183C183C7E3C3C24]->Pic1SENT
@@ -88,7 +88,7 @@ L_1+100->QB
 [FF838585A1C1C1FF007C7A7A5E3E3E00]->Pic1STIL
 [FFDFAFFFFFFBF5FF0020500000040A00
 [183C7E7EFFFFFF7E1824524681A1817E
-[000018243C7E3C000000183C3C423C00
+[0018243C7E3C000000183C3C423C0000
 [FFFFFFFFFFFFFFFFFFDFBFDFFDFBFDFF
 [AAAA5555AAAA55555555AAAA5555AAAA
 [FFC3FFC3FFC3FFC3FFFFFFFFFFFFFFFF
