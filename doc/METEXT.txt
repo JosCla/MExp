@@ -44,12 +44,18 @@ Lbl DTEX {
 }
 
 Lbl PAUS {
-    .Pauses, waiting for enter to be released and pressed again
+    .Pauses, waiting for a full enter press (none -> press -> none)
     .Clears the screen afterwards
 
+    .Oddly, I found that I have to put these little pauses within the while
+    .   loops, or else they don't seem to run.
     While getKey(9)
+        Pause 8
     End
     Repeat getKey(9)
+    End
+    While getKey(9)
+        Pause 8
     End
 
     ClrHome

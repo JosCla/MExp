@@ -10,7 +10,7 @@ Lbl MVEI {
     .r4: Layers of indirection from player push
 
     .Clearing the interaction type before moving
-    0->IT
+    0->IT->IP
 
     .Doing the movement
     MVEF()
