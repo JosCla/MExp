@@ -72,7 +72,7 @@ L_1+100->QB
 .Effectively, we want to move certain entities up a certain number of pixels
 .  while rendering to give a greater appearance of depth.
 .Use nib{}^r to correctly access entries
-[2110011220]->GDB1ERUD
+[3110011220]->GDB1ERUD
 
 ."Sprite table (Entity)"
 [1824183C66243C24183C183C7E3C3C24]->Pic1SENT
