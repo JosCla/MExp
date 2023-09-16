@@ -158,13 +158,36 @@ Lbl UNDO {
             .(raft type is always 2 greater than respective log type)
             {H}+2->{H}
 
-            .then adding back the extra bytes
-            {UP+3}^r->{H+6}^r
-
-            .finally marking the extra log as absorbed by the raft
+            .grabbing eptr pointer for removed log
             Select(H,
                 GEPP({UP+3},{UP+4})->G
             )->H
+
+            If {UP+5}
+                .removed was main log in raft
+
+                .correcting entity IDs
+                {H+3}^r->{H+6}^r
+                {UP+3}^r->{H+3}^r
+
+                .correcting main log pointer
+                H-CE->{G}^r
+
+                .overriding contained log pointer to correct
+                Select(H,
+                    GEPP({H+3},{H+4})->G
+                )->H
+            Else
+                .removed was contained log in raft
+
+                .correcting entity IDs
+                {UP+3}^r->{H+6}^r
+
+                .(don't need to get contained log pointer to correct; it's
+                .   already in G)
+            End
+
+            .correcting contained log pointer
             CE-H->{G}^r
         End
     End

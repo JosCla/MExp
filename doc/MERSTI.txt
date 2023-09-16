@@ -103,6 +103,7 @@ Lbl RMER {
             7->{S-6}
             {C+6}^r->{S-5}^r
             {C+3}^r->{S-3}^r
+            1->{S-1}
             LGUN()
 
             .Make this entity have the entity id of the contained log
@@ -127,6 +128,7 @@ Lbl RMER {
         7->{S-6}
         {C+3}^r->{S-5}^r
         {C+6}^r->{S-3}^r
+        0->{S-1}
         LGUN()
 
         .Deleting the owned part of the raft
