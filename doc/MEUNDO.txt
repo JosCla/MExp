@@ -40,7 +40,7 @@ Lbl FIUN {
     .Finish Undo Block
 
     .Log undo header
-    If NU=1
+    If NU=1?{UP}=1?{UP+1}=0
         .This was just a single player movement; log it as such
         DCUP()
         2->{S-5}
