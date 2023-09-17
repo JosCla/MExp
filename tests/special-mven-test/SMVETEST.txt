@@ -130,18 +130,19 @@ MVER(A,8,8,2)
 MVEF(A,1,0,0)
 ASRT({A+1}=8)
 
-.Test A: Ladder
+.Moved Test: Ladder
 .    The player should be able to climb laddered tiles
 .    (and other stuff shouldn't)
-GCEP(0)->A
-GCEP(10,1)->B
-Return!If A?B
-MVER(A,2,9,2)
-MVEF(A,1,0,0)
-MVEF(B,1,0,1)
-ASRT({A+1}=3?{A+5}=4?{B+1}=8?{B+5}=2)
+.(this test has been moved to the extra test map)
+.GCEP(0)->A
+.GCEP(10,1)->B
+.Return!If A?B
+.MVER(A,2,9,2)
+.MVEF(A,1,0,0)
+.MVEF(B,1,0,1)
+.ASRT({A+1}=3?{A+5}=4?{B+1}=8?{B+5}=2)
 
-.Test B: Pushing log underneath stack
+.Test A: Pushing log underneath stack
 .    If a vertical log is underneath a stack of other items, then upon tilting
 .    the log up to a standing log, the other items should increase their height
 .    accordingly.
