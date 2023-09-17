@@ -126,6 +126,15 @@ Lbl MVEN {
                 nib{C*2+J*4+GDB1EITB*2+G}^r->F
             End
 
+            {S}-{A+5}->G
+            If nib{GDB1MEAH*2+C}^r<<G
+                If F=1
+                    0->F
+                ElseIf F=4
+                    2->F
+                End
+            End
+
             .Finally, putting pointer to target on stack before proceeding
             GEPP({B+3},{B+4})->{S+8}^r
         Else
