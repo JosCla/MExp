@@ -89,7 +89,7 @@ Lbl MVEN {
     {S}-{A+5}->G
 
     If nib{GDB1MEAH*2+C}^r>=>=G
-        ??{S+5}e7?nib{GDB1CCLL*2+C}^r
+        ??{S+5}e7?nib{GDB1CCLL*2+C}^r?signed{S+2}<<0
         .Ground is low enough to move to or there's a ladder we can climb
 
         .Checking for entities on this spot
