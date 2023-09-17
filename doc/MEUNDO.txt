@@ -175,7 +175,7 @@ Lbl UNDO {
 
                 .overriding contained log pointer to correct
                 Select(H,
-                    GEPP({H+3},{H+4})->G
+                    GEPP({H+6},{H+7})->G
                 )->H
             Else
                 .removed was contained log in raft
