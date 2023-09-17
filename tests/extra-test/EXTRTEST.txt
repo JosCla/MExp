@@ -1,0 +1,84 @@
+L_1+768->S
+prgmMESTAT
+LARC()->G
+ReturnIf G
+CSAV()->G
+ReturnIf G
+
+RSETTST()
+BSTK()
+
+.Test 1: Ladder directions
+.   You can only climb ladders from the bottom, not the top.
+GCEP(0)->A
+Return!If A
+MVER(A,0,6,2)
+MVEF(A,0,-1,0)
+{A+2}=5?{A+5}=4
+    ->B
+MVEF(A,0,-1,0)
+MVEF(A,0,1,0)
+{A+2}=4?{A+5}=2
+    ->C
+ASRT(B?C)
+
+.Test 2: Ladders for logs
+.   Other entities like logs cannot climb ladders.
+GCEP(0)->A
+GCEP(2,1)->B
+Return!If A?B
+MVER(A,1,7,2)
+MVEF(A,0,-1,0)
+ASRT({A+2}=7?{B+2}=6?{B+5}=2)
+
+.Test 3: Raft to raft push
+.   This one is made to test a specific bug: If you push something atop a raft
+.   from a raft, your raft shouldn't slide along with it!
+GCEP(0)->A
+GCEP(3,1)->B
+GCEP(3,2)->C
+Return!If A?B?C
+MVER(A,2,4,2)
+MVEF(A,0,-1,0)
+ASRT({A+2}=4?{B+2}=4?{C+2}=0)
+
+.Test 4: Climb a raft
+.   You can climb atop a raft!
+GCEP(0)->A
+Return!If A
+MVER(A,3,7,2)
+MVEF(A,0,-1,0)
+ASRT({A+2}=6?{A+5}=3)
+
+.Test 5: Can't climb too high a raft
+.   You can only push on a raft if it's too high.
+GCEP(0)->A
+Return!If A
+MVER(A,4,7,2)
+MVEF(A,0,-1,0)
+ASRT({A+2}=7?{A+5}=2)
+
+.Final Test: Stack correctness
+CSTK()
+
+DISPRES()
+Return
+
+Lbl LGUN {
+    .(does nothing)
+    Return
+}
+
+.DEPENDENCIES
+prgmMECEUT
+prgmMECSAV
+prgmMEEUTL
+prgmMEFILE
+prgmMELSAV
+prgmMEMVEF
+prgmMEMVEN
+prgmMEMVER
+prgmMEMVET
+prgmMERSTI
+prgmMEUTIL
+prgmMEWORL
