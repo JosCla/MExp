@@ -58,6 +58,26 @@ MVER(A,4,7,2)
 MVEF(A,0,-1,0)
 ASRT({A+2}=7?{A+5}=2)
 
+.Test 6: Raft content ejection
+.   If you just push a raft into a wall, it won't eject its contents.
+GCEP(0)->A
+GCEP(6,1)->B
+GCEP(6,2)->C
+Return!If A?B?C
+MVER(A,5,7,2)
+MVEF(A,0,-1,0)
+ASRT({A+2}=7?{B+2}=6?{C+2}=6)
+
+.Test 7: Roll over a raft
+.   If a log rolls over a raft, it shouldn't cause the raft to sail.
+GCEP(0)->A
+GCEP(7,1)->B
+GCEP(7,2)->C
+Return!If A?B?C
+MVER(A,6,7,2)
+MVEF(A,0,-1,0)
+ASRT({A+2}=6?{B+2}=4?{C+2}=5)
+
 .Final Test: Stack correctness
 CSTK()
 

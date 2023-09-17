@@ -231,7 +231,9 @@ Lbl MVEN {
                 0->T
             Else
                 .Not bottom of stack; defer movement
+                {S+3}--
                 MVENPMTQ()
+                {S+3}++
                 3->T
             End
         Else
