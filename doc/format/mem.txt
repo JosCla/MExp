@@ -51,14 +51,17 @@ Pic1SENT (Sprite ENTities) structure
     7: Snowman
 
 Pic1STIL (Sprite TILes) structure
-16B: Ground sprite
+4*16B: Ground sprite
     0: Grass
-3*16B: Miscellaneous
-    0: Water
-    1: Impenetrable Rock
-    2: Stump
+    1: Flowers
+    2: Rock
+    3: Sand
 4*16B: 4 wall type sprites
     0: Wall
     1: Waterfall (wall but water)
     2: Wall with ladder
     3: Waterfall with ladder
+3*16B: Miscellaneous
+    0: Water
+    1: Impenetrable Rock
+    2: Stump
