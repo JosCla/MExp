@@ -348,7 +348,7 @@ Lbl MVEN {
     .The top and bottom entities must both be single logs, and neither should
     .   be standing. Also, neither should have any pending movements in the
     .   building queue.
-    If {A}=3??{A}=4
+    If {A}=1??{A}=3??{A}=4
         Select(T,
             GHEB({A+1},{A+2},{A+5})->G
         )->T
@@ -366,6 +366,17 @@ Lbl MVEN {
                         .Found a queued movement for one log or the other
                         Goto MVENE
                     End
+                End
+            End
+
+            .Checking that if the top log is a standing log, the bottom is on
+            .   water
+            If {A}=1
+                Select(G,
+                    IMOW({G+1},{G+2},{G+5},{S+1},{S+2})->H
+                )->G
+                If H!=1
+                    Goto MVENE
                 End
             End
 

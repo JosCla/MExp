@@ -88,7 +88,7 @@ MVER(A,7,7,2)
 MVEF(A,0,-1,0)
 GCEP(8,1)->B
 GCEP(8,2)->C
-ASRT(C>CE?CE-C=B?{C}=6)
+ASRT(C>CE?C-CE+B=CE?{C}=6)
 
 .Final Test: Stack correctness
 CSTK()
