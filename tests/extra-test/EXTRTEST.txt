@@ -78,6 +78,18 @@ MVER(A,6,7,2)
 MVEF(A,0,-1,0)
 ASRT({A+2}=6?{B+2}=4?{C+2}=5)
 
+.Test 8: Make a raft again
+.   If an inverse-T happens on the water, it should combine into a raft.
+GCEP(0)->A
+GCEP(8,1)->B
+GCEP(8,2)->C
+Return!If A?B?C
+MVER(A,7,7,2)
+MVEF(A,0,-1,0)
+GCEP(8,1)->B
+GCEP(8,2)->C
+ASRT(C>CE?CE-C=B?{C}=6)
+
 .Final Test: Stack correctness
 CSTK()
 
