@@ -74,7 +74,7 @@ Lbl RMEN {
     If B=I
         .If the next entity in our list is what we're moving in, reset the
         .   next pointer to where it will be
-        A->B
+        A-CE->B
     End
     I+CE->I
     If A!=I
