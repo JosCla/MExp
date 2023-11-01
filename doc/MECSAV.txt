@@ -79,6 +79,7 @@ Lbl CSAV {
     US+2->{UN-2}^r          .UNDO size
     2->{UN}^r               .UNDO first block pointer
     0->{UN+2}^r             .UNDO first block header
+    2->UP                   .(setting up UNDO pointer)
 
     .Putting the checksum into the save file
     CCSM()

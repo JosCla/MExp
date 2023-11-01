@@ -31,6 +31,9 @@ Lbl LSAV {
     {EM}->MW
     {EM+1}->MH
 
+    .Getting undo pointer
+    {UN}^r+UN->UP
+
     .(return)
     0Return
 }

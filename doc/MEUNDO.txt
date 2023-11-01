@@ -8,11 +8,11 @@ Lbl LGUN {
     .If we're not currently recording undos, exit early
     Return!If RU
 
-    .Copying the bytes
-    Copy(S-6,UP,6)
-
     .Moving the undo pointer
     INUP()
+
+    .Copying the bytes
+    Copy(S-6,UP,6)
 
     .Incrementing number of undo units in this block
     NU++
@@ -22,10 +22,6 @@ Lbl LGUN {
 
 Lbl STUN {
     .Start Undo Block
-
-    .Setting undo pointer from current undo block header
-    {UN}^r+UN->UP
-    INUP()
 
     .Num units to undo = 0
     0->NU
@@ -42,17 +38,17 @@ Lbl FIUN {
     .Log undo header
     If NU=1?{UP}=1?{UP+1}=0
         .This was just a single player movement; log it as such
-        DCUP()
         2->{S-5}
         Copy(UP+3,S-4,3)
+        DCUP()
     Else
         .This undo has more than just player movement; log it as such
         1->{S-5}
         NU->{S-4}
     End
-    UP-UN->{UN}^r
     0->{S-6}
     LGUN()
+    UP-UN->{UN}^r
 
     .Stop recording undos
     0->RU
@@ -66,11 +62,8 @@ Lbl UNDO {
     .Allocating stack
     SSRG()
 
-    .Putting pointer to block header in undo pointer
-    {UN}^r+UN->UP
-
-    .Making sure this block header has not been consumed
-    Return!If {UP+1}
+    .Making sure this is an unconsumed block header
+    ReturnIf {UP}??{UP+1}=0
 
     .Seeing if this is just a single player movement to undo
     If {UP+1}=2
