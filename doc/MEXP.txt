@@ -60,6 +60,7 @@ Repeat getKey(15)
         FIUN()
         DRPL()
     ElseIf getKey(48)
+        DGUP(1)
         UNDO()
         DRPL()
     End
