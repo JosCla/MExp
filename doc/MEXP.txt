@@ -43,6 +43,9 @@ Repeat getKey(15)
     .DispGraph with parity
     DGWP()
 
+    .Potential island reset code
+    0->C
+
     .Checking for player inputs
     If getKey(1)
         MVPL(0,1)
@@ -53,15 +56,27 @@ Repeat getKey(15)
     ElseIf getKey(4)
         MVPL(0,-1)
     ElseIf getKey(54)
-        GCEP(0)->G
-        GEIA({G+1},{G+2})->G
-        STUN()
-        RSTI(G)
-        FIUN()
-        DRPL()
+        1->C
     ElseIf getKey(48)
         DGUP(1)
         UNDO()
+        DRPL()
+    ElseIf getKey(10)
+        6->C .jump to backward island
+    ElseIf getKey(11)
+        5->C .jump to forward island
+    End
+
+    If C
+        GCEP(0)->G
+        GEIA({G+1},{G+2})->G
+        If C>1
+            IDWO(G*2)->G
+            IDBY(G+C)->G
+        End
+        STUN()
+        RSTI(G)
+        FIUN()
         DRPL()
     End
 End

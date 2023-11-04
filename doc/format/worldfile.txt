@@ -4,8 +4,8 @@ MEXPWORL, World File {
     from the start of the overall file.
 
     Format:
-    2B: pointer to Island Data file
     2B: pointer to Island Map file
+    2B: pointer to Island Data file
     2B: pointer to Height Map file
     2B: pointer to Other Map file
     2B: pointer to Strings file
@@ -25,7 +25,9 @@ Island Data (formerly MEIDAT) {
         1B: # entities on this island
         3B: respawn position
         1B: is this the initial island for this map
-        3B: nothing
+        1B: backward island (for level skip)
+        1B: forward island (for level skip)
+        1B: nothing
 
         8B: entity 1 spawn information
         8B: entity 2 spawn information
