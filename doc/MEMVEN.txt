@@ -72,17 +72,17 @@ Lbl MVEN {
         End
     End
 
-    .If we're trying to move into an impenetrable rock, we're blocked
-    If {S+5}e4
-        0->F
-        Goto MVENA
-    End
-
     .Getting the pointer to our entity
     GEPP({A+3},{A+4})->{S+6}^r
 
     .Getting our collision type
     GECT({A},{S+1},{S+2})->C
+
+    .If we're trying to move into an impenetrable rock, we're blocked
+    If {S+5}e4
+        0->F
+        Goto MVENA
+    End
 
     .Finding the relative height of the target space
     GHAT(D,E)+1->{S}
