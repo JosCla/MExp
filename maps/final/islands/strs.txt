@@ -1,0 +1,24 @@
+Welcome to
+the islands!
+
+
+Arrows to move
+{ALPHA} to undo
+{2ND} to reset
+
+
+If you're having
+trouble, you can
+press {+}/{-} to
+skip forward and
+backward.
+
+
+Congratulations!
+You completed
+the islands!
+
+Code for next
+area:
+ 
+(TODO)
