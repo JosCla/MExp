@@ -22,7 +22,7 @@ Lbl CCAM {
     CX+12>=MW?MW-12->CX
 
     .Centering on Y
-    {G+2}>=3?{G+2}-3->CY,0->CY
+    {G+2}>=4?{G+2}-4->CY,0->CY
     CY+8>=MH?MH-8->CY
 
     .Centering on Z
