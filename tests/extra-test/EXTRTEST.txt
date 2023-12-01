@@ -90,6 +90,21 @@ GCEP(8,1)->B
 GCEP(8,2)->C
 ASRT(C>CE?C-CE+B=CE?{C}=6)
 
+.Test 9: Inverse-T on raft
+.   This tests two things:
+.   1. You should be able to make an inverse-T on a raft.
+.   2. When putting it together, you should push-and-move, not just push
+GCEP(0)->A
+GCEP(9,2)->B
+GCEP(9,3)->C
+Return!If A?B?C
+MVER(A,8,7,3)
+MVEF(A,0,-1,0)
+GCEP(0)->A
+GCEP(9,2)->B
+GCEP(9,3)->C
+ASRT(A?B?C?{B}=4?{C}=1?{A+2}=6)
+
 .Final Test: Stack correctness
 CSTK()
 
