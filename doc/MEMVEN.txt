@@ -276,42 +276,41 @@ Lbl MVEN {
     !If T
         If C=1??C=2
             .Standing log to "lying" log
-            0->G
             If {S+1}
                 3->G
-            ElseIf {S+2}
+            Else
                 4->G
             End
 
-            If G
-                CHET(A,G)
-                0->T
-            End
+            CHET(A,G)
+            0->T
         ElseIf C=4
             .Vertical log to standing log (if grounded)
             IMOW({A+1},{A+2},{A+5},{S+1},{S+2})->G
-            0->T
 
             !If G
                 CHET(A,1)
-                0->T
             End
+
+            0->T
         ElseIf C=3
             .Rolling log continues to roll (if grounded)
             IMOW({A+1},{A+2},{A+5},{S+1},{S+2})->G
-            0->T
 
             !If G
                 MVENPMTQ()
             End
+
+            0->T
         ElseIf C=5
             .Raft continues moving if on water
             IMOW({A+1},{A+2},{A+5},{S+1},{S+2})->G
-            0->T
 
             !If G!=1??{S+4}e6=0
                 MVENPMTQ()
             End
+
+            0->T
         End
     Else
         If C=2
