@@ -371,9 +371,11 @@ Lbl MVEN {
             .Checking that if the top log is a standing log, the bottom is on
             .   water
             If {A}=1
+                Select(T,
                 Select(G,
                     IMOW({G+1},{G+2},{G+5},{S+1},{S+2})->H
                 )->G
+                )->T
                 If H!=1
                     Goto MVENE
                 End
