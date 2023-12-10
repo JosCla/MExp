@@ -152,7 +152,7 @@ Lbl MVEN {
     If {A}=0
         If {S+5}e6?B=0
             6->F
-        ElseIf IMOW({A+1},{A+2},{A+5},{S+1},{S+2})=2
+        ElseIf MVENIMOW()=2
             F->I
             nib{GDB1PIRD*2+I}^r->F
         End
@@ -283,35 +283,23 @@ Lbl MVEN {
             End
 
             CHET(A,G)
-            0->T
         ElseIf C=4
             .Vertical log to standing log (if grounded)
-            IMOW({A+1},{A+2},{A+5},{S+1},{S+2})->G
-
-            !If G
+            !If MVENIMOW()
                 CHET(A,1)
             End
-
-            0->T
         ElseIf C=3
             .Rolling log continues to roll (if grounded)
-            IMOW({A+1},{A+2},{A+5},{S+1},{S+2})->G
-
-            !If G
+            !If MVENIMOW()
                 MVENPMTQ()
             End
-
-            0->T
         ElseIf C=5
             .Raft continues moving if on water
-            IMOW({A+1},{A+2},{A+5},{S+1},{S+2})->G
-
-            !If G!=1??{S+4}e6=0
+            If MVENIMOW()=1?{S+4}e6
                 MVENPMTQ()
             End
-
-            0->T
         End
+        0->T
     Else
         If C=2
             .Tree standing log, through any interaction, loses leaves
@@ -422,4 +410,11 @@ Lbl MVENRPTR {
     {G}^r+CE->B
 
     Return
+}
+
+Lbl MVENIMOW {
+    .MVEN Is moving on water
+    .(sees if the current entity is moving on water)
+
+    IMOW({A+1},{A+2},{A+5},{S+1},{S+2})Return
 }
