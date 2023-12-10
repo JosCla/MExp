@@ -135,7 +135,7 @@ Lbl MVEN {
                 If F=1
                     0->F
                 ElseIf F=4
-                    2->F
+                    3->F
                 End
             End
 
