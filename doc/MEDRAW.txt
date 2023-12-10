@@ -72,33 +72,35 @@ Lbl DTIL {
     End
 
     .Rendering the tile atop the wall
-    If De6
-        .If water, render a water tile
-        Pt-Mask(r_3,C,Pic1STIL+128)
-    Else
-        .If land, find the ground type and render it
-        .(The and-mask finds the upper half-byte of the property byte)
-        Pt-Mask(r_3,C,D and 240+Pic1STIL)
+    If C+8<72
+        If De6
+            .If water, render a water tile
+            Pt-Mask(r_3,C,Pic1STIL+128)
+        Else
+            .If land, find the ground type and render it
+            .(The and-mask finds the upper half-byte of the property byte)
+            Pt-Mask(r_3,C,D and 240+Pic1STIL)
 
-        .Rendering borders with surrounding tiles
-        .(bottom)
-        If r_4!=56?{G+108}<A
-            HLine(C+7,r_3,r_3+7)
-        End
+            .Rendering borders with surrounding tiles
+            .(bottom)
+            If r_4!=56?{G+108}<A
+                HLine(C+7,r_3,r_3+7)
+            End
 
-        .(top)
-        If r_4?{G+84}<A
-            HLine(C,r_3,r_3+7)
-        End
+            .(top)
+            If r_4?{G+84}<A
+                HLine(C,r_3,r_3+7)
+            End
 
-        .(left)
-        If r_3?{G+95}<A
-            VLine(r_3,C,C+7)
-        End
+            .(left)
+            If r_3?{G+95}<A
+                VLine(r_3,C,C+7)
+            End
 
-        .(right)
-        If r_3!=88?{G+97}<A
-            VLine(r_3+7,C,C+7)
+            .(right)
+            If r_3!=88?{G+97}<A
+                VLine(r_3+7,C,C+7)
+            End
         End
     End
 
