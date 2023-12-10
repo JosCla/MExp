@@ -105,6 +105,20 @@ GCEP(9,2)->B
 GCEP(9,3)->C
 ASRT(A?B?C?{B}=4?{C}=1?{A+2}=6)
 
+.Test 10: Silly raft condition
+.   When pushing a raft off a log onto the water, it should not immediately
+.   sail away.
+GCEP(0)->A
+GCEP(10,1)->B
+GCEP(10,2)->C
+Return!If A?B?C
+MVER(A,9,7,2)
+MVEF(A,0,-1,0)
+GCEP(0)->A
+GCEP(10,1)->B
+GCEP(10,2)->C
+ASRT(A?B?C?{A+2}=6?{C+2}=5)
+
 .Final Test: Stack correctness
 CSTK()
 
