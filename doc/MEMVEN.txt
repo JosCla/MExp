@@ -25,8 +25,9 @@ Lbl MVEN {
     .   S+8 : pointer to target entity pointer
     .   S+10: is target top/bottom of stack
     .   S+11: target z if push-then-move interaction
+    .   S+12: pre-move IMOW output
     SSRG()
-    S-12->S
+    S-13->S
     r_2->{S+1}
     r_3->{S+2}
     r_4->{S+3}
@@ -53,6 +54,9 @@ Lbl MVEN {
     .Putting property bytes for current position and target position on stack
     GPBA({A+1},{A+2})->{S+4}
     GPBA(D,E)->{S+5}
+
+    .Putting IMOW output into S+12
+    MVENIMOW()->{S+12}
 
     .If we're one layer from the player, and we're on a water raft, defer
     .   movement to the raft, and only proceed if the raft move fails.
@@ -152,7 +156,7 @@ Lbl MVEN {
     If {A}=0
         If {S+5}e6?B=0
             6->F
-        ElseIf MVENIMOW()=2
+        ElseIf {S+12}=2
             F->I
             nib{GDB1PIRD*2+I}^r->F
         End
@@ -294,8 +298,8 @@ Lbl MVEN {
                 MVENPMTQ()
             End
         ElseIf C=5
-            .Raft continues moving if on water
-            If MVENIMOW()=1?{S+4}e6
+            .Raft continues moving if the current and prev. spaces were water
+            If MVENIMOW()=1?{S+12}=1
                 MVENPMTQ()
             End
         End
@@ -380,7 +384,7 @@ Lbl MVEN {
 
     .MVENE (MVEN End)
     Lbl MVENE
-    S+12->S
+    S+13->S
     RSRG()
 
     .(return)
