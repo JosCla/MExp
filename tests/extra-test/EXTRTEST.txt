@@ -119,6 +119,17 @@ GCEP(10,1)->B
 GCEP(10,2)->C
 ASRT(A?B?C?{A+2}=6?{C+2}=5)
 
+.Test 11: Push a raft up a ledge
+.   When pushing a raft up a ledge, you should push-then-move
+GCEP(0)->A
+GCEP(11,1)->B
+Return!If A?B
+MVER(A,10,7,2)
+MVEF(A,0,-1,0)
+GCEP(0)->A
+GCEP(11,1)->B
+ASRT(A?B?{A+2}=6?{B+2}=5)
+
 .Final Test: Stack correctness
 CSTK()
 
