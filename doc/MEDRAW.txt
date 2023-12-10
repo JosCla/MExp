@@ -62,11 +62,13 @@ Lbl DTIL {
     r_5-A*2+r_4->C
 
     .Rendering wall beneath tile
-    {G+108}->B
-    De7*2+(De6)->H .wall type
-    While B<A
-        Pt-Mask(r_3,A-B*2+C,H+4*2*2*2*2+Pic1STIL)
-        B+4->B
+    If r_4!=56
+        {G+108}->B
+        De7*2+(De6)->H .wall type
+        While B<A
+            Pt-Mask(r_3,A-B*2+C,H+4*2*2*2*2+Pic1STIL)
+            B+4->B
+        End
     End
 
     .Rendering the tile atop the wall
