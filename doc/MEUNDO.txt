@@ -201,9 +201,10 @@ Lbl UNDO {
 Lbl INUP {
     .Increment undo pointer
 
-    UP+6->UP
-    If UP-UN-2>=US
+    If UP-UN+4>=US
         2+UN->UP
+    Else
+        UP+6->UP
     End
 
     Return
@@ -212,9 +213,10 @@ Lbl INUP {
 Lbl DCUP {
     .Decrement undo pointer
 
-    UP-6->UP
-    If UP<UN
+    If UP-UN<=2
         US-4+UN->UP
+    Else
+        UP-6->UP
     End
 
     Return
