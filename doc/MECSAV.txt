@@ -78,8 +78,8 @@ Lbl CSAV {
     A*2+4->C                .EPTR first island pointer
     US+2->{UN-2}^r          .UNDO size
     2->{UN}^r               .UNDO first block pointer
-    0->{UN+2}^r             .UNDO first block header
-    2->UP                   .(setting up UNDO pointer)
+    UN+2->UP                .(setting up UNDO pointer)
+    0->{UP}^r               .UNDO first block header
 
     .Putting the checksum into the save file
     CCSM()
