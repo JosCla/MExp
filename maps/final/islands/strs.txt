@@ -13,6 +13,10 @@ press {+}/{-} to
 skip forward and
 backward.
 
+This will never
+be required for
+any puzzle!
+
 
 Congratulations!
 You completed
