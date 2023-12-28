@@ -260,14 +260,9 @@ Lbl MVEN {
     ElseIf F=7
         .Interact (effectively stop by refusal)
 
-        If {B}=7
-            .Snowfolk
-            2->IT
-        ElseIf {B}=8
-            .Sign
-            1->IT
-            {B+6}^r->IP
-        End
+        .Grabbing interaction type and parameter
+        {B}->IT
+        {B+6}^r->IP
 
         .Marking refusal to move
         4->T
