@@ -1,5 +1,6 @@
 Welcome to
-the islands!
+the Sandbank
+Islands!
 
 
 Arrows to move
@@ -22,9 +23,26 @@ puzzle!
 
 Congratulations!
 You completed
-the islands!
+the Sandbank
+Islands!
 
 Code for locked
 folder:
  
 P8WJLT8AYD
+
+
+The snowperson
+hands you a
+note:
+ 
+secret-1
+YCLRP3UDZS
+
+
+The snowperson
+hands you a
+note:
+ 
+secret-2
+XQQPKK53NT
