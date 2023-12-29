@@ -13,9 +13,11 @@ press {+}/{-} to
 skip forward and
 backward.
 
-This will never
-be required for
-any puzzle!
+These
+"cheat controls"
+will never be
+required for any
+puzzle!
 
 
 Congratulations!
@@ -25,4 +27,4 @@ the islands!
 Code for locked
 folder:
  
-T66P1R9ZT8XD
+P8WJLT8AYD
