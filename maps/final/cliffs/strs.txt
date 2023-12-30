@@ -1,10 +1,10 @@
 Welcome to
-the spire!
+the Snow Spire!
 
 
 Congratulations!
 You completed
-the spire!
+the Snow Spire!
 
 You made it to
 the top of the
@@ -16,3 +16,19 @@ Code for locked
 folder:
  
 T6FHB1SEDW
+
+
+The snowperson
+hands you a
+note:
+ 
+secret-1
+PGC1VUTUBW
+
+
+The snowperson
+hands you a
+note:
+ 
+secret-2
+35Z7VEPZXE
