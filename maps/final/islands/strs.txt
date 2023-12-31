@@ -6,6 +6,7 @@ Islands!
 Arrows to move
 {ALPHA} to undo
 {2ND} to reset
+{CLEAR} to exit
 
 
 If you're having
