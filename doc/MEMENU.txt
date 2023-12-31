@@ -35,6 +35,9 @@ Lbl MMEN {
     Text(14,32,"Exit")
     Fix 4
 
+    .(brief pause to make selection more lenient)
+    Pause 200
+
     .Getting user input
     0->G
     1->H

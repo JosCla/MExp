@@ -31,8 +31,7 @@ If B=1
         Goto MEXPMENU
     End
 ElseIf B=2
-    .Exit
-    Return
+    Goto EXIT
 End
 
 .Drawing the screen for the first time
@@ -80,6 +79,9 @@ Repeat getKey(15)
         DRPL()
     End
 End
+
+Lbl EXIT
+Pause 200
 Return
 
 Lbl MVPL {
