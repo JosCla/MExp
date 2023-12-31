@@ -49,18 +49,32 @@ Lbl PAUS {
 
     .Oddly, I found that I have to put these little pauses within the while
     .   loops, or else they don't seem to run.
-    While getKey(9)
+    While ITAH()
         Pause 8
     End
-    Repeat getKey(9)
+    Repeat ITAH()
     End
-    While getKey(9)
+    While ITAH()
         Pause 8
     End
 
     ClrHome
 
     Return
+}
+
+Lbl ITAH {
+    .Is Text Advance Held
+    .Returns if any key that can advance text is held
+    getKey(1)
+        ??getKey(2)
+        ??getKey(3)
+        ??getKey(4)
+        ??getKey(15)
+        ??getKey(48)
+        ??getKey(54)
+        ??getKey(9)
+        Return
 }
 
 Lbl DERR {
