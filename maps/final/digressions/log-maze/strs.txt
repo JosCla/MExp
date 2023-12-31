@@ -1,2 +1,8 @@
 Digression:
 Log Maze
+
+
+You win!
+ 
+Fragment 1:
+CC5Y
