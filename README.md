@@ -18,3 +18,5 @@ The main folders hold the following:
     - All of MExp's main maps can be found in **final**.
     - Want to create your own maps? See [MExpMapper](https://github.com/JosCla/MExpMapper) for a simple mapping tool on your calculator.
 - **screenshots**: Various screenshots of the game taken throughout development!
+    - Contains spoilers for many of the game's mechanics.
+- **dist**: Scripts and files for building a distributable version of the game.
