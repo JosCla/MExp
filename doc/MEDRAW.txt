@@ -16,11 +16,22 @@ Lbl DSCR {
     .S+96 through S+191 is ground heights for each tile on-screen (w/o stumps)
 
     .Getting property bytes and ground heights for each tile
+    r_2*MW+r_1+2->D
     For(A,0,7)
+        Copy(
+            A*MW+D+OM+Y_1,
+            A*12+S,
+            12
+        )
+        Copy(
+            A*MW+D+HM+Y_1,
+            A*12+96+S,
+            12
+        )
+
         For(B,0,11)
-            A*12+B->C
-            GPBA({S+192}+B,{S+193}+A)->{S+C}
-            GHAT({S+192}+B,{S+193}+A)-({S+C}e5)->{S+C+96}
+            A*12+B+S->C
+            {C}e5*-1+{C+96}->{C+96}
         End
     End
 
