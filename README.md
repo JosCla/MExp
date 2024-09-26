@@ -38,7 +38,7 @@ To recreate the bug:
 
 4. Press `[2ND]` to reset the island.
 
-5. Repeat steps 1 through 4 again. If you've done everything right, the trees you used to make the raft should have mysteriously disappeared!
+5. Repeat steps 2 through 4 again. If you've done everything right, the trees you used to make the raft should have mysteriously disappeared!
 
 ![A screenshot of MExp. The player is on an island with two trees, and two empty stumps.](screenshots/raft-bug-1-4.png "Raft Bug 4")
 
